@@ -22,3 +22,6 @@ out/
 
 # Ignore OS-generated files
 Thumbs.db
+
+# Ignore Next.js build directory
+.next/
