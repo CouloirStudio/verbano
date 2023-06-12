@@ -1,0 +1,29 @@
+/* global.scss */
+
+/* Add the @import rule to import the Nunito font */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap');
+
+/* Set the font-family rule to use Nunito as the default font */
+body {
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Reset default browser styles */
+body,
+h1,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Add box-sizing to all elements */
+* {
+  box-sizing: border-box;
+}
+
+/* Add a global container class */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
