@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+      "lib": ["dom", "es2017"],
+      "allowJs": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "jsx": "react",
+      "target": "es5",
+      "outDir": "./dist",
+      "baseUrl": "./",
+      "paths": {
+        "@/components/*": ["./client/src/components/*"],
+        "@/hooks/*": ["./client/src/hooks/*"],
+        "@/contexts/*": ["./client/src/contexts/*"],
+        "@/styles/*": ["./client/src/styles/*"],
+        "@/graphql/*": ["./client/src/graphql/*"],
+        "@/server/*": ["./server/*"],
+        "@/models/*": ["./server/models/*"],
+        "@/controllers/*": ["./server/controllers/*"],
+        "@/routes/*": ["./server/routes/*"],
+        "@/graphql-server/*": ["./server/graphql/*"]
+      }
+    },
+    "include": [
+      "./client/src",
+      "./server"
+    ],
+    "exclude": ["node_modules"]
+  }
+  
