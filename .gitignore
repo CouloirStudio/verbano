@@ -25,3 +25,6 @@ Thumbs.db
 
 # Ignore Next.js build directory
 .next/
+
+# Ignore API key
+.env

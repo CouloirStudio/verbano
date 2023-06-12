@@ -1,30 +1,34 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import next from 'next';
 import path from 'path';
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import App from '../client/src/pages/App';
 
-const app = express();
+// Check if the environment is development
+const dev = process.env.NODE_ENV !== 'production';
+
+// Create a Next.js app instance
+const nextApp = next({ dev });
+
+// Get the default request handler from Next.js
+const handle = nextApp.getRequestHandler();
+
+// Define the port to listen on
 const port = 3000;
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '../client/public')));
+// Prepare the Next.js app
+nextApp.prepare().then(() => {
+  // Create an Express server instance
+  const app = express();
 
-app.get('/', (req: Request, res: Response) => {
-  const appHtml = ReactDOMServer.renderToString(<App />);
-  res.send(`
-    <html>
-      <head>
-        <title>Verbano App</title>
-      </head>
-      <body>
-        <div id="root">${appHtml}</div>
-        <script src="/client.js"></script>
-      </body>
-    </html>
-  `);
-});
+  // Serve static files from the "public" directory
+  app.use(express.static(path.join(__dirname, '../public')));
 
-app.listen(port, () => {
-  console.log(`Express server is running on port ${port}`);
+  // Handle all requests using the Next.js request handler
+  app.all('*', (req, res) => {
+    return handle(req, res);
+  });
+
+  // Start the server and listen on the specified port
+  app.listen(port, () => {
+    console.log(`Express server is running on port ${port}`);
+  });
 });
