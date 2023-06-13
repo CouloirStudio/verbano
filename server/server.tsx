@@ -1,9 +1,9 @@
-import express from 'express';
-import next from 'next';
-import path from 'path';
+import express from "express";
+import next from "next";
+import path from "path";
 
 // Check if the environment is development
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV !== "production";
 
 // Create a Next.js app instance
 const nextApp = next({ dev });
@@ -20,10 +20,10 @@ nextApp.prepare().then(() => {
   const app = express();
 
   // Serve static files from the "public" directory
-  app.use(express.static(path.join(__dirname, '../public')));
+  app.use(express.static(path.join(__dirname, "../public")));
 
   // Handle all requests using the Next.js request handler
-  app.all('*', (req, res) => {
+  app.all("*", (req, res) => {
     return handle(req, res);
   });
 

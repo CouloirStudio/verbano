@@ -1,18 +1,17 @@
-import React from 'react';
-import Link from 'next/link';
-import PlaceholderPage1 from './page2';
+import React from "react";
+import { AppProps } from "next/app";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
+import "../styles/global.scss";
 
-const App: React.FC = () => {
-  // Next.js will handle routing, so we just render the main content.
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <div>
-      <h1>Hello Verbano</h1>
-      <Link href="/page2" passHref>
-        <button>Go to Page 2</button>
-      </Link>
-      <PlaceholderPage1 />
+      <Header />
+      <Component {...pageProps} />
+      <Sidebar />
     </div>
   );
 };
 
-export default App;
+export default MyApp;

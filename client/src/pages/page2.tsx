@@ -1,8 +1,8 @@
-import React from 'react';
-import Link from 'next/link';
-import styles from '../styles/pages/index.module.scss';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+import React from "react";
+import Link from "next/link";
+import styles from "../styles/pages/index.module.scss";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
 const Page2: React.FC = () => {
   return (

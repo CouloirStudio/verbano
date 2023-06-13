@@ -1,14 +1,12 @@
-import React from 'react';
-import Link from 'next/link';
-import styles from '../styles/pages/index.module.scss';
+import React from "react";
+import Link from "next/link";
+import styles from "../styles/pages/index.module.scss";
 
 const Header: React.FC = () => {
   return (
     <header className={styles.header}>
       <Link href="/" passHref>
-        <h1 className={styles.title}>
-          Verbano
-        </h1>
+        <h1 className={styles.title}>Verbano</h1>
       </Link>
     </header>
   );

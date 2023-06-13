@@ -1,13 +1,14 @@
 /* Import the Nunito font */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap");
 
 /* Set the font-family rule to use Nunito as the default font */
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 /* Reset default browser styles */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -28,5 +29,5 @@ html, body {
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
