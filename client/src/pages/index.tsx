@@ -1,13 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
+import styles from '../styles/pages/index.module.scss';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <h1>Welcome to Home Page</h1>
-      <Link href="/page2" passHref>
-        <button>Go to Page 2</button>
-      </Link>
+    <div className={styles.container}>
+      <Header />
+      <Sidebar />
+      <div className={styles.main}>
+        <h1>Welcome to the Home Page</h1>
+      </div>
     </div>
   );
 };

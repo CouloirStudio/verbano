@@ -10,7 +10,7 @@ const Page2: React.FC = () => {
       <Header />
       <Sidebar />
       <div className={styles.main}>
-        <h1>Welcome to Page 2</h1>
+        <h1>Welcome to Page 3</h1>
       </div>
     </div>
   );
