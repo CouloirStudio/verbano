@@ -1,17 +1,14 @@
 import React from "react";
 import { AppProps } from "next/app";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+import Layout from "../components/Layout";
 import "../styles/global.scss";
 
-const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <div>
-      <Header />
+    <Layout>
       <Component {...pageProps} />
-      <Sidebar />
-    </div>
+    </Layout>
   );
 };
 
-export default MyApp;
+export default App;

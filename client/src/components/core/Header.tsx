@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import styles from "../styles/pages/index.module.scss";
+import styles from "../../styles/pages/index.module.scss";
 
 const Header: React.FC = () => {
   return (

@@ -1,19 +1,17 @@
 import React from "react";
-import Link from "next/link";
 import styles from "../styles/pages/index.module.scss";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+import Layout from "../components/core/Layout";
 
-const Page2: React.FC = () => {
+const Home: React.FC = () => {
   return (
-    <div className={styles.container}>
-      <Header />
-      <Sidebar />
-      <div className={styles.main}>
-        <h1>Welcome to Page 2</h1>
+    <Layout>
+      <div className={styles.container}>
+        <div className={styles.main}>
+          <h1>Welcome to Page 2</h1>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
-export default Page2;
+export default Home;

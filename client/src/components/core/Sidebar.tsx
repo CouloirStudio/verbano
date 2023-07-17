@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import styles from "../styles/pages/index.module.scss";
+import styles from "../../styles/pages/index.module.scss";
 
 const Sidebar: React.FC = () => {
   const pageTitles = ["Page 1", "Page 2", "Page 3"];
