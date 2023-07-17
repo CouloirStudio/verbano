@@ -1,34 +1,40 @@
 import express from "express";
 import next from "next";
 import path from "path";
+import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
-// Check if the environment is development
 const dev = process.env.NODE_ENV !== "production";
-
-// Create a Next.js app instance
 const nextApp = next({ dev });
-
-// Get the default request handler from Next.js
 const handle = nextApp.getRequestHandler();
-
-// Define the port to listen on
 const port = 3000;
 
-// Prepare the Next.js app
-nextApp.prepare().then(() => {
-  // Create an Express server instance
-  const app = express();
+const runServer = async () => {
+  try {
+    const mongoServer = new MongoMemoryServer();
+    const mongoUri = await mongoServer.getUri();
 
-  // Serve static files from the "public" directory
-  app.use(express.static(path.join(__dirname, "../public")));
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    } as Parameters<typeof mongoose.connect>[1]);
 
-  // Handle all requests using the Next.js request handler
-  app.all("*", (req, res) => {
-    return handle(req, res);
-  });
+    console.log('Connected to MongoDB');
 
-  // Start the server and listen on the specified port
-  app.listen(port, () => {
-    console.log(`Express server is running on port ${port}`);
-  });
-});
+    nextApp.prepare().then(() => {
+      const app = express();
+      app.use(express.static(path.join(__dirname, "../public")));
+      app.all("*", (req, res) => {
+        return handle(req, res);
+      });
+      app.listen(port, () => {
+        console.log(`Express server is running on port ${port}`);
+      });
+    });
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  }
+};
+
+runServer();
