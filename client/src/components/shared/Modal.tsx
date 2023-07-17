@@ -7,11 +7,7 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ children }) => {
   // Implement modal logic here
 
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 };
 
 export default Modal;

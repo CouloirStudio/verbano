@@ -1,15 +1,15 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   // Logic for getting all reports
 });
 
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   // Logic for creating a new report
 });
 
-router.delete('/', (req, res) => {
+router.delete("/", (req, res) => {
   // Logic for deleting an existing report
 });
 

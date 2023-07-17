@@ -7,11 +7,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ children }) => {
   // Implement dropdown logic here
 
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 };
 
 export default Dropdown;

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { ReportContext } from "../../contexts/app/ReportContext";
-import Button from '../shared/Button';
+import Button from "../shared/Button";
 
 const Report: React.FC = () => {
   const { generateReport, exportReport } = useContext(ReportContext);
