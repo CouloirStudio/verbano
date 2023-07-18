@@ -1,22 +1,22 @@
 class RecordingController {
-  constructor(
-    private audioInputDevice: any,
-    private recordingSettings: any,
-    private audioData: Blob = new Blob()
-  ) {}
+	constructor(
+		private readonly audioInputDevice: any,
+		private readonly recordingSettings: any,
+		private readonly audioData: Blob = new Blob(),
+	) {}
 
-  startRecording(): void {
-    // logic to start recording here
-  }
+	startRecording(): void {
+		// Logic to start recording here
+	}
 
-  async stopRecording(): Promise<Blob> {
-    // logic to stop recording here
-    return new Blob(); // placeholder
-  }
+	async stopRecording(): Promise<Blob> {
+		// Logic to stop recording here
+		return new Blob(); // Placeholder
+	}
 
-  async saveRecording(): Promise<void> {
-    // logic to save recording here
-  }
+	async saveRecording(): Promise<void> {
+		// Logic to save recording here
+	}
 }
 
 export default RecordingController;

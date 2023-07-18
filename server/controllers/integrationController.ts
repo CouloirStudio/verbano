@@ -1,13 +1,17 @@
 class IntegrationController {
-    constructor(private apiKey: string, private apiBaseURL: string, private externalServices: Array<string>) {}
-  
-    authenticate(): void {
-      // logic here
-    }
-  
-    async sendReport(): Promise<void> {
-      // logic here
-    }
+	constructor(
+		private readonly apiKey: string,
+		private readonly apiBaseURL: string,
+		private readonly externalServices: string[],
+	) {}
+
+	authenticate(): void {
+		// Logic here
+	}
+
+	async sendReport(): Promise<void> {
+		// Logic here
+	}
 }
 
 export default IntegrationController;

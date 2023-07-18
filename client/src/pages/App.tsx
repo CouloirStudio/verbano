@@ -1,14 +1,12 @@
-import React from "react";
-import { AppProps } from "next/app";
-import Layout from "../components/Layout";
-import "../styles/global.scss";
+import React from 'react';
+import {type AppProps} from 'next/app';
+import Layout from '../components/Layout';
+import '../styles/global.scss';
 
-const App: React.FC<AppProps> = ({ Component, pageProps }) => {
-  return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
-  );
-};
+const App: React.FC<AppProps> = ({Component, pageProps}) => (
+	<Layout>
+		<Component {...pageProps} />
+	</Layout>
+);
 
 export default App;

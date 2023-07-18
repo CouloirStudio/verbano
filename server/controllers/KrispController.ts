@@ -1,14 +1,14 @@
 class KrispController {
-  constructor(private apiKey: string, private apiBaseURL: string) {}
+	constructor(private readonly apiKey: string, private readonly apiBaseURL: string) {}
 
-  authenticate(): void {
-    // logic to authenticate with Krisp API here
-  }
+	authenticate(): void {
+		// Logic to authenticate with Krisp API here
+	}
 
-  async cleanAudio(): Promise<Blob> {
-    // logic to clean audio here
-    return new Blob(); // placeholder
-  }
+	async cleanAudio(): Promise<Blob> {
+		// Logic to clean audio here
+		return new Blob(); // Placeholder
+	}
 }
 
 export default KrispController;

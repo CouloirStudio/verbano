@@ -1,20 +1,23 @@
 class TranscriptionController {
-    constructor(private audioData: Blob = new Blob(), private transcript: string = '') {}
-  
-    async transcribeAudio(): Promise<string> {
-      // logic to transcribe audio here
-      return 'transcription'; // placeholder
-    }
-  
-    async cleanTranscription(): Promise<string> {
-      // logic to clean transcription here
-      return 'clean transcription'; // placeholder
-    }
-  
-    getTranscription(): string {
-      // logic to get transcription here
-      return this.transcript; // placeholder
-    }
-  }
-  
-  export default TranscriptionController;
+	constructor(
+		private readonly audioData: Blob = new Blob(),
+		private readonly transcript: string = '',
+	) {}
+
+	async transcribeAudio(): Promise<string> {
+		// Logic to transcribe audio here
+		return 'transcription'; // Placeholder
+	}
+
+	async cleanTranscription(): Promise<string> {
+		// Logic to clean transcription here
+		return 'clean transcription'; // Placeholder
+	}
+
+	getTranscription(): string {
+		// Logic to get transcription here
+		return this.transcript; // Placeholder
+	}
+}
+
+export default TranscriptionController;

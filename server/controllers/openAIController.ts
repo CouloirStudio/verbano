@@ -1,14 +1,14 @@
 class OpenAIController {
-    constructor(private apiKey: string, private apiBaseURL: string) {}
-  
-    authenticate(): void {
-      // logic here
-    }
-  
-    async generateReport(): Promise<string> {
-      // logic here
-      return "report"; // placeholder
-    }
+	constructor(private readonly apiKey: string, private readonly apiBaseURL: string) {}
+
+	authenticate(): void {
+		// Logic here
+	}
+
+	async generateReport(): Promise<string> {
+		// Logic here
+		return 'report'; // Placeholder
+	}
 }
 
 export default OpenAIController;

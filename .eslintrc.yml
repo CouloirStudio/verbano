@@ -1,0 +1,25 @@
+env:
+  browser: true
+  es2021: true
+  node: true
+extends:
+  - eslint:recommended
+  - plugin:react/recommended
+overrides:
+  - extends:
+      - xo-typescript
+    files:
+      - '*.ts'
+      - '*.tsx'
+parserOptions:
+  ecmaVersion: 2022
+plugins:
+  - react
+rules: {}
+ignorePatterns:
+  - __tests__/server/openAIConfig.test.ts
+  - client/next-env.d.ts
+  - client/prettier.d.ts
+settings:
+  react:
+    version: detect

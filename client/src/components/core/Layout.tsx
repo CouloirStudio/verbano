@@ -1,19 +1,17 @@
-import React, { ReactNode } from "react";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+import React, {type ReactNode} from 'react';
+import Header from './Header';
+import Sidebar from './Sidebar';
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  return (
-    <div>
-      <Header />
-      <Sidebar />
-      {children}
-    </div>
-  );
+type LayoutProps = {
+	children: ReactNode;
 };
+
+const Layout: React.FC<LayoutProps> = ({children}) => (
+	<div>
+		<Header />
+		<Sidebar />
+		{children}
+	</div>
+);
 
 export default Layout;

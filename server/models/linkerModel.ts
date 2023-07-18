@@ -1,18 +1,22 @@
 class LinkerModel {
-    constructor(private linkID: number, private linkType: string, private linkList: Array<any>) {}
-  
-    createLink(): void {
-      // logic here
-    }
-  
-    removeLink(): void {
-      // logic here
-    }
-  
-    getLinks(): Array<any> {
-      // logic here
-      return this.linkList; // placeholder
-    }
-  }
-  
-  export default LinkerModel;
+	constructor(
+		private readonly linkID: number,
+		private readonly linkType: string,
+		private readonly linkList: any[],
+	) {}
+
+	createLink(): void {
+		// Logic here
+	}
+
+	removeLink(): void {
+		// Logic here
+	}
+
+	getLinks(): any[] {
+		// Logic here
+		return this.linkList; // Placeholder
+	}
+}
+
+export default LinkerModel;

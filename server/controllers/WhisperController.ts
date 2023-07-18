@@ -1,14 +1,14 @@
 class WhisperController {
-  constructor(private apiKey: string, private apiBaseURL: string) {}
+	constructor(private readonly apiKey: string, private readonly apiBaseURL: string) {}
 
-  authenticate(): void {
-    // logic here
-  }
+	authenticate(): void {
+		// Logic here
+	}
 
-  async transcribeAudio(): Promise<string> {
-    // logic here
-    return "transcription"; // placeholder
-  }
+	async transcribeAudio(): Promise<string> {
+		// Logic here
+		return 'transcription'; // Placeholder
+	}
 }
 
 export default WhisperController;

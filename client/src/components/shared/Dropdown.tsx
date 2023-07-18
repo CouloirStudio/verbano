@@ -1,13 +1,11 @@
-import React, { ReactNode } from "react";
+import React, {type ReactNode} from 'react';
 
-interface DropdownProps {
-  children: ReactNode;
-}
-
-const Dropdown: React.FC<DropdownProps> = ({ children }) => {
-  // Implement dropdown logic here
-
-  return <div>{children}</div>;
+type DropdownProps = {
+	children: ReactNode;
 };
 
+const Dropdown: React.FC<DropdownProps> = ({children}) =>
+// Implement dropdown logic here
+
+	<div>{children}</div>;
 export default Dropdown;

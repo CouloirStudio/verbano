@@ -1,13 +1,13 @@
-import { useContext } from "react";
-import { OpenAIContext } from "../contexts/api/OpenAIContext";
+import {useContext} from 'react';
+import {OpenAIContext} from '../contexts/api/OpenAIContext';
 
 function useOpenAI() {
-  const context = useContext(OpenAIContext);
-  const getReport = async () => {
-    // call the provideReportService of OpenAIContext
-  };
+	const context = useContext(OpenAIContext);
+	const getReport = async () => {
+		// Call the provideReportService of OpenAIContext
+	};
 
-  return {
-    getReport,
-  };
+	return {
+		getReport,
+	};
 }

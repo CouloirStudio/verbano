@@ -1,13 +1,11 @@
-import React, { ReactNode } from "react";
+import React, {type ReactNode} from 'react';
 
-interface ModalProps {
-  children: ReactNode;
-}
-
-const Modal: React.FC<ModalProps> = ({ children }) => {
-  // Implement modal logic here
-
-  return <div>{children}</div>;
+type ModalProps = {
+	children: ReactNode;
 };
 
+const Modal: React.FC<ModalProps> = ({children}) =>
+// Implement modal logic here
+
+	<div>{children}</div>;
 export default Modal;

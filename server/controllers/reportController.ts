@@ -1,14 +1,17 @@
 class ReportController {
-    constructor(private templateType: string, private reportContent: string = '') {}
-  
-    async generateReport(): Promise<string> {
-      // logic to generate report here
-      return 'report'; // placeholder
-    }
-  
-    async exportReport(): Promise<void> {
-      // logic to export report here
-    }
-  }
-  
-  export default ReportController;
+	constructor(
+		private readonly templateType: string,
+		private readonly reportContent: string = '',
+	) {}
+
+	async generateReport(): Promise<string> {
+		// Logic to generate report here
+		return 'report'; // Placeholder
+	}
+
+	async exportReport(): Promise<void> {
+		// Logic to export report here
+	}
+}
+
+export default ReportController;

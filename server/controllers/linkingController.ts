@@ -1,18 +1,18 @@
 class LinkingController {
-    constructor(private linkType: string, private linksList: Array<any> = []) {}
-  
-    createLink(): void {
-      // logic to create link here
-    }
-  
-    removeLink(): void {
-      // logic to remove link here
-    }
-  
-    getLinks(): Array<any> {
-      // logic to get links here
-      return this.linksList; // placeholder
-    }
-  }
+	constructor(private readonly linkType: string, private readonly linksList: any[] = []) {}
 
-  export default LinkingController;
+	createLink(): void {
+		// Logic to create link here
+	}
+
+	removeLink(): void {
+		// Logic to remove link here
+	}
+
+	getLinks(): any[] {
+		// Logic to get links here
+		return this.linksList; // Placeholder
+	}
+}
+
+export default LinkingController;
