@@ -159,7 +159,7 @@ Let's walk through how the different parts of our codebase work together to impl
 
 4.  Server Processing
 
-    *   controllers/KrispController.ts and services/recordingService.ts
+    *   `controllers/KrispController.ts` and `services/recordingService.ts`
 
     *   The server receives the request from the client in the `KrispController.ts` file. This controller uses the `recordingService.ts` to interface with the Krisp API, sending the audio data and receiving the processed audio data in response.
 
