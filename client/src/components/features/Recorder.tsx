@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {useRecorder} from '../../hooks/useRecorder';
+import {useRecorder} from '../../hooks/app/useRecorder';
 import Button from '../shared/Button';
 
 const Recorder: React.FC = () => {

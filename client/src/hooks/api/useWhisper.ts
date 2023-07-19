@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {WhisperContext} from '../contexts/api/WhisperContext';
+import {WhisperContext} from '../../contexts/api/WhisperContext';
 
 export function useWhisper() {
 	const context = useContext(WhisperContext);

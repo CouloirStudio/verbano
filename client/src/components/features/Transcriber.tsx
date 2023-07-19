@@ -1,5 +1,5 @@
 import React from 'react';
-import {useWhisper} from '../../hooks/useWhisper';
+import {useWhisper} from '../../hooks/api/useWhisper';
 import styles from '../../styles/pages/index.module.scss';
 
 const Transcriber: React.FC = () => {

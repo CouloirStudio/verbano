@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {KrispContext} from '../contexts/api/KrispContext';
+import {KrispContext} from '../../contexts/api/KrispContext';
 
 function useKrisp() {
 	const context = useContext(KrispContext);
