@@ -137,39 +137,55 @@ Utility functions and TypeScript interfaces can be used anywhere in your code to
 
 Let's walk through how the different parts of our codebase work together to implement the recording feature. We'll start from when the user interacts with the user interface, and follow the path the data takes through our client and server.
 
-#### 1\. User Interaction (components/features/Recorder.tsx)
+1.  **User Interaction**
 
-When the user presses the record button, the `Recorder.tsx` component calls the `startRecording` function exposed by the `useRecorder` hook.
+    *   `components/features/Recorder.tsx`
 
-#### 2\. Hook and Context (hooks/app/useRecorder.ts and contexts/app/RecorderContext.tsx)
+    *   When the user presses the record button, the `Recorder.tsx` component calls the `startRecording` function exposed by the `useRecorder` hook.
 
-The `startRecording` function modifies state inside the `RecorderContext.tsx` to indicate that a recording is in progress. It also triggers side effects, such as initializing the Web Audio API to start recording audio.
+2.  **Hook and Context**
 
-#### 3\. Client-Server Communication (hooks/api/useKrisp.ts and contexts/api/KrispContext.tsx)
+    *   `hooks/app/useRecorder.ts` and `contexts/app/RecorderContext.tsx`
 
-When the user presses the stop recording button, `Recorder.tsx` calls the `stopRecording` function from `useRecorder`. This function stops the Web Audio API recording, then sends the recorded audio data to the `useKrisp` hook.
+    *   The `startRecording` function modifies state inside the `RecorderContext.tsx` to indicate that a recording is in progress. It also triggers side effects, such as initializing the Web Audio API to start recording audio.
 
-`useKrisp` sends a request to the server to process the audio data using the Krisp API, and sets a loading state in the `KrispContext.tsx`.
+3.  Client-Server Communication
 
-#### 4\. Server Processing (controllers/KrispController.ts and services/recordingService.ts)
+    *   `hooks/api/useKrisp.ts` and `contexts/api/KrispContext.tsx`
 
-The server receives the request from the client in the `KrispController.ts` file. This controller uses the `recordingService.ts` to interface with the Krisp API, sending the audio data and receiving the processed audio data in response.
+    *   When the user presses the stop recording button, `Recorder.tsx` calls the `stopRecording` function from `useRecorder`. This function stops the Web Audio API recording, then sends the recorded audio data to the `useKrisp` hook.
 
-#### 5\. Database Interaction (models/RecordingModel.ts)
+    *   `useKrisp` sends a request to the server to process the audio data using the Krisp API, and sets a loading state in the `KrispContext.tsx`.
 
-Once the processed audio data is received, `recordingService.ts` uses `RecordingModel.ts` to save the recording data into MongoDB.
+4.  Server Processing
 
-#### 6\. Server Response (routes/audio.ts)
+    *   controllers/KrispController.ts and services/recordingService.ts
 
-The `KrispController.ts` sends the processed audio data and the database record back to the client as a response to the initial request, which was routed by `audio.ts`.
+    *   The server receives the request from the client in the `KrispController.ts` file. This controller uses the `recordingService.ts` to interface with the Krisp API, sending the audio data and receiving the processed audio data in response.
 
-#### 7\. Client Update (hooks/api/useKrisp.ts and contexts/api/KrispContext.tsx)
+5.  Database Interaction
 
-Back on the client side, `useKrisp` receives the server's response. It updates the `KrispContext.tsx` to indicate that the Krisp processing is no longer loading, and stores the processed audio data.
+    *   `models/RecordingModel.ts`
 
-#### 8\. User Interface Update (components/features/Recorder.tsx)
+    *   Once the processed audio data is received, `recordingService.ts` uses `RecordingModel.ts` to save the recording data into MongoDB.
 
-Finally, `Recorder.tsx` re-renders due to the state changes in `RecorderContext.tsx` and `KrispContext.tsx`. It shows the processed audio data to the user, and adds the new recording to the list view.
+6.  Server Response
+
+    *   `routes/audio.ts`
+
+    *   The `KrispController.ts` sends the processed audio data and the database record back to the client as a response to the initial request, which was routed by `audio.ts`.
+
+7.  Client Update
+
+    *   `hooks/api/useKrisp.ts` and `contexts/api/KrispContext.tsx`
+
+    *   Back on the client side, `useKrisp` receives the server's response. It updates the `KrispContext.tsx` to indicate that the Krisp processing is no longer loading, and stores the processed audio data.
+
+8.  User Interface Update
+
+    *   `components/features/Recorder.tsx`
+
+    *   Finally, `Recorder.tsx` re-renders due to the state changes in `RecorderContext.tsx` and `KrispContext.tsx`. It shows the processed audio data to the user, and adds the new recording to the list view.
 
 And that's it! The user can now see and interact with their new recording. From a single button press, data has flowed through components, hooks, contexts, a controller, a service, a model, a route, and back. This is just one example of how different parts of our application work together to deliver a feature.
 
@@ -178,8 +194,6 @@ And that's it! The user can now see and interact with their new recording. From 
 Understanding this file structure and how the components work together will be key in efficiently navigating and contributing to this project. Please refer back to this document whenever you feel the need.
 
 Happy coding!
-
-<br/>
 
 <br/>
 
