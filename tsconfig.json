@@ -1,31 +1,27 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "es2017"],
-    "allowJs": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "jsx": "react",
     "target": "es5",
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "types": ["@types/babel__generator"],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/components/*": ["./client/src/components/*"],
-      "@/hooks/*": ["./client/src/hooks/*"],
-      "@/contexts/*": ["./client/src/contexts/*"],
-      "@/styles/*": ["./client/src/styles/*"],
-      "@/graphql/*": ["./client/src/graphql/*"],
-      "@/server/*": ["./server/*"],
-      "@/models/*": ["./server/models/*"],
-      "@/controllers/*": ["./server/controllers/*"],
-      "@/routes/*": ["./server/routes/*"],
-      "@/graphql-server/*": ["./server/graphql/*"]
+      "@/*": ["./*"]
     }
   },
-  "include": ["./client/src", "./server"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

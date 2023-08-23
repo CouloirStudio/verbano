@@ -1,7 +1,4 @@
-module.exports = {
-  pageExtensions: ["tsx"],
-  webpack: (config) => {
-    config.resolve.modules.push(__dirname);
-    return config;
-  },
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {}
+
+module.exports = nextConfig
