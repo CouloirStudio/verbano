@@ -1,0 +1,27 @@
+@import '../_shared/_variables.scss';
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #444;
+  color: #fff;
+  display: flex;
+  flex-direction: column; // change from default row direction to column
+  justify-content: flex-start; // align items to the top
+  height: calc(100vh - $header-height);
+  overflow-y: auto;
+  padding: 1rem; // optional, for some space
+  
+  h1 {
+    margin-bottom: 1rem; // space between the header and the list
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+    
+    li {
+      margin-bottom: 0.5rem; // space between list items
+    }
+  }
+}
