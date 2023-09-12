@@ -109,7 +109,7 @@ const NoteSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Project',
     required: true  // Each note must belong to a project
-  }
+  },
 	noteName: {
     type: String,
     required: true
