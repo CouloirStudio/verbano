@@ -2,12 +2,17 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import styles from './layout.module.scss';
 
-function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: React.ReactNode;
+  noHeaderSidebar?: boolean; 
+}
+
+function Layout({ children, noHeaderSidebar }: LayoutProps) {
   return (
     <div className={styles.layoutContainer}>
-      <Header />
+      {!noHeaderSidebar && <Header />}
       <div className={styles.contentArea}>
-        <Sidebar />
+        {!noHeaderSidebar && <Sidebar />}
         <main>{children}</main>
       </div>
     </div>
