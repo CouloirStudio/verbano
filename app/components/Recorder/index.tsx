@@ -3,7 +3,7 @@ import styles from './recorder.module.scss';
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRecorderContext, RecorderProvider } from '../../contexts/RecorderContext';
-
+import dynamic from 'next/dynamic';
 import RecordRTC, {invokeSaveAsDialog} from 'recordrtc';
 
 
@@ -27,7 +27,7 @@ const Recorder: React.FC = () => {
     // Apollo Client hook to call the CREATE_NOTE_MUTATION
     // const [createNote] = useMutation(CREATE_NOTE_MUTATION);
 
-        const toggleRecording = async () => {
+    const toggleRecording = async () => {
 
             navigator.mediaDevices.getUserMedia({
                 audio: true
