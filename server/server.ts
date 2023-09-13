@@ -61,7 +61,8 @@ async function startApolloServer() {
       }
     })
   );
-  
+
+
   // Handle all other requests using Next.js
   app.all('*', (req, res) => {
     return handle(req, res);
