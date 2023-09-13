@@ -1,5 +1,7 @@
 import OpenAI from 'openai';
 
+require('dotenv').config();
+
 class OpenAIService {
     private readonly apiKey: string;
     private readonly openai: OpenAI;
@@ -12,6 +14,9 @@ class OpenAIService {
         this.openai = new OpenAI({
             apiKey: this.apiKey,
         });
+        if(!this.openai) {
+            throw new Error("Failed to initialize OpenAI.");
+        }
     }
 
     /**
@@ -75,3 +80,5 @@ class OpenAIService {
         }
     }
 }
+
+export default OpenAIService;
