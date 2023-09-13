@@ -1,4 +1,4 @@
-import OpenAIService from '../app/services/OpenAIService';
+import OpenAIService from '../../app/services/OpenAIService';
 
 describe('OpenAIService', () => {
     let service: OpenAIService;
