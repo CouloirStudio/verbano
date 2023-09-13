@@ -1,3 +1,4 @@
+// Import necessary modules and dependencies
 import 'dotenv/config';
 import express from 'express';
 import next from 'next';
@@ -8,25 +9,30 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import http from 'http';
 import { json } from 'express';
 
+// Database connection setup
 import { connectDB } from '../app/models/Database';
-// Importing your type definitions and resolvers
+
+// Import GraphQL type definitions and resolvers
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
 
-
+// Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
+/**
+ * Initializes and starts Apollo Server with Express and Next.js
+ */
 async function startApolloServer() {
   const app = express();
 
-  // Enable cors and json middleware
+  // Middleware setup: Enable CORS and handle JSON requests
   app.use(cors());
   app.use(json());
 
-  // Connect to MongoDB
+  // Attempt MongoDB connection
   connectDB().then(() => {
     console.log('Connected to MongoDB');
   }).catch((err) => {
@@ -35,6 +41,7 @@ async function startApolloServer() {
 
   await nextApp.prepare();
 
+  // Create Apollo Server instance with associated plugins
   const httpServer = http.createServer(app);
   const server = new ApolloServer({
     typeDefs,
@@ -42,9 +49,10 @@ async function startApolloServer() {
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
-  // Ensure Apollo Server is started before using with express
+  // Ensure Apollo Server starts before integrating with Express
   await server.start();
 
+  // Configure GraphQL route with authentication context
   app.use(
     '/graphql',
     expressMiddleware(server, {
@@ -54,16 +62,18 @@ async function startApolloServer() {
     })
   );
 
-  // Handle all other requests with Next.js
+  // Handle all other requests using Next.js
   app.all('*', (req, res) => {
     return handle(req, res);
   });
 
+  // Start HTTP server and log URLs once ready
   await new Promise<void>(resolve => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
   console.log(`> Next.js on http://localhost:${port}`);
 }
 
+// Start the server and handle potential errors
 startApolloServer().catch(error => {
   console.error("Failed to start server:", error);
 });
