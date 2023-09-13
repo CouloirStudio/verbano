@@ -1,9 +1,12 @@
 import { gql } from 'apollo-server-express';
+import UserSchema from './UserSchema';
 
-const typeDefs = gql`
+const RootSchema = gql`
   type Query {
-    hello: String
+    _empty: String
   }
 `;
+
+const typeDefs = [RootSchema, UserSchema];
 
 export default typeDefs;

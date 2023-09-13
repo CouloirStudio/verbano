@@ -1,7 +1,7 @@
+import UserResolvers from './UserResolvers';
+
 const resolvers = {
-  Query: {
-    hello: () => "Hello, world!"
-  }
+  ...UserResolvers,
 };
 
 export default resolvers;
