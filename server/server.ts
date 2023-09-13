@@ -56,7 +56,7 @@ async function startApolloServer() {
   app.use(
     '/graphql',
     expressMiddleware(server, {
-      context: ({ req }) => {
+      context: ({ req, res }) => {
         return Promise.resolve({ req, token: req.headers.token });
       }
     })

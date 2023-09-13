@@ -8,6 +8,17 @@ const UserSchema = new Schema({
     required: true,
     unique: true
   },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`
+  },
   email: {
     type: String,
     required: true,
@@ -18,7 +29,6 @@ const UserSchema = new Schema({
     required: true
   },
   salt: String,  // For password hashing
-  fullName: String,
   profilePicture: String,
   dateJoined: {
     type: Date,

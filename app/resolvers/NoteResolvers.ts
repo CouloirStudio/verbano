@@ -1,4 +1,4 @@
-import { Note } from '../models/dbModels';
+import { Note } from '../models/dbModels.mongo';
 import { ResolverContext, GetNoteArgs, AddNoteArgs, UpdateNoteArgs, DeleteNoteArgs } from './types';
 
 const NoteResolvers = {
