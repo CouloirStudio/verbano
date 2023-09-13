@@ -4,10 +4,10 @@
   "description": "Audio transcription and report generation application",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development ts-node server/server.ts",
+    "dev": "cross-env NODE_ENV=development ts-node server/server.ts",
     "build": "next build && yarn build:server",
     "build:server": "tsc --project ./server/tsconfig.server.json",
-    "start": "NODE_ENV=production node server/build/server/server.js",
+    "start": "cross-env NODE_ENV=production node server/build/server/server.js",
     "test": "jest --watch",
     "lint": "next lint"
   },
@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@types/express-session": "^1.17.7",
-    "@types/passport": "^1.0.12"
+    "@types/passport": "^1.0.12",
+    "cross-env": "^7.0.3"
   }
 }
