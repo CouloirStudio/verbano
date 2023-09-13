@@ -1,5 +1,9 @@
-import OpenAIService from '../../app/services/OpenAIService';
+import OpenAIService from '../app/services/OpenAIService';
 
+/**
+ * Tests the OpenAI API.
+ * @group local
+ */
 describe('OpenAIService', () => {
     let service: OpenAIService;
 
