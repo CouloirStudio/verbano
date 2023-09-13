@@ -30,7 +30,7 @@ const Recorder: React.FC = () => {
 
             // Mock URL for the audio location (replace with logic to upload to AWS S3)
             const mockS3Url = "https://aws-s3-bucket/your-recording-file.mp3";
-
+            /*
             try {
                 // Call the mutation to create a new note with the audio URL
                 const { data } = await createNote({ variables: { audioLocation: mockS3Url } });
@@ -38,6 +38,7 @@ const Recorder: React.FC = () => {
             } catch (error) {
                 console.error('Error creating note:', error);
             }
+            */
         } else {
             // If not recording, start
             startRecording();
