@@ -1,0 +1,16 @@
+# Node.js modules
+node_modules/
+
+# Build directory
+dist/
+build/
+
+# Any logs or markdown files
+*.log
+*.md
+
+# Any config files
+*.config.js
+
+# Any JSON files
+*.json
