@@ -1,6 +1,6 @@
 import User from '../models/User';
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 module.exports = {
     Query: {
@@ -8,50 +8,51 @@ module.exports = {
     },
 
     Mutation: {
-      async registerUser(_: any, {registerInput: {email, password, firstName, lastName}}: any) {
-
-        // See if user exists
-        const oldUser = await User.findOne({email});
-        if (oldUser) {
-            throw new Error('User already exists');
-        }
-
-        // Encrypt password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create user
-        const newUser = new User({
-            email: email.toLowerCase(),
-            password: hashedPassword,
-            firstName,
-            lastName
-
-        });
-
-        // Save user
+        async registerUser(_: any, {registerInput: {email, password, firstName, lastName}}: any) {
+            console.log("Entered password: " + password);
 
 
-        newUser.token = jwt.sign({userId: newUser._id, email}, "CHANGE_ME_SECRET", {expiresIn: '1h'});
+            // See if user exists
+            const oldUser = await User.findOne({email});
+            if (oldUser) {
+                throw new Error('User already exists');
+            }
 
-        const result = await newUser.save();
+            // Entered password
+            const hashedPassword = await hashPassword(password);
 
-        // Return user
-        return {
-            id: result.id,
-            ...result.toObject()
-        }
-      },
-      async loginUser(_: any, {loginInput: {email, password}}: any) {
-          const user = await User.findOne({email});
+            // Create user
+            const newUser = new User({
+                email: email.toLowerCase(),
+                password: hashedPassword,
+                firstName: firstName,
+                lastName: lastName
+            });
+
+            // Save user
+
+
+            newUser.token = jwt.sign({userId: newUser._id, email}, "CHANGE_ME_SECRET", {expiresIn: '1h'});
+
+            const result = await newUser.save();
+
+            // Return user
+            return {
+                id: result.id,
+                ...result.toObject()
+            }
+        },
+        async loginUser(_: any, {loginInput: {email, password}}: any) {
+            const user = await User.findOne({email});
 
             if (!user) {
                 throw new Error('User does not exist');
             }
 
-            const valid = await bcrypt.compare(password, user.password);
+            const passwordsMatch = await comparePasswords(password, user.password);
 
-            if (!valid) {
-                throw new Error('Invalid password');
+            if (!passwordsMatch) {
+                throw new Error('Invalid password:');
             }
 
             user.token = jwt.sign({userId: user._id, email}, "CHANGE_ME_SECRET", {expiresIn: '1h'});
@@ -61,6 +62,23 @@ module.exports = {
                 ...user.toObject()
             }
 
-      }
+        }
     }
 }
+
+const hashPassword = async (password: string): Promise<string> => {
+    try {
+        const saltRounds = 10;
+        return await bcrypt.hash(password, saltRounds);
+    } catch (error) {
+        throw new Error('Error hashing password');
+    }
+};
+
+const comparePasswords = async (enteredPassword: string, storedPasswordHash: string): Promise<boolean> => {
+    try {
+        return await bcrypt.compare(enteredPassword, storedPasswordHash);
+    } catch (error) {
+        throw new Error('Error comparing passwords');
+    }
+};

@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import mongoose, {Schema} from 'mongoose';
 
 
@@ -43,21 +42,6 @@ const UserSchema = new Schema({
         ref: 'Project'
     }]
 });
-
-// A pre-save hook to hash the password before saving
-UserSchema.pre('save', function (next) {
-    const user = this as any;
-    if (!user.isModified('password')) return next();
-    bcrypt.hash(user.password, 10, (err: any, hash: any) => {
-        if (err) return next(err);
-        user.password = hash;
-        next();
-    });
-});
-
-UserSchema.methods.comparePassword = async function (password: string | Buffer) {
-    return bcrypt.compare(password, this.password);
-};
 
 const User = mongoose.model('User', UserSchema);
 
