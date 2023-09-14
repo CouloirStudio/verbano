@@ -17,7 +17,7 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit}>
           <div className={styles.inputField}>
             <label>
-              Username: 
+              Username:
               <input
                 type="text"
                 value={username}
@@ -27,7 +27,7 @@ const LoginPage = () => {
           </div>
           <div className={styles.inputField}>
             <label>
-              Password: 
+              Password:
               <input
                 type="password"
                 value={password}

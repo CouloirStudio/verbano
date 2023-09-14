@@ -33,11 +33,13 @@ async function startApolloServer() {
   app.use(json());
 
   // Attempt MongoDB connection
-  connectDB().then(() => {
-    console.log('Connected to MongoDB');
-  }).catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+  connectDB()
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+      console.error('Error connecting to MongoDB:', err);
+    });
 
   await nextApp.prepare();
 
@@ -58,8 +60,8 @@ async function startApolloServer() {
     expressMiddleware(server, {
       context: ({ req }) => {
         return Promise.resolve({ req, token: req.headers.token });
-      }
-    })
+      },
+    }),
   );
 
   // Handle all other requests using Next.js
@@ -68,12 +70,12 @@ async function startApolloServer() {
   });
 
   // Start HTTP server and log URLs once ready
-  await new Promise<void>(resolve => httpServer.listen({ port }, resolve));
+  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
   console.log(`> Next.js on http://localhost:${port}`);
 }
 
 // Start the server and handle potential errors
-startApolloServer().catch(error => {
-  console.error("Failed to start server:", error);
+startApolloServer().catch((error) => {
+  console.error('Failed to start server:', error);
 });

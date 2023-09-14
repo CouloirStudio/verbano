@@ -1,5 +1,11 @@
-import { Note } from '../models/dbModels';
-import { ResolverContext, GetNoteArgs, AddNoteArgs, UpdateNoteArgs, DeleteNoteArgs } from './types';
+import { Note } from '../models/dbModels.mongo';
+import {
+  ResolverContext,
+  GetNoteArgs,
+  AddNoteArgs,
+  UpdateNoteArgs,
+  DeleteNoteArgs,
+} from './types';
 
 const NoteResolvers = {
   Query: {
@@ -8,7 +14,7 @@ const NoteResolvers = {
     },
     async listNotes() {
       return await Note.find();
-    }
+    },
   },
   Mutation: {
     async addNote(_: any, args: AddNoteArgs, context: ResolverContext) {
@@ -20,9 +26,9 @@ const NoteResolvers = {
     },
     async deleteNote(_: any, args: DeleteNoteArgs, context: ResolverContext) {
       const deleted = await Note.findByIdAndDelete(args.id);
-      return !!deleted;  // Return true if a note was deleted
-    }
-  }
+      return !!deleted; // Return true if a note was deleted
+    },
+  },
 };
 
 export default NoteResolvers;
