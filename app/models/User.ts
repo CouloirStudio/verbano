@@ -56,6 +56,7 @@ UserSchema.virtual('fullName').get(function(this: IUser) {
 
 // Before saving, if the password is modified, hash it
 UserSchema.pre<IUser>('save', async function (next) {
+
   if (!this.isModified('password')) return next();
 
   const salt = await bcrypt.genSalt(10);
@@ -64,4 +65,3 @@ UserSchema.pre<IUser>('save', async function (next) {
 });
 
 export const User: Model<IUser> = mongoose.model('User', UserSchema);
-
