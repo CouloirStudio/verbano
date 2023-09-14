@@ -1,19 +1,24 @@
-import mongoose, {Schema} from 'mongoose';
+import mongoose, {Document, Model, Schema} from 'mongoose';
+import bcrypt from 'bcrypt';
 
+export interface IUser extends Document {
+    id: string;  // default document id
+    username: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    refreshToken?: string;
+    dateJoined?: Date;
+    settings?: typeof Schema.Types.ObjectId;
+    projectIds?: typeof Schema.Types.ObjectId[];
+}
 
-// ========== User Model ==========
-
-const UserSchema = new Schema({
-    email: {
+const UserSchema = new Schema<IUser>({
+    username: { // This is now the email, ensuring it's unique
         type: String,
         required: true,
         unique: true
     },
-    password: {
-        type: String,
-        required: true
-    },
-    token: String,
     firstName: {
         type: String,
         required: true
@@ -22,8 +27,11 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-
-    profilePicture: {
+    password: {
+        type: String,
+        required: true
+    },
+    refreshToken: {
         type: String,
         default: null
     },
@@ -31,11 +39,9 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    registeredIP: String,
-    lastLoginIP: String,
     settings: {
-        darkMode: Boolean,
-        notifications: Boolean
+        type: Schema.Types.ObjectId,
+        ref: 'Settings'
     },
     projectIds: [{
         type: Schema.Types.ObjectId,
@@ -43,6 +49,18 @@ const UserSchema = new Schema({
     }]
 });
 
-const User = mongoose.model('User', UserSchema);
+// Define the virtual for fullName
+UserSchema.virtual('fullName').get(function (this: IUser) {
+    return `${this.firstName} ${this.lastName}`;
+});
 
-export default User;
+// Before saving, if the password is modified, hash it
+UserSchema.pre<IUser>('save', async function (next) {
+    if (!this.isModified('password')) return next();
+
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+export const User: Model<IUser> = mongoose.model('User', UserSchema);
