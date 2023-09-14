@@ -1,7 +1,7 @@
-import UserResolvers from './UserResolvers';
+const userResolvers = require( './UserResolvers');
 
 const resolvers = {
-  ...UserResolvers,
+  ...userResolvers,
 };
 
 export default resolvers;
