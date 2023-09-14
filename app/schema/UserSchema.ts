@@ -11,7 +11,7 @@ const User = gql`
         registeredIP: String
         lastLoginIP: String
         settings: UserSettings
-        token: String
+        refreshToken: String
     }
 
     type UserSettings {

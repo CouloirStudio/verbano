@@ -1,9 +1,7 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose, {Document, Model, Schema} from 'mongoose';
 
-export interface IUser extends Document { 
-  id: string;  // default document id
-  username: string;
+export interface IUser extends Document {
+  email: string;
   firstName: string;
   lastName: string;
   password: string;
@@ -14,7 +12,7 @@ export interface IUser extends Document {
 }
 
 const UserSchema = new Schema<IUser>({
-  username: { // This is now the email, ensuring it's unique
+  email: { // This is now the email, ensuring it's unique
     type: String,
     required: true,
     unique: true
@@ -50,18 +48,9 @@ const UserSchema = new Schema<IUser>({
 });
 
 // Define the virtual for fullName
-UserSchema.virtual('fullName').get(function(this: IUser) {
+UserSchema.virtual('fullName').get(function (this: IUser) {
   return `${this.firstName} ${this.lastName}`;
 });
 
-// Before saving, if the password is modified, hash it
-UserSchema.pre<IUser>('save', async function (next) {
-
-  if (!this.isModified('password')) return next();
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
 
 export const User: Model<IUser> = mongoose.model('User', UserSchema);
