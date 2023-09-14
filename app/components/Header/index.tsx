@@ -1,5 +1,9 @@
 import styles from './header.module.scss';
-import Recorder from '../Recorder';
+import dynamic from 'next/dynamic';
+
+const Recorder = dynamic(() => import('../../components/Recorder'), {
+  ssr: false,
+});
 
 function Header() {
   return (
