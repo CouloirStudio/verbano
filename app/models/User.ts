@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-interface IUser extends Document {
+export interface IUser extends Document { 
+  id: string;  // default document id
   username: string;
   firstName: string;
   lastName: string;
@@ -30,7 +31,7 @@ const UserSchema = new Schema<IUser>({
     type: String,
     required: true
   },
-  refreshToken: { // The added refreshToken field
+  refreshToken: {
     type: String,
     default: null
   },
@@ -63,3 +64,4 @@ UserSchema.pre<IUser>('save', async function (next) {
 });
 
 export const User: Model<IUser> = mongoose.model('User', UserSchema);
+
