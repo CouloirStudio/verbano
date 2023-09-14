@@ -1,34 +1,42 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {createContext, ReactNode, useContext, useState} from 'react';
 
 interface RecorderContextType {
-  isRecording: boolean;
-  startRecording: () => void;
-  stopRecording: () => void;
+    currentRecorder: any;
+    isRecording: boolean;
+    startRecording: () => void;
+    stopRecording: () => void;
+    setCurrentRecorder: (recorder: any) => void;
 }
 
 const RecorderContext = createContext<RecorderContextType | undefined>(undefined);
 
 interface Props {
-  children: ReactNode;
+    children: ReactNode;
 }
 
-export const RecorderProvider: React.FC<Props> = ({ children }) => {
-  const [isRecording, setIsRecording] = useState(false);
+export const RecorderProvider: React.FC<Props> = ({children}) => {
+    const [isRecording, setIsRecording] = useState(false);
+    const [currentRecorder, setRecorder] = useState(undefined);
 
-  const startRecording = () => setIsRecording(true);
-  const stopRecording = () => setIsRecording(false);
+    const setCurrentRecorder = (recorder: any) => setRecorder(recorder);
+    const startRecording = () => {
+        setIsRecording(true);
 
-  return (
-    <RecorderContext.Provider value={{ isRecording, startRecording, stopRecording }}>
-      {children}
-    </RecorderContext.Provider>
-  )
+    }
+    const stopRecording = () => setIsRecording(false);
+
+    return (
+        <RecorderContext.Provider
+            value={{currentRecorder, isRecording, startRecording, stopRecording, setCurrentRecorder}}>
+            {children}
+        </RecorderContext.Provider>
+    )
 };
 
 export const useRecorderContext = (): RecorderContextType => {
-  const context = useContext(RecorderContext);
-  if (context === undefined) {
-    throw new Error('useRecorderContext must be used within a RecorderProvider');
-  }
-  return context;
+    const context = useContext(RecorderContext);
+    if (context === undefined) {
+        throw new Error('useRecorderContext must be used within a RecorderProvider');
+    }
+    return context;
 };

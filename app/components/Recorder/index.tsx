@@ -1,11 +1,8 @@
 import React from 'react';
 import styles from './recorder.module.scss';
-import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
-import { useRecorderContext, RecorderProvider } from '../../contexts/RecorderContext';
-import dynamic from 'next/dynamic';
-import RecordRTC, {invokeSaveAsDialog} from 'recordrtc';
-
+import {RecorderProvider, useRecorderContext} from '../../contexts/RecorderContext';
+import RecordRTC, {invokeSaveAsDialog} from "recordrtc";
 
 // GraphQL mutation to create a new note entry with an audio location
 const CREATE_NOTE_MUTATION = gql`
@@ -22,51 +19,49 @@ const CREATE_NOTE_MUTATION = gql`
 const Recorder: React.FC = () => {
 
     // Retrieve recording state and control functions from the context
-    const { isRecording, startRecording, stopRecording } = useRecorderContext();
+    const {currentRecorder, isRecording, startRecording, stopRecording, setCurrentRecorder} = useRecorderContext();
 
     // Apollo Client hook to call the CREATE_NOTE_MUTATION
     // const [createNote] = useMutation(CREATE_NOTE_MUTATION);
 
     const toggleRecording = async () => {
 
-            navigator.mediaDevices.getUserMedia({
-                audio: true
-            }).then(async function(stream) {
-                let recorder = new RecordRTC(stream, {
-                    type: 'audio'
-                });
-
-            // If already recording, stop and save the audio
-            if (isRecording) {
-
-                recorder.stopRecording(function() {
-                    let blob = recorder.getBlob();
-                    invokeSaveAsDialog(blob);
-                });
-
-                stopRecording();
-
-
-                // Mock URL for the audio location (replace with logic to upload to AWS S3)
-                const mockS3Url = "https://aws-s3-bucket/your-recording-file.mp3";
-                /*
-                try {
-                    // Call the mutation to create a new note with the audio URL
-                    const { data } = await createNote({ variables: { audioLocation: mockS3Url } });
-                    console.log('New note created:', data.addNote);
-                } catch (error) {
-                    console.error('Error creating note:', error);
-                }
-                */
-            } else {
-                // If not recording, start
-                recorder.startRecording();
-                startRecording();
+        let recorder: any;
+        // If already recording, stop and save the audio
+        if (isRecording) {
+            stopRecording();
+            currentRecorder.stopRecording(function () {
+                let blob = currentRecorder.getBlob();
+                invokeSaveAsDialog(blob);
+            });
+            // Mock URL for the audio location (replace with logic to upload to AWS S3)
+            const mockS3Url = "https://aws-s3-bucket/your-recording-file.mp3";
+            /*
+            try {
+                // Call the mutation to create a new note with the audio URL
+                const { data } = await createNote({ variables: { audioLocation: mockS3Url } });
+                console.log('New note created:', data.addNote);
+            } catch (error) {
+                console.error('Error creating note:', error);
             }
-        });
+            */
+        } else {
+            navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+                recorder = new RecordRTC(stream, {
+                    type: 'audio',
+                    mimeType: 'audio/wav',
+                });
+
+                recorder.startRecording();
+                setCurrentRecorder(recorder);
+            }).catch(error => {
+                console.error('Error accessing the microphone:', error);
+            });
+            // If not recording, start
+            startRecording();
+
+        }
     };
-
-
 
 
     return (
@@ -84,7 +79,7 @@ const Recorder: React.FC = () => {
 // Wrapped component to provide context to the Recorder component
 export const WrappedRecorder: React.FC = () => (
     <RecorderProvider>
-        <Recorder />
+        <Recorder/>
     </RecorderProvider>
 );
 
