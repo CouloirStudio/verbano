@@ -1,51 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, {Document, Schema} from 'mongoose';
 
-// ========== User Model ==========
-
-const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
-    type: String,
-    required: true
-  },
-
-  get fullName() {
-    return `${this.firstName} ${this.lastName}`
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  salt: String,  // For password hashing
-  profilePicture: String,
-  dateJoined: {
-    type: Date,
-    default: Date.now
-  },
-  settings: {
-    darkMode: Boolean,
-    notifications: Boolean
-  },
-  projectIds: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Project'
-  }]
-});
-
-const User = mongoose.model<Document & any>('User', UserSchema);
 
 // ========== Project Model ==========
 
@@ -133,7 +87,6 @@ const Note = mongoose.model<Document & any>('Note', NoteSchema);
 // Exporting the models
 
 export {
-  User,
   Project,
   Report,
   Template,
