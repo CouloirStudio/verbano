@@ -6,43 +6,45 @@ const UserSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   firstName: {
     type: String,
-    required: true
+    required: true,
   },
   lastName: {
     type: String,
-    required: true
+    required: true,
   },
 
   get fullName() {
-    return `${this.firstName} ${this.lastName}`
+    return `${this.firstName} ${this.lastName}`;
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
-  salt: String,  // For password hashing
+  salt: String, // For password hashing
   profilePicture: String,
   dateJoined: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   settings: {
     darkMode: Boolean,
-    notifications: Boolean
+    notifications: Boolean,
   },
-  projectIds: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Project'
-  }]
+  projectIds: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Project',
+    },
+  ],
 });
 
 const User = mongoose.model<Document & any>('User', UserSchema);
@@ -52,9 +54,9 @@ const User = mongoose.model<Document & any>('User', UserSchema);
 const ProjectSchema = new Schema({
   projectName: {
     type: String,
-    required: true
+    required: true,
   },
-  projectDescription: String
+  projectDescription: String,
 });
 
 const Project = mongoose.model<Document & any>('Project', ProjectSchema);
@@ -64,28 +66,30 @@ const Project = mongoose.model<Document & any>('Project', ProjectSchema);
 const ReportSchema = new Schema({
   reportName: {
     type: String,
-    required: true
+    required: true,
   },
   reportDescription: String,
   reportContent: String,
   dateCreated: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   templateId: {
     type: Schema.Types.ObjectId,
     ref: 'Template',
-    required: true  // Each report is linked to one template
+    required: true, // Each report is linked to one template
   },
   projectId: {
     type: Schema.Types.ObjectId,
     ref: 'Project',
-    required: true  // Each report must belong to a project
+    required: true, // Each report must belong to a project
   },
-  noteIds: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Note'  // Each report can reference multiple notes
-  }]
+  noteIds: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Note', // Each report can reference multiple notes
+    },
+  ],
 });
 
 const Report = mongoose.model<Document & any>('Report', ReportSchema);
@@ -95,10 +99,10 @@ const Report = mongoose.model<Document & any>('Report', ReportSchema);
 const TemplateSchema = new Schema({
   templateName: {
     type: String,
-    required: true
+    required: true,
   },
   templateDescription: String,
-  prompt: String
+  prompt: String,
 });
 
 const Template = mongoose.model<Document & any>('Template', TemplateSchema);
@@ -108,34 +112,28 @@ const Template = mongoose.model<Document & any>('Template', TemplateSchema);
 const NoteSchema = new Schema({
   audioLocation: {
     type: String,
-    required: true
+    required: true,
   },
   dateCreated: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   transcription: String,
   tags: [String],
   projectId: {
     type: Schema.Types.ObjectId,
     ref: 'Project',
-    required: true  // Each note must belong to a project
+    required: true, // Each note must belong to a project
   },
-	noteName: {
+  noteName: {
     type: String,
-    required: true
+    required: true,
   },
-  noteDescription: String
+  noteDescription: String,
 });
 
 const Note = mongoose.model<Document & any>('Note', NoteSchema);
 
 // Exporting the models
 
-export {
-  User,
-  Project,
-  Report,
-  Template,
-  Note
-};
+export { User, Project, Report, Template, Note };

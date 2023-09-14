@@ -1,5 +1,5 @@
 import styles from './header.module.scss';
-import Recorder from '../Recorder'; 
+import Recorder from '../Recorder';
 
 function Header() {
   return (

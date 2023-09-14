@@ -4,7 +4,7 @@ import styles from './layout.module.scss';
 
 interface LayoutProps {
   children: React.ReactNode;
-  noHeaderSidebar?: boolean; 
+  noHeaderSidebar?: boolean;
 }
 
 function Layout({ children, noHeaderSidebar }: LayoutProps) {
