@@ -19,7 +19,7 @@ const CREATE_NOTE_MUTATION = gql`
 const Recorder: React.FC = () => {
 
     // Retrieve recording state and control functions from the context
-    const {currentRecorder, isRecording, startRecording, stopRecording, setCurrentRecorder} = useRecorderContext();
+    const {audioBlob, currentRecorder, isRecording, startRecording, stopRecording, setCurrentRecorder, setAudioBlob} = useRecorderContext();
 
     // Apollo Client hook to call the CREATE_NOTE_MUTATION
     // const [createNote] = useMutation(CREATE_NOTE_MUTATION);
@@ -29,11 +29,16 @@ const Recorder: React.FC = () => {
         let recorder: any;
         // If already recording, stop and save the audio
         if (isRecording) {
-            stopRecording();
             currentRecorder.stopRecording(function () {
+                stopRecording();
                 let blob = currentRecorder.getBlob();
+                setAudioBlob(blob);
                 invokeSaveAsDialog(blob);
+                //this MUST be inside of the stopRecording function or it will run before the blob is retrieved, causing issues.
+                currentRecorder.destroy();
+                setCurrentRecorder(undefined);
             });
+
             // Mock URL for the audio location (replace with logic to upload to AWS S3)
             const mockS3Url = "https://aws-s3-bucket/your-recording-file.mp3";
             /*
@@ -45,13 +50,12 @@ const Recorder: React.FC = () => {
                 console.error('Error creating note:', error);
             }
             */
+
         } else {
             navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
                 recorder = new RecordRTC(stream, {
-                    type: 'audio',
-                    mimeType: 'audio/wav',
+                    type: 'audio'
                 });
-
                 recorder.startRecording();
                 setCurrentRecorder(recorder);
             }).catch(error => {
@@ -59,7 +63,6 @@ const Recorder: React.FC = () => {
             });
             // If not recording, start
             startRecording();
-
         }
     };
 
