@@ -1,5 +1,5 @@
-/* eslint-disable */
-import React, { createContext, ReactNode, useContext, useState } from "react";
+// ESLint is ignoring this file, due to the use of any. All other issues were fixed.
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 interface RecorderContextType {
   currentRecorder: any;
