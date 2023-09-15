@@ -1,14 +1,20 @@
-// ESLint is ignoring this file, due to the use of any. All other issues were fixed.
 import React, { createContext, ReactNode, useContext, useState } from 'react';
+import RecordRTC from 'recordrtc';
+
+type RecorderType = RecordRTC | null;
+type AudioBlobType = Blob | null;
+type MediaStreamType = MediaStream | null;
 
 interface RecorderContextType {
-  currentRecorder: any;
+  currentRecorder: RecorderType;
   isRecording: boolean;
   startRecording: () => void;
   stopRecording: () => void;
-  setCurrentRecorder: (recorder: any) => void;
-  audioBlob: Blob;
-  setAudioBlob: (blob: Blob) => void;
+  setCurrentRecorder: (recorder: RecorderType) => void;
+  audioBlob: AudioBlobType;
+  setAudioBlob: (blob: AudioBlobType) => void;
+  mediaStream: MediaStreamType;
+  setMediaStream: (stream: MediaStreamType) => void;
 }
 
 const RecorderContext = createContext<RecorderContextType | undefined>(
@@ -21,16 +27,12 @@ interface Props {
 
 export const RecorderProvider: React.FC<Props> = ({ children }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [currentRecorder, setRecorder] = useState(undefined);
-  const [audioBlob, setBlob] = useState(new Blob());
+  const [currentRecorder, setCurrentRecorder] = useState<RecorderType>(null);
+  const [audioBlob, setAudioBlob] = useState<AudioBlobType>(null);
+  const [mediaStream, setMediaStream] = useState<MediaStreamType>(null);
 
-  const setCurrentRecorder = (recorder: any) => setRecorder(recorder);
-  const startRecording = () => {
-    setIsRecording(true);
-  };
+  const startRecording = () => setIsRecording(true);
   const stopRecording = () => setIsRecording(false);
-
-  const setAudioBlob = (blob: Blob) => setBlob(blob);
 
   return (
     <RecorderContext.Provider
@@ -38,10 +40,12 @@ export const RecorderProvider: React.FC<Props> = ({ children }) => {
         currentRecorder,
         isRecording,
         audioBlob,
+        mediaStream,
         startRecording,
         stopRecording,
         setCurrentRecorder,
         setAudioBlob,
+        setMediaStream,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './recorder.module.scss';
 import {
   RecorderProvider,
@@ -12,42 +12,77 @@ const Recorder: React.FC = () => {
   const {
     currentRecorder,
     isRecording,
+    mediaStream,
     startRecording,
     stopRecording,
     setCurrentRecorder,
     setAudioBlob,
+    setMediaStream,
   } = useRecorderContext();
 
   const toggleRecording = async () => {
     let recorder: RecordRTC;
 
     // If already recording, stop and save the audio
-    if (isRecording) {
-      currentRecorder.stopRecording(function () {
-        stopRecording();
-        const blob = currentRecorder.getBlob();
-        setAudioBlob(blob);
-        invokeSaveAsDialog(blob);
-        //this MUST be inside of the stopRecording function or it will run before the blob is retrieved, causing issues.
-        currentRecorder.destroy();
-        setCurrentRecorder(undefined);
-      });
-    } else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          recorder = new RecordRTC(stream, {
-            type: 'audio',
-          });
-          startRecording();
-          recorder.startRecording();
-          setCurrentRecorder(recorder);
-        })
-        .catch((error) => {
-          console.error('Error accessing the microphone:', error);
+    if (!isRecording) {
+      /*
+      USE CASES:
+      - user rejects use of the microphone,
+      - user wants to stop the microphone access/stream after granting it,
+      - errors connecting to the microphone
+       */
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
         });
+        setMediaStream(stream);
+        recorder = new RecordRTC(stream, {
+          type: 'audio',
+        });
+        startRecording();
+        recorder.startRecording();
+        setCurrentRecorder(recorder);
+      } catch (error) {
+        console.error('Error accessing the microphone:', error);
+      }
+    } else {
+      if (currentRecorder) {
+        currentRecorder.stopRecording(function () {
+          stopRecording();
+          const blob = currentRecorder.getBlob();
+          setAudioBlob(blob);
+          invokeSaveAsDialog(blob);
+
+          // Ensure currentRecorder is defined before calling destroy()
+          if (currentRecorder) {
+            currentRecorder.destroy();
+          }
+          setCurrentRecorder(null);
+
+          // Stop the stream when recording stops
+          clearStreams();
+        });
+      }
     }
   };
+
+  const clearStreams = async () => {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  const streamRef = useRef<MediaStream | undefined>();
+
+  useEffect(() => {
+    const stream = streamRef.current;
+    return () => {
+      // Disconnect the stream when unmounting
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
 
   return (
     <div className={styles.recorder}>
