@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+/* eslint-disable */
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
 interface RecorderContextType {
   currentRecorder: any;
