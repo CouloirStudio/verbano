@@ -39,14 +39,13 @@ const Recorder: React.FC = () => {
           recorder = new RecordRTC(stream, {
             type: 'audio',
           });
+          startRecording();
           recorder.startRecording();
           setCurrentRecorder(recorder);
         })
         .catch((error) => {
           console.error('Error accessing the microphone:', error);
         });
-      // If not recording, start
-      startRecording();
     }
   };
 
