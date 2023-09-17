@@ -1,36 +1,33 @@
 import React, { useEffect } from 'react';
-import './errormodal.module.scss';
-import {
-  ErrorContextProvider,
-  useErrorContext,
-} from '@/app/contexts/ErrorModalContext';
+import styles from './errormodal.module.scss';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 
 const ErrorModal = () => {
-  const { isError, errorMessage, setIsError } = useErrorContext();
+  const { isError, errorMessage, setIsError } = useErrorModalContext();
 
-  // Use useEffect to open the modal when an error occurs
+  // Set to false on unmount.
   useEffect(() => {
-    if (isError) {
-      setIsError(true);
-    }
-  }, []); // Empty dependency array ensures this effect runs once on mount
+    return () => {
+      setIsError(false);
+    };
+  }, [setIsError]);
 
-  const closeModal = () => {
+  // dismiss the modal by setting isError to false.
+  const dismissModal = () => {
     setIsError(false);
   };
 
   return (
-    <div className="ErrorModal">
+    <div>
+      {/* Conditionally render the overlay and modal, if isError is set to true, it will appear. */}
       {isError && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <button onClick={closeModal} className="modal-close-button">
-              X
+        <div className={styles.ErrorModalOverlay}>
+          <div className={styles.ErrorModal}>
+            <span className={styles.title}>Woopsies!</span>
+            <p className={styles['modal-error']}>{errorMessage}</p>
+            <button className={styles.button} onClick={dismissModal}>
+              Dismiss
             </button>
-            <h1>Test</h1>
-            {/* Display the error message from ErrorContext */}
-            {isError && <p className="modal-error">{errorMessage}</p>}
-            {/* Add modal content here */}
           </div>
         </div>
       )}
@@ -38,10 +35,4 @@ const ErrorModal = () => {
   );
 };
 
-const WrappedErrorModal: React.FC = () => (
-  <ErrorContextProvider>
-    <ErrorModal />
-  </ErrorContextProvider>
-);
-
-export default WrappedErrorModal;
+export default ErrorModal;

@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Layout from '../app/components/Layout/index';
-import ErrorModal from '@/app/components/ErrorModal';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -21,7 +20,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Layout noHeaderSidebar={noHeaderSidebar}>
-      <ErrorModal></ErrorModal>
       <Component {...pageProps} />
     </Layout>
   );

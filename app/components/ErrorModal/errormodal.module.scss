@@ -1,61 +1,75 @@
-.ErrorModal {
+
+.ErrorModalOverlay {
   position: absolute;
-  width: 280px;
-  height: 210px;
-  top: 95px;
-  left: 60px;
-  background: #fff;
-  border-radius: 3px;
-  box-shadow: 4px 8px 12px 0 rgba(0, 0, 0, 0.4);
-  text-align: center;
-  overflow: hidden;
-  animation: show-modal .7s ease-in-out;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent grey background */
+  z-index: 999; /* Place it behind the modal (but above the main application) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  &.hide {
-    animation: hide-modal .6s ease-in-out both;
-  }
+  .ErrorModal {
+    position: absolute; /* Use fixed position to center the modal on the viewport */
+    //top: 50%; /* Center vertically */
+    //left: 50%; /* Center horizontally */
+    //transform: translate(-50%, -50%); /* Center the modal in the viewport */
+    width: 280px;
+    height: 210px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 4px 8px 12px 0 rgba(0, 0, 0, 0.4);
+    text-align: center;
+    overflow: hidden;
+    animation: show-modal .7s ease-in-out;
+    z-index: 1000;
 
-  img {
-    margin-top: 24px;
-  }
+    img {
+      margin-top: 24px;
+    }
 
-  .title {
-    display: block;
-    font-size: 18px;
-    line-height: 24px;
-    font-weight: 400;
-    margin: 14px 0 5px 0;
-  }
+    .title {
+      display: block;
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 400;
+      margin: 14px 0 5px 0;
+    }
 
-  p {
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 19px;
-    margin: 0;
-    padding: 0 30px;
-  }
+    p {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 19px;
+      margin: 0;
+      padding: 0 30px;
+    }
 
-  button {
-    position: absolute;
-    height: 40px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #F65656;
-    color: #fff;
-    line-height: 40px;
-    font-size: 14px;
-    font-weight: 400;
-    cursor: pointer;
-    transition: background .3s ease-in-out;
+    button {
+      position: absolute;
+      height: 40px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #F65656;
+      color: #fff;
+      line-height: 40px;
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background .3s ease-in-out;
+      border-width: 0;
 
-    &:hover {
-      background: #EC3434;
+      &:hover {
+        background: #EC3434;
+      }
+
     }
 
   }
-
 }
+
 
 @keyframes show-modal {
   0% {
@@ -69,17 +83,5 @@
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@keyframes hide-modal {
-  0% {
-    transform: scale(1);
-  }
-  20% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(0);
   }
 }

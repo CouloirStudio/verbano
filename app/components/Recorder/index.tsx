@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styles from './recorder.module.scss';
 import {
   RecorderProvider,
@@ -6,6 +6,7 @@ import {
 } from '../../contexts/RecorderContext';
 
 import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const Recorder: React.FC = () => {
   // Retrieve recording state and control functions from the context
@@ -20,67 +21,66 @@ const Recorder: React.FC = () => {
     setMediaStream,
   } = useRecorderContext();
 
+  const { setIsError, setErrorMessage } = useErrorModalContext();
   const toggleRecording = async () => {
     let recorder: RecordRTC;
 
-    // If already recording, stop and save the audio
     if (!isRecording) {
-      /*
-      USE CASES:
-      - user rejects use of the microphone,
-      - user wants to stop the microphone access/stream after granting it,
-      - errors connecting to the microphone
-       */
+      // If not already recording, then start.
       try {
+        // Getting media stream
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
         setMediaStream(stream);
+        // Instantiating Recorder Object
         recorder = new RecordRTC(stream, {
           type: 'audio',
         });
+        // updating recorder context and starting the recorder.
         startRecording();
         recorder.startRecording();
         setCurrentRecorder(recorder);
       } catch (error) {
-        console.error('Error accessing the microphone:', error);
+        // Update the error context so that the modal is displayed
+        setErrorMessage(
+          'We encountered an error while accessing the microphone: please ensure your microphone is connected and allowed in the browser. See our troubleshooting guide for details: INSERT LINK HERE',
+        );
+        // this is what will make the error modal appear.
+        setIsError(true);
+        console.error('Error accessing the microphone:' + error);
       }
     } else {
+      // if current recorder is not null, then stop recording, this is used to be type-safe.
       if (currentRecorder) {
         currentRecorder.stopRecording(function () {
           stopRecording();
-          const blob = currentRecorder.getBlob();
-          setAudioBlob(blob);
-          invokeSaveAsDialog(blob);
-
-          // Ensure currentRecorder is defined before calling destroy()
-          if (currentRecorder) {
-            currentRecorder.destroy();
-          }
-          setCurrentRecorder(null);
-
           // Stop the stream when recording stops
           clearStreams();
+          // Get the blob and save it to the context so it can be accessed by other components
+          const blob = currentRecorder.getBlob();
+          setAudioBlob(blob);
+          // This is temporary, but will save the audio to your browser so you know that it is working properly.
+          invokeSaveAsDialog(blob);
+          // Destroy the recorder and set the context for it to null.
+          currentRecorder.destroy();
+          setCurrentRecorder(null);
         });
       }
     }
   };
 
-  const clearStreams = async () => {
+  // Clear the Media streams
+  const clearStreams = () => {
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
     }
   };
 
-  const streamRef = useRef<MediaStream | undefined>();
-
   useEffect(() => {
-    const stream = streamRef.current;
     return () => {
       // Disconnect the stream when unmounting
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
+      clearStreams();
     };
   }, []);
 
@@ -99,7 +99,7 @@ const Recorder: React.FC = () => {
 };
 
 // Wrapped component to provide context to the Recorder component
-export const WrappedRecorder: React.FC = () => (
+const WrappedRecorder: React.FC = () => (
   <RecorderProvider>
     <Recorder />
   </RecorderProvider>

@@ -1,17 +1,19 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 // Define the shape of your error context
-interface ErrorContextType {
+interface ErrorModalContextType {
   errorMessage: string | null;
   isError: boolean;
   setIsError: (error: boolean) => void;
-  setError: (errorMessage: string | null) => void;
+  setErrorMessage: (errorMessage: string | null) => void;
 }
 
-const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
+const ErrorModalContext = createContext<ErrorModalContextType | undefined>(
+  undefined,
+);
 
-export const useErrorContext = (): ErrorContextType => {
-  const context = useContext(ErrorContext);
+export const useErrorModalContext = (): ErrorModalContextType => {
+  const context = useContext(ErrorModalContext);
   if (!context) {
     throw new Error(
       'useErrorContext must be used within an ErrorContextProvider',
@@ -24,16 +26,17 @@ interface ErrorContextProviderProps {
   children: ReactNode;
 }
 
-export const ErrorContextProvider: React.FC<ErrorContextProviderProps> = ({
+export const ErrorModalContextProvider: React.FC<ErrorContextProviderProps> = ({
   children,
 }) => {
-  const [errorMessage, setError] = useState<string | null>('Ruh Roh Shaggy!');
-  const [isError, setIsError] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>('');
+  // setting isError to true is what causes the Modal to appear.
+  const [isError, setIsError] = useState<boolean>(false);
   return (
-    <ErrorContext.Provider
-      value={{ errorMessage, setError, isError, setIsError }}
+    <ErrorModalContext.Provider
+      value={{ errorMessage, setErrorMessage, isError, setIsError }}
     >
       {children}
-    </ErrorContext.Provider>
+    </ErrorModalContext.Provider>
   );
 };
