@@ -9,10 +9,13 @@ interface ITemplate extends Document {
 const TemplateSchema = new Schema<ITemplate>({
   templateName: {
     type: String,
-    required: true
+    required: true,
   },
   templateDescription: String,
-  prompt: String
+  prompt: String,
 });
 
-export const Template: Model<ITemplate> = mongoose.model('Template', TemplateSchema);
+export const Template: Model<ITemplate> = mongoose.model(
+  'Template',
+  TemplateSchema,
+);

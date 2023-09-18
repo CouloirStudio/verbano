@@ -13,24 +13,24 @@ interface INote extends Document {
 const NoteSchema = new Schema<INote>({
   audioLocation: {
     type: String,
-    required: true
+    required: true,
   },
   dateCreated: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   transcription: String,
   tags: [String],
   projectId: {
     type: Schema.Types.ObjectId,
     ref: 'Project',
-    required: true
+    required: true,
   },
   noteName: {
     type: String,
-    required: true
+    required: true,
   },
-  noteDescription: String
+  noteDescription: String,
 });
 
 export const Note: Model<INote> = mongoose.model('Note', NoteSchema);

@@ -5,7 +5,7 @@ import {
   useRecorderContext,
 } from '../../contexts/RecorderContext';
 
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import RecordRTC from 'recordrtc';
 import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const Recorder: React.FC = () => {

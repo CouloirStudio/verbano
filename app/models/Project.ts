@@ -8,9 +8,12 @@ interface IProject extends Document {
 const ProjectSchema = new Schema<IProject>({
   projectName: {
     type: String,
-    required: true
+    required: true,
   },
-  projectDescription: String
+  projectDescription: String,
 });
 
-export const Project: Model<IProject> = mongoose.model('Project', ProjectSchema);
+export const Project: Model<IProject> = mongoose.model(
+  'Project',
+  ProjectSchema,
+);
