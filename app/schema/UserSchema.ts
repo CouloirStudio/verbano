@@ -35,10 +35,14 @@ const typeDefs = gql`
         currentUser: User
     }
 
+    type AuthPayload {
+        user: User
+    }
+
     type Mutation {
         registerUser(registerInput: RegisterInput): User
         loginUser(loginInput: LoginInput): User
-        login(email: String!, password: String!): User
+        login(email: String!, password: String!): AuthPayload
         logout: Boolean
     }
 `;

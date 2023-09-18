@@ -1,34 +1,6 @@
 import styles from '../styles/login.module.scss';
 import {useState} from 'react';
-import {gql} from "apollo-server-express";
 import {useMutation} from "@apollo/client";
-
-const LOGIN_USER = gql`
-    mutation LoginUser($email: String!, $password: String!) {
-        loginUser(loginInput: { email: $email, password: $password }) {
-            id
-            email
-            firstName
-            lastName
-            refreshToken
-        }
-    }
-`;
-
-const GET_USER = gql`
-    query GetUser($id: ID!) {
-        user(id: $id) {
-            id
-            email
-            firstName
-            lastName
-            settings {
-                darkMode
-                notifications
-            }
-        }
-    }
-`;
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');

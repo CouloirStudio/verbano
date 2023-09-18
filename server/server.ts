@@ -5,17 +5,19 @@ import next from 'next';
 import cors from 'cors';
 import http from 'http';
 
+
 // Database connection setup
 import {connectDB} from '../app/models/Database';
 
 // Import GraphQL type definitions and resolvers
 import typeDefs from '../app/schema/UserSchema';
 import resolvers from '../app/resolvers/UserResolvers';
-import passport from 'passport';
+import passport from '../config/passport';
 import {ApolloServer, Config, ExpressContext} from "apollo-server-express";
 import session from "express-session";
 import {buildContext} from "graphql-passport";
 import {User} from "../app/models/User";
+import {randomUUID} from "crypto";
 
 
 // Server configuration
@@ -30,22 +32,22 @@ const handle = nextApp.getRequestHandler();
 async function startApolloServer() {
   const app = express();
   app.use(session({
+    genid: (req) => randomUUID(),
     secret: "CHANGE_ME_SECRET",
     resave: false,
     saveUninitialized: false
   }))
+
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const {loginStrategies} = require('../config/passport');
-  loginStrategies();
 
   // Middleware setup: Enable CORS and handle JSON requests
   const corsOptions = {
-    origin: ['http://localhost:3000'],
+    origin: ["http://localhost:3000", "http://localhost:4000/graphql", "https://studio.apollographql.com",],
     credentials: true,
   };
-  app.use(cors());
+  app.use(cors(corsOptions));
   app.use(json());
 
   // Attempt MongoDB connection
