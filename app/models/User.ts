@@ -1,4 +1,5 @@
 import mongoose, {Document, Model, Schema} from 'mongoose';
+import bcrypt from "bcrypt";
 
 export interface IUser extends Document {
   email: string;
@@ -51,6 +52,15 @@ const UserSchema = new Schema<IUser>({
 UserSchema.virtual('fullName').get(function (this: IUser) {
   return `${this.firstName} ${this.lastName}`;
 });
+
+//compare passwords method
+UserSchema.methods.comparePasswords = async function (enteredPassword: string, storedPasswordHash: string): Promise<boolean> {
+  try {
+    return await bcrypt.compare(enteredPassword, storedPasswordHash);
+  } catch (error) {
+    throw new Error('Error comparing passwords');
+  }
+}
 
 
 export const User: Model<IUser> = mongoose.model('User', UserSchema);

@@ -2,9 +2,12 @@ import {User} from '../models/User';
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-module.exports = {
+const resolvers = {
   Query: {
-    user: (_: any, {id}: any) => User.findById(id)
+    async currentUser(parent: any, args: any, context: any) {
+      console.log(context.getUser());
+      return context.getUser();
+    }
   },
 
   Mutation: {
@@ -62,9 +65,21 @@ module.exports = {
         ...user.toObject()
       }
 
+    },
+
+    async login(parent: any, {email, password}: any, context: any) {
+      const {user} = await context.authenticate('graphql-local', {email, password});
+      await context.login(user);
+      return user;
+    },
+
+    async logout(_: any, __: any, {req}: any) {
+      req.logout();
     }
   }
 }
+
+export default resolvers;
 
 const hashPassword = async (password: string): Promise<string> => {
   try {

@@ -9,12 +9,13 @@ import http from 'http';
 import {connectDB} from '../app/models/Database';
 
 // Import GraphQL type definitions and resolvers
-import typeDefs from '../app/schema/index';
-import resolvers from '../app/resolvers/index';
-import passport from "passport";
+import typeDefs from '../app/schema/UserSchema';
+import resolvers from '../app/resolvers/UserResolvers';
+import passport from 'passport';
+import {ApolloServer, Config, ExpressContext} from "apollo-server-express";
+import session from "express-session";
+import {buildContext} from "graphql-passport";
 import {User} from "../app/models/User";
-import {ExtractJwt, Strategy} from "passport-jwt";
-import {ApolloServer} from "apollo-server-express";
 
 
 // Server configuration
@@ -28,8 +29,22 @@ const handle = nextApp.getRequestHandler();
  */
 async function startApolloServer() {
   const app = express();
+  app.use(session({
+    secret: "CHANGE_ME_SECRET",
+    resave: false,
+    saveUninitialized: false
+  }))
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  const {loginStrategies} = require('../config/passport');
+  loginStrategies();
 
   // Middleware setup: Enable CORS and handle JSON requests
+  const corsOptions = {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  };
   app.use(cors());
   app.use(json());
 
@@ -47,50 +62,22 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({req}) => {
-      // Decode the user from the request
-      const user = req.user || null;
-      return {user};
-    }
-  });
-
-
-  // User authentication
-
-  // Passport JWT Strategy Configuration
-  const opts = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: "CHANGE_ME_SECRET",
-  };
-
-  passport.use(new Strategy(opts, async (jwt_payload, done) => {
-    try {
-      const user = await User.findById(jwt_payload.userId);
-      if (user) {
-        return done(null, user);
-      } else {
-        return done(null, false);
+    playground: {
+      settings: {
+        "request.credentials": "same-origin"
       }
-    } catch (err) {
-      return done(err, false);
-    }
-  }));
-  app.use(passport.initialize());
-
+    },
+    context: ({req, res}) => buildContext({req, res, User}),
+  } as Config<ExpressContext>);
 
   // Ensure Apollo Server starts before integrating with Express
   await server.start();
 
-  server.applyMiddleware({app})
-
-
-  app.listen({port: 4000}, () => {
-    console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
-  });
+  server.applyMiddleware({app, cors: false})
 
   // Configure GraphQL route with authentication context
   // Protect all routes
-  app.use('/graphql', passport.authenticate('jwt', {session: false}));
+  // app.use('/graphql', passport.authenticate('jwt', {session: false}));
 
 
   // Handle all other requests using Next.js
@@ -109,3 +96,5 @@ async function startApolloServer() {
 startApolloServer().catch(error => {
   console.error("Failed to start server:", error);
 });
+
+
