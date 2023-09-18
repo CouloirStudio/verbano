@@ -21,6 +21,9 @@ server/build/
 .DS_Store
 *.pem
 
+#IDE
+.idea
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -36,6 +39,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# IDE
-.idea
+# api keys
 .env

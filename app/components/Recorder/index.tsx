@@ -1,50 +1,88 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './recorder.module.scss';
-import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
 import {
-  useRecorderContext,
   RecorderProvider,
+  useRecorderContext,
 } from '../../contexts/RecorderContext';
 
-// GraphQL mutation to create a new note entry with an audio location
-const CREATE_NOTE_MUTATION = gql`
-  mutation CreateNote($audioLocation: String!) {
-    addNote(input: { audioLocation: $audioLocation }) {
-      id
-      audioLocation
-    }
-  }
-`;
+import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const Recorder: React.FC = () => {
   // Retrieve recording state and control functions from the context
-  const { isRecording, startRecording, stopRecording } = useRecorderContext();
+  const {
+    currentRecorder,
+    isRecording,
+    mediaStream,
+    startRecording,
+    stopRecording,
+    setCurrentRecorder,
+    setAudioBlob,
+    setMediaStream,
+  } = useRecorderContext();
 
-  // Apollo Client hook to call the CREATE_NOTE_MUTATION
-  // const [createNote] = useMutation(CREATE_NOTE_MUTATION);
-
+  const { setIsError, setErrorMessage } = useErrorModalContext();
   const toggleRecording = async () => {
-    // If already recording, stop and save the audio
-    if (isRecording) {
-      stopRecording();
+    let recorder: RecordRTC;
 
-      // Mock URL for the audio location (replace with logic to upload to AWS S3)
-      const mockS3Url = 'https://aws-s3-bucket/your-recording-file.mp3';
-      /*
-            try {
-                // Call the mutation to create a new note with the audio URL
-                const { data } = await createNote({ variables: { audioLocation: mockS3Url } });
-                console.log('New note created:', data.addNote);
-            } catch (error) {
-                console.error('Error creating note:', error);
-            }
-            */
+    if (!isRecording) {
+      // If not already recording, then start.
+      try {
+        // Getting media stream
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        setMediaStream(stream);
+        // Instantiating Recorder Object
+        recorder = new RecordRTC(stream, {
+          type: 'audio',
+        });
+        // updating recorder context and starting the recorder.
+        startRecording();
+        recorder.startRecording();
+        setCurrentRecorder(recorder);
+      } catch (error) {
+        // Update the error context so that the modal is displayed
+        setErrorMessage(
+          'We encountered an error while accessing the microphone: please ensure your microphone is connected and allowed in the browser. See our troubleshooting guide for details: INSERT LINK HERE',
+        );
+        // this is what will make the error modal appear.
+        setIsError(true);
+        console.error('Error accessing the microphone:' + error);
+      }
     } else {
-      // If not recording, start
-      startRecording();
+      // if current recorder is not null, then stop recording, this is used to be type-safe.
+      if (currentRecorder) {
+        currentRecorder.stopRecording(function () {
+          stopRecording();
+          // Stop the stream when recording stops
+          clearStreams();
+          // Get the blob and save it to the context so it can be accessed by other components
+          const blob = currentRecorder.getBlob();
+          setAudioBlob(blob);
+          // This is temporary, but will save the audio to your browser so you know that it is working properly.
+          invokeSaveAsDialog(blob);
+          // Destroy the recorder and set the context for it to null.
+          currentRecorder.destroy();
+          setCurrentRecorder(null);
+        });
+      }
     }
   };
+
+  // Clear the Media streams
+  const clearStreams = () => {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      // Disconnect the stream when unmounting
+      clearStreams();
+    };
+  }, []);
 
   return (
     <div className={styles.recorder}>
@@ -61,7 +99,7 @@ const Recorder: React.FC = () => {
 };
 
 // Wrapped component to provide context to the Recorder component
-export const WrappedRecorder: React.FC = () => (
+const WrappedRecorder: React.FC = () => (
   <RecorderProvider>
     <Recorder />
   </RecorderProvider>
