@@ -2,7 +2,6 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import User from '../User';
 import styles from './layout.module.scss';
-import LoginWithCredentials from "../Login";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +16,6 @@ function Layout({children, noHeaderSidebar}: LayoutProps) {
         {!noHeaderSidebar && <Sidebar/>}
         <main>{children}</main>
         <User/>
-        <LoginWithCredentials/>
       </div>
     </div>
   );
