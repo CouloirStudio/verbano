@@ -45,7 +45,6 @@ const googleOptions = {
 
 const googleCallback = async (accessToken: any, refreshToken: any, profile: any, done: any) => {
   const matchingUser = await User.findOne({googleId: profile.id})
-  console.log("Matching user: " + matchingUser)
   if (matchingUser) {
     done(null, matchingUser);
     return;
@@ -61,7 +60,6 @@ const googleCallback = async (accessToken: any, refreshToken: any, profile: any,
     lastName: lastName,
     email: email,
   }).save();
-  console.log("Creating new user: " + newUser._id)
   done(null, newUser);
   done(null, null);
 };
@@ -74,7 +72,6 @@ passport.use(new GoogleStrategy(googleOptions, googleCallback));
  * In this case, we're storing the user's ID.
  */
 passport.serializeUser((user: any, done: any) => {
-  console.log("Serializing user: " + user._id)
   done(null, user._id);
 });
 
@@ -83,7 +80,6 @@ passport.serializeUser((user: any, done: any) => {
  * Here, the user is fetched from the database using the ID that was serialized to the session.
  */
 passport.deserializeUser(async (id: ObjectId, done: any) => {
-  console.log("Deserializing user: " + id)
   const user = await User.findById(id);
   done(null, user);
 });

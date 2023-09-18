@@ -5,17 +5,12 @@ import bcrypt from "bcrypt";
 const resolvers = {
   Query: {
     async currentUser(parent: any, args: any, context: any) {
-      console.log('--- currentUser response ---');
-      console.log(`isAuthenticated: ${context.isAuthenticated()}`);
-      console.log(`isUnauthenticated: ${context.isUnauthenticated()}`);
-      console.log(`getUser: ${context.getUser()}`);
       return context.getUser();
     }
   },
 
   Mutation: {
     async registerUser(_: any, {registerInput: {email, password, firstName, lastName}}: any) {
-      console.log("Entered password: " + password);
 
 
       // See if user exists
@@ -73,10 +68,7 @@ const resolvers = {
     login: async (parent: any, {email, password}: any, context: any) => {
       const {user} = await context.authenticate('graphql-local', {email, password});
       await context.login(user);
-      console.log('--- login response ---');
-      console.log(`isAuthenticated: ${context.isAuthenticated()}`);
-      console.log(`isUnauthenticated: ${context.isUnauthenticated()}`);
-      console.log(`getUser: ${context.getUser()}`);
+
       return {user};
     },
 
