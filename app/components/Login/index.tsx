@@ -1,5 +1,6 @@
 import {gql} from "apollo-boost";
 import {useMutation} from "@apollo/client";
+import GoogleButton from "react-google-button";
 
 const LOGIN_MUTATION = gql`
     mutation Login($email: String!, $password: String!) {
@@ -58,6 +59,11 @@ const LoginWithCredentials = () => {
           variables: user
         })}>Login
         </button>
+        <GoogleButton
+          onClick={() => {
+            window.open("http://localhost:3000/auth/google");
+          }}
+        />
       </form>
     </div>
   );

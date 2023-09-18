@@ -38,13 +38,22 @@ async function startApolloServer() {
     saveUninitialized: false
   }))
 
+  app.get('/auth/google', passport.authenticate('google'));
+  app.get('/auth/google/callback', passport.authenticate('google', {
+      failureRedirect: '/login',
+      failureMessage: true
+    }),
+    function (req, res) {
+      res.redirect('/');
+    });
+
   app.use(passport.initialize());
   app.use(passport.session());
 
 
   // Middleware setup: Enable CORS and handle JSON requests
   const corsOptions = {
-    origin: ["http://localhost:3000", "http://localhost:4000/graphql", "https://studio.apollographql.com",],
+    origin: "http://localhost:3000",
     credentials: true,
   };
   app.use(cors(corsOptions));

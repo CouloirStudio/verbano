@@ -10,6 +10,8 @@ export interface IUser extends Document {
   dateJoined?: Date;
   settings?: typeof Schema.Types.ObjectId;
   projectIds?: typeof Schema.Types.ObjectId[];
+  facebookId?: string;
+  googleId?: string;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -28,7 +30,7 @@ const UserSchema = new Schema<IUser>({
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   refreshToken: {
     type: String,
@@ -45,7 +47,15 @@ const UserSchema = new Schema<IUser>({
   projectIds: [{
     type: Schema.Types.ObjectId,
     ref: 'Project'
-  }]
+  }],
+  facebookId: {
+    type: String,
+    default: null
+  },
+  googleId: {
+    type: String,
+    default: null
+  }
 });
 
 // Define the virtual for fullName

@@ -3,6 +3,8 @@ import {gql} from 'apollo-server-express';
 const typeDefs = gql`
     type User {
         id: ID!
+        facebookId: String!
+        googleId: String!
         email: String!
         password: String!
         firstName: String!
