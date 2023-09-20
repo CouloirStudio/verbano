@@ -45,7 +45,15 @@ const resolvers = {
     },
 
     async logout(_: any, __: any, {req}: any) {
-      req.logout();
+      return new Promise((resolve, reject) => {
+        req.logout((err: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(true);
+          }
+        });
+      });
     }
   }
 }

@@ -1,10 +1,12 @@
 import styles from './header.module.scss';
-import Recorder from '../Recorder'; 
+import Recorder from '../Recorder';
+import LogoutButton from "@/app/components/Logout";
 
 function Header() {
   return (
     <div className={styles.header}>
-      <Recorder />
+      <Recorder/>
+      <LogoutButton/>
     </div>
   );
 }
