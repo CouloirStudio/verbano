@@ -21,18 +21,6 @@ const typeDefs = gql`
         notifications: Boolean
     }
 
-    input RegisterInput {
-        email: String!
-        password: String!
-        firstName: String!
-        lastName: String!
-    }
-
-    input LoginInput {
-        email: String!
-        password: String!
-    }
-
     type Query {
         currentUser: User
     }
@@ -42,8 +30,7 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        registerUser(registerInput: RegisterInput): User
-        loginUser(loginInput: LoginInput): User
+        signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload
         login(email: String!, password: String!): AuthPayload
         logout: Boolean
     }

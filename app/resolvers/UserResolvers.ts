@@ -1,5 +1,4 @@
 import {User} from '../models/User';
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const resolvers = {
@@ -10,9 +9,7 @@ const resolvers = {
   },
 
   Mutation: {
-    async registerUser(_: any, {registerInput: {email, password, firstName, lastName}}: any) {
-
-
+    signup: async (parent: any, {firstName, lastName, email, password}: any, context: any) => {
       // See if user exists
       const oldUser = await User.findOne({email});
       if (oldUser) {
@@ -30,39 +27,14 @@ const resolvers = {
         lastName: lastName
       });
 
-      // Save user
-
-
-      newUser.refreshToken = jwt.sign({userId: newUser._id, email}, "CHANGE_ME_SECRET", {expiresIn: '1h'});
-
       const result = await newUser.save();
+
+      await context.login(result);
 
       // Return user
       return {
-        id: result.id,
-        ...result.toObject()
+        user: result
       }
-    },
-    async loginUser(_: any, {loginInput: {email, password}}: any) {
-      const user = await User.findOne({email});
-
-      if (!user) {
-        throw new Error('User does not exist');
-      }
-
-      const passwordsMatch = await comparePasswords(password, user.password);
-
-      if (!passwordsMatch) {
-        throw new Error('Invalid password:');
-      }
-
-      user.refreshToken = jwt.sign({userId: user._id, email}, "CHANGE_ME_SECRET", {expiresIn: '1h'});
-
-      return {
-        id: user._id,
-        ...user.toObject()
-      }
-
     },
 
     login: async (parent: any, {email, password}: any, context: any) => {
