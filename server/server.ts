@@ -8,6 +8,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
 import { json } from 'express';
+import audioRoutes from './audioRoutes';
 
 // Database connection setup
 import { connectDB } from '../app/models/Database';
@@ -31,6 +32,7 @@ async function startApolloServer() {
   // Middleware setup: Enable CORS and handle JSON requests
   app.use(cors());
   app.use(json());
+  app.use('/audio', audioRoutes);
 
   // Attempt MongoDB connection
   connectDB()
