@@ -1,11 +1,9 @@
-// Import necessary modules and dependencies
+// Required imports
 import 'dotenv/config';
 import express, {json} from 'express';
 import next from 'next';
 import cors from 'cors';
 import http from 'http';
-import audioRoutes from './audioRoutes';
-
 // Database connection setup
 import {connectDB} from '../app/models/Database';
 
@@ -18,6 +16,12 @@ import session from 'express-session';
 import {buildContext} from 'graphql-passport';
 import {User} from '../app/models/User';
 import {randomUUID} from 'crypto';
+import audioRoutes from '../app/routes/audioRoutes';
+
+
+// GraphQL type definitions and resolvers
+import typeDefs from '../app/schema/index';
+import resolvers from '../app/resolvers/index';
 
 // Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
@@ -26,9 +30,10 @@ const nextApp = next({dev});
 const handle = nextApp.getRequestHandler();
 
 /**
- * Initializes and starts Apollo Server with Express and Next.js
+ * Creates an Express app instance with the necessary middleware.
+ * @returns The configured Express app instance.
  */
-async function startApolloServer() {
+export function createApp() {
   const app = express();
   app.use(
     session({
@@ -62,9 +67,21 @@ async function startApolloServer() {
   app.use(cors(corsOptions));
   app.use(json());
   app.use('/audio', audioRoutes);
+  return app;
+}
 
-  // Attempt MongoDB connection
-  connectDB()
+/**
+ * Initializes and starts the Apollo Server with Express and Next.js.
+ * @param app - The Express app instance to which the Apollo Server is attached.
+ * @param testPort - Optional. For testing, it provides a dynamic port.
+ * @returns - Returns the HTTP server instance.
+ */
+export async function startApolloServer(
+  app: express.Express,
+  testPort?: number,
+): Promise<http.Server> {
+  // MongoDB connection
+  await connectDB()
     .then(() => {
       console.log('Connected to MongoDB');
     })
@@ -72,9 +89,10 @@ async function startApolloServer() {
       console.error('Error connecting to MongoDB:', err);
     });
 
+  // Prepare Next.js app
   await nextApp.prepare();
 
-  // Create Apollo Server instance with associated plugins
+  // Apollo Server setup
   const httpServer = http.createServer(app);
   const server = new ApolloServer({
     typeDefs,
@@ -87,23 +105,42 @@ async function startApolloServer() {
     context: ({req, res}) => buildContext({req, res, User}),
   } as Config<ExpressContext>);
 
-  // Ensure Apollo Server starts before integrating with Express
+  // Starting Apollo Server before Express integration
   await server.start();
 
   server.applyMiddleware({app, cors: false});
+  // Add GraphQL route with authentication context
+  app.use(
+    '/graphql',
+    expressMiddleware(server, {
+      context: ({ req }) => {
+        return Promise.resolve({ req, token: req.headers.token });
+      },
+    }),
+  );
 
-  // Handle all other requests using Next.js
+  // Handle other requests with Next.js
   app.all('*', (req, res) => {
     return handle(req, res);
   });
 
-  // Start HTTP server and log URLs once ready
-  await new Promise<void>((resolve) => httpServer.listen({port}, resolve));
-  console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
-  console.log(`> Next.js on http://localhost:${port}`);
+  const actualPort = testPort !== undefined ? testPort : port;
+
+  // Start the HTTP server
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: actualPort }, resolve),
+  );
+
+  if (!testPort) {
+    console.log(`🚀 Server ready at http://localhost:${actualPort}/graphql`);
+    console.log(`> Next.js on http://localhost:${actualPort}`);
+  }
+
+  return httpServer;
 }
 
-// Start the server and handle potential errors
-startApolloServer().catch((error) => {
+// Initialize the app and start the server
+const app = createApp();
+startApolloServer(app).catch((error) => {
   console.error('Failed to start server:', error);
 });

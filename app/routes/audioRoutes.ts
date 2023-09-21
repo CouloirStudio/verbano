@@ -1,14 +1,14 @@
 import express from 'express';
 import multer from 'multer';
-import { uploadAudioToS3 } from '../app/services/AWSService';
+import { uploadAudioToS3 } from '../services/AWSService';
 
 const router = express.Router();
 
 const storage = multer.memoryStorage(); // Store the file in memory
 const upload = multer({ storage: storage });
 
-import { Note } from '../app/models/Note';
-import { Project } from '../app/models/Project';
+import { Note } from '../models/Note';
+import { Project } from '../models/Project';
 
 router.post('/upload', upload.single('audio'), async (req, res) => {
   if (!req.file || !req.file.buffer) {
