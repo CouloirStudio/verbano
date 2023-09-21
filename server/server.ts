@@ -1,26 +1,30 @@
 // Required imports
 import 'dotenv/config';
-import express from 'express';
+import express, {json} from 'express';
 import next from 'next';
 import cors from 'cors';
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
-import { json } from 'express';
-import audioRoutes from '../app/routes/audioRoutes';
+// Database connection setup
+import {connectDB} from '../app/models/Database';
 
-// Database connection
-import { connectDB } from '../app/models/Database';
+// Import GraphQL type definitions and resolvers
+import passport from '../config/passport';
+import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
+import session from 'express-session';
+// import { buildContext } from 'graphql-passport';
+import {randomUUID} from 'crypto';
+import audioRoutes from '../app/routes/audioRoutes';
 
 // GraphQL type definitions and resolvers
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
+import {buildContext} from "graphql-passport";
+import {User} from "../app/models";
 
 // Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev });
+const nextApp = next({dev});
 const handle = nextApp.getRequestHandler();
 
 /**
@@ -29,7 +33,36 @@ const handle = nextApp.getRequestHandler();
  */
 export function createApp() {
   const app = express();
-  app.use(cors());
+  app.use(
+    session({
+      genid: (_req) => randomUUID(),
+      secret: process.env.JWT_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
+
+  app.get('/auth/google', passport.authenticate('google'));
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', {
+      failureRedirect: '/login',
+      failureMessage: true,
+    }),
+    function (req, res) {
+      res.redirect('/');
+    },
+  );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  // Middleware setup: Enable CORS and handle JSON requests
+  const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
   app.use(json());
   app.use('/audio', audioRoutes);
   return app;
@@ -62,21 +95,22 @@ export async function startApolloServer(
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  });
+    introspection: dev, // enable introspection in development
+    playground: dev
+      ? {
+        settings: {
+          'request.credentials': 'same-origin',
+        },
+      }
+      : false,
+    context: ({req, res}) => buildContext({req, res, User}),
+
+  } as Config<ExpressContext>);
 
   // Starting Apollo Server before Express integration
   await server.start();
 
-  // Add GraphQL route with authentication context
-  app.use(
-    '/graphql',
-    expressMiddleware(server, {
-      context: ({ req }) => {
-        return Promise.resolve({ req, token: req.headers.token });
-      },
-    }),
-  );
+  server.applyMiddleware({app, cors: false});
 
   // Handle other requests with Next.js
   app.all('*', (req, res) => {
@@ -87,7 +121,7 @@ export async function startApolloServer(
 
   // Start the HTTP server
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: actualPort }, resolve),
+    httpServer.listen({port: actualPort}, resolve),
   );
 
   if (!testPort) {

@@ -1,13 +1,33 @@
 import styles from '../styles/login.module.scss';
 import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import GoogleButton from 'react-google-button';
+
+import { CURRENT_USER_QUERY } from '../app/middleware/queries';
+import { LOGIN_MUTATION } from '../app/middleware/mutations';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [login] = useMutation(LOGIN_MUTATION, {
+    update: (cache, { data: { login } }) =>
+      cache.writeQuery({
+        query: CURRENT_USER_QUERY,
+        data: { currentUser: login.user },
+      }),
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Logging in with', username, password);
+
+    const user = {
+      email: username,
+      password: password,
+    };
+
+    const result = await login({ variables: user });
+    console.log(result);
   };
 
   return (
@@ -38,6 +58,11 @@ const LoginPage = () => {
           <button type="submit">Login</button>
         </form>
       </div>
+      <GoogleButton
+        onClick={() => {
+          window.open('http://localhost:3000/auth/google');
+        }}
+      />
     </div>
   );
 };
