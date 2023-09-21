@@ -1,32 +1,11 @@
 import styles from '../styles/login.module.scss';
 import {useState} from 'react';
 import {useMutation} from "@apollo/client";
-import {gql} from "apollo-boost";
 import GoogleButton from 'react-google-button'
 
-const LOGIN_MUTATION = gql`
-    mutation Login($email: String!, $password: String!) {
-        login(email: $email, password: $password) {
-            user {
-                id
-                firstName
-                lastName
-                email
-            }
-        }
-    }
-`;
+const CURRENT_USER_QUERY = require("../app/middleware/queries");
+const LOGIN_MUTATION = require("../app/middleware/mutations");
 
-const CURRENT_USER_QUERY = gql`
-    query CurrentUserQuery {
-        currentUser {
-            id
-            firstName
-            lastName
-            email
-        }
-    }
-`;
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');

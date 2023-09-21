@@ -60,7 +60,7 @@ const resolvers = {
 
 export default resolvers;
 
-const hashPassword = async (password: string): Promise<string> => {
+export const hashPassword = async (password: string): Promise<string> => {
   try {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
@@ -69,7 +69,7 @@ const hashPassword = async (password: string): Promise<string> => {
   }
 };
 
-const comparePasswords = async (enteredPassword: string, storedPasswordHash: string): Promise<boolean> => {
+export const comparePasswords = async (enteredPassword: string, storedPasswordHash: string): Promise<boolean> => {
   try {
     return await bcrypt.compare(enteredPassword, storedPasswordHash);
   } catch (error) {

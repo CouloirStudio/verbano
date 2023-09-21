@@ -86,10 +86,6 @@ async function startApolloServer() {
 
   server.applyMiddleware({app, cors: false})
 
-  // Configure GraphQL route with authentication context
-  // Protect all routes
-  // app.use('/graphql', passport.authenticate('jwt', {session: false}));
-
 
   // Handle all other requests using Next.js
   app.all('*', (req, res) => {

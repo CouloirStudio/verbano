@@ -1,42 +1,45 @@
-//import graphql resolvers
+import {comparePasswords, hashPassword} from '../app/resolvers/UserResolvers'; // Adjust path accordingly
+import * as bcrypt from 'bcrypt';
 
 
-import {afterEach} from "@jest/globals";
-import {ApolloServer} from "apollo-server-express";
-import {makeExecutableSchema} from "@graphql-tools/schema";
-import {createTestClient} from 'apollo-server-testing';
-import {typeDefs} from '../app/resolvers/UserResolvers';
-import {User} from "@/app/models"; // Update with the correct path
+jest.mock('../app/models/User');
+
+jest.mock('bcrypt');
+
+const mockCompare = bcrypt.compare as jest.Mock;
+const mockHashFn = bcrypt.hash as jest.Mock;
 
 
-// Create a mock schema using graphql-tools
+describe('Utility functions', () => {
+  it('should hash the password', async () => {
+    const mockHash = 'hashed_password';
+    mockHashFn.mockResolvedValue(mockHash);
 
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers: {Mutation: {registerUser}},
-});
-
-const {mutate} = createTestClient(new ApolloServer({schema}));
-
-// Mock the User model functions
-jest.mock('../models/User', () => ({
-  findById: jest.fn(),
-  findOne: jest.fn(),
-  create: jest.fn(),
-}));
-
-
-describe('UserAuthenticationService', () => {
-
-  beforeEach(() => {
-    // Reset the mock implementations and clear the mock calls for each test
-    User.findById.mockReset();
-    User.findOne.mockReset();
-    User.create.mockReset();
-    hashPassword.mockReset();
+    const result = await hashPassword('password123');
+    expect(result).toBe(mockHash);
   });
 
-  afterEach(() => {
+  it('should compare passwords correctly', async () => {
+    mockCompare.mockResolvedValue(true);
 
+    const result = await comparePasswords('password123', 'hashed_password123');
+    expect(result).toBeTruthy();
+  });
+  it('should throw an error if hashing fails', async () => {
+    mockHashFn.mockRejectedValue(new Error('Error hashing password'));
+
+    await expect(hashPassword('password123')).rejects.toThrowError('Error hashing password');
+  });
+  it('should throw an error if comparing fails', async () => {
+    mockCompare.mockRejectedValue(new Error('Error comparing passwords'));
+
+    await expect(comparePasswords('password123', 'hashed_password123')).rejects.toThrowError('Error comparing passwords');
+  });
+  it('should compare false if passwords do not match', async () => {
+    mockCompare.mockResolvedValue(false);
+
+    const result = await comparePasswords('password123', 'hashed_password123');
+    expect(result).toBeFalsy();
   });
 });
+

@@ -14,9 +14,6 @@ const LogoutButton = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      // Optionally clear any local state or cache if necessary
-      // for example: apolloClient.clearStore();
-      // Then redirect to login page
       window.location.href = '/login';
     } catch (error) {
       console.error("Error logging out:", error);

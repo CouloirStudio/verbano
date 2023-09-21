@@ -5,15 +5,13 @@ import {GraphQLLocalStrategy} from "graphql-passport";
 import passport from "passport";
 import 'dotenv/config';
 
-
-const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth20');
 
 
-/*
-* Set up passport to use the local strategy.
-* The strategy requires a username and password for authentication.
-*/
+/**
+ * Configure how Passport authenticates users.
+ * In this case, we're using a local strategy, which means we're using a username and password.
+ */
 passport.use(
   new GraphQLLocalStrategy(async (email, password, done) => {
       try {
@@ -35,6 +33,10 @@ passport.use(
   )
 );
 
+/**
+ * Set up passport to use the Google strategy.
+ * The strategy requires a client ID and client secret for authentication.
+ */
 const googleOptions = {
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -43,6 +45,13 @@ const googleOptions = {
   state: true
 }
 
+/**
+ * Callback function for Google strategy.
+ * @param accessToken the access token
+ * @param refreshToken the refresh token which can be used to obtain a new access token
+ * @param profile the user's Google profile
+ * @param done callback function
+ */
 const googleCallback = async (accessToken: any, refreshToken: any, profile: any, done: any) => {
   const matchingUser = await User.findOne({googleId: profile.id})
   if (matchingUser) {
@@ -84,16 +93,11 @@ passport.deserializeUser(async (id: ObjectId, done: any) => {
   done(null, user);
 });
 
-
-const hashPassword = async (password: string): Promise<string> => {
-  try {
-    const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
-  } catch (error) {
-    throw new Error('Error hashing password');
-  }
-};
-
+/**
+ * Hashes a password using bcrypt.
+ * @param enteredPassword the password to hash
+ * @param storedPasswordHash the stored password hash
+ */
 const comparePasswords = async (enteredPassword: string, storedPasswordHash: string): Promise<boolean> => {
   try {
     return await bcrypt.compare(enteredPassword, storedPasswordHash);
