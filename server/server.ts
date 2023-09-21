@@ -33,14 +33,12 @@ const handle = nextApp.getRequestHandler();
  */
 export function createApp() {
   const app = express();
-  app.use(
-    session({
-      genid: (req) => randomUUID(),
-      secret: 'CHANGE_ME_SECRET',
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
+  app.use(session({
+    genid: (req) => randomUUID(),
+    secret: process.env.JWT_SECRET as string,
+    resave: false,
+    saveUninitialized: false
+  }))
 
   app.get('/auth/google', passport.authenticate('google'));
   app.get(
