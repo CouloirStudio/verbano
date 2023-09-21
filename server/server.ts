@@ -8,8 +8,6 @@ import http from 'http';
 import {connectDB} from '../app/models/Database';
 
 // Import GraphQL type definitions and resolvers
-import typeDefs from '../app/schema/UserSchema';
-import resolvers from '../app/resolvers/UserResolvers';
 import passport from '../config/passport';
 import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
 import session from 'express-session';
@@ -113,8 +111,8 @@ export async function startApolloServer(
   app.use(
     '/graphql',
     expressMiddleware(server, {
-      context: ({ req }) => {
-        return Promise.resolve({ req, token: req.headers.token });
+      context: ({req}) => {
+        return Promise.resolve({req, token: req.headers.token});
       },
     }),
   );
@@ -128,7 +126,7 @@ export async function startApolloServer(
 
   // Start the HTTP server
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: actualPort }, resolve),
+    httpServer.listen({port: actualPort}, resolve),
   );
 
   if (!testPort) {
