@@ -1,29 +1,30 @@
 // Required imports
 import 'dotenv/config';
-import express, { json } from 'express';
+import express, {json} from 'express';
 import next from 'next';
 import cors from 'cors';
 import http from 'http';
 // Database connection setup
-import { connectDB } from '../app/models/Database';
+import {connectDB} from '../app/models/Database';
 
 // Import GraphQL type definitions and resolvers
 import passport from '../config/passport';
-import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
+import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
 import session from 'express-session';
 // import { buildContext } from 'graphql-passport';
-import { randomUUID } from 'crypto';
+import {randomUUID} from 'crypto';
 import audioRoutes from '../app/routes/audioRoutes';
-import { authenticateJWT } from '../app/middleware/auth';
 
 // GraphQL type definitions and resolvers
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
+import {buildContext} from "graphql-passport";
+import {User} from "../app/models";
 
 // Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev });
+const nextApp = next({dev});
 const handle = nextApp.getRequestHandler();
 
 /**
@@ -97,33 +98,19 @@ export async function startApolloServer(
     introspection: dev, // enable introspection in development
     playground: dev
       ? {
-          settings: {
-            'request.credentials': 'same-origin',
-          },
-        }
-      : false,
-    context: ({ req }) => {
-      // Get the user from the request (set by passport after authentication)
-      const user = req.user || null;
-
-      // Use your JWT authentication function to decode and verify the token
-      let jwtPayload = null;
-      try {
-        jwtPayload = authenticateJWT({ req });
-      } catch (error) {
-        if (typeof error === 'object' && error !== null && 'message' in error) {
-          console.warn('JWT authentication failed:', error.message);
-        }
+        settings: {
+          'request.credentials': 'same-origin',
+        },
       }
+      : false,
+    context: ({req, res}) => buildContext({req, res, User}),
 
-      return { user, jwtPayload };
-    },
   } as Config<ExpressContext>);
 
   // Starting Apollo Server before Express integration
   await server.start();
 
-  server.applyMiddleware({ app, cors: false });
+  server.applyMiddleware({app, cors: false});
 
   // Handle other requests with Next.js
   app.all('*', (req, res) => {
@@ -134,7 +121,7 @@ export async function startApolloServer(
 
   // Start the HTTP server
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: actualPort }, resolve),
+    httpServer.listen({port: actualPort}, resolve),
   );
 
   if (!testPort) {
