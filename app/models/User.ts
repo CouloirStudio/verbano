@@ -1,5 +1,4 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
-import bcrypt from 'bcrypt';
+import mongoose, {Document, Model, Schema} from 'mongoose';
 
 export interface IUser extends Document {
   email: string;
@@ -9,66 +8,56 @@ export interface IUser extends Document {
   refreshToken?: string;
   dateJoined?: Date;
   settings?: typeof Schema.Types.ObjectId;
-  projectIds?: typeof Schema.Types.ObjectId[];
+  projectIds?: (typeof Schema.Types.ObjectId)[];
   googleId?: string;
 }
 
 const UserSchema = new Schema<IUser>({
-  email: { // This is now the email, ensuring it's unique
+  email: {
+    // This is now the email, ensuring it's unique
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   firstName: {
     type: String,
-    required: true
+    required: true,
   },
   lastName: {
     type: String,
-    required: true
+    required: true,
   },
   password: {
     type: String,
-    required: false
+    required: false,
   },
   refreshToken: {
     type: String,
-    default: null
+    default: null,
   },
   dateJoined: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   settings: {
     type: Schema.Types.ObjectId,
-    ref: 'Settings'
+    ref: 'Settings',
   },
-  projectIds: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Project'
-  }],
+  projectIds: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Project',
+    },
+  ],
   googleId: {
     type: String,
-    default: null
-  }
+    default: null,
+  },
 });
 
 // Define the virtual for fullName
 UserSchema.virtual('fullName').get(function (this: IUser) {
   return `${this.firstName} ${this.lastName}`;
 });
-
-//compare passwords method
-UserSchema.methods.comparePasswords = async function (
-  enteredPassword: string,
-  storedPasswordHash: string,
-): Promise<boolean> {
-  try {
-    return await bcrypt.compare(enteredPassword, storedPasswordHash);
-  } catch (error) {
-    throw new Error('Error comparing passwords');
-  }
-}
-
 
 export const User: Model<IUser> = mongoose.model('User', UserSchema);

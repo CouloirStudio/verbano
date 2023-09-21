@@ -1,12 +1,11 @@
 import {User} from '../app/models/User';
 import bcrypt from 'bcrypt';
 import {ObjectId} from 'mongoose';
-import {GraphQLLocalStrategy} from "graphql-passport";
-import passport from "passport";
+import {GraphQLLocalStrategy} from 'graphql-passport';
+import passport from 'passport';
 import 'dotenv/config';
 
 const GoogleStrategy = require('passport-google-oauth20');
-
 
 /**
  * Configure how Passport authenticates users.
@@ -14,23 +13,25 @@ const GoogleStrategy = require('passport-google-oauth20');
  */
 passport.use(
   new GraphQLLocalStrategy(async (email, password, done) => {
-      try {
-        const user = await User.findOne({email: email});
-        if (!user) {
-          throw new Error('Invalid email');
-        }
-        if (typeof password === "string") {
-          const isMatch = await comparePasswords(password, user.password);
-          if (!isMatch) {
-            throw new Error('Invalid password');
-          }
-        }
-        return done(null, user);
-      } catch (error) {
-        return done(error);
+    try {
+      const user = await User.findOne({email: email});
+      if (!user) {
+        throw new Error('Invalid email');
       }
+      if (!user.password) {
+        throw new Error('Account created with Google. Please login with Google.')
+      }
+      if (typeof password === 'string') {
+        const isMatch = await comparePasswords(password, user.password);
+        if (!isMatch) {
+          throw new Error('Invalid password');
+        }
+      }
+      return done(null, user);
+    } catch (error) {
+      return done(error);
     }
-  )
+  }),
 );
 
 /**
@@ -40,10 +41,10 @@ passport.use(
 const googleOptions = {
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:3000/auth/google/callback",
+  callbackURL: 'http://localhost:3000/auth/google/callback',
   scope: ['profile', 'email'],
-  state: true
-}
+  state: true,
+};
 
 /**
  * Callback function for Google strategy.
@@ -52,8 +53,13 @@ const googleOptions = {
  * @param profile the user's Google profile
  * @param done callback function
  */
-const googleCallback = async (accessToken: any, refreshToken: any, profile: any, done: any) => {
-  const matchingUser = await User.findOne({googleId: profile.id})
+const googleCallback = async (
+  accessToken: any,
+  refreshToken: any,
+  profile: any,
+  done: any,
+) => {
+  const matchingUser = await User.findOne({googleId: profile.id});
   if (matchingUser) {
     done(null, matchingUser);
     return;
@@ -93,12 +99,25 @@ passport.deserializeUser(async (id: ObjectId, done: any) => {
   done(null, user);
 });
 
+
+export const hashPassword = async (password: string): Promise<string> => {
+  try {
+    const saltRounds = 10;
+    return await bcrypt.hash(password, saltRounds);
+  } catch (error) {
+    throw new Error('Error hashing password');
+  }
+};
+
 /**
  * Hashes a password using bcrypt.
  * @param enteredPassword the password to hash
  * @param storedPasswordHash the stored password hash
  */
-const comparePasswords = async (enteredPassword: string, storedPasswordHash: string): Promise<boolean> => {
+export const comparePasswords = async (
+  enteredPassword: string,
+  storedPasswordHash: string,
+): Promise<boolean> => {
   try {
     return await bcrypt.compare(enteredPassword, storedPasswordHash);
   } catch (error) {
@@ -107,4 +126,3 @@ const comparePasswords = async (enteredPassword: string, storedPasswordHash: str
 };
 
 export default passport;
-

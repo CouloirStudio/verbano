@@ -1,9 +1,8 @@
-import styles from '../styles/login.module.scss';
-import {useState} from 'react';
-import {useMutation} from "@apollo/client";
+import React, {useState} from 'react';
+import {useMutation} from '@apollo/client';
 import GoogleButton from 'react-google-button';
 
-const SIGNUP_MUTATION = require("../app/middleware/mutations");
+const SIGNUP_MUTATION = require('../app/middleware/mutations');
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -19,14 +18,14 @@ const RegisterPage = () => {
       email,
       password,
       firstName,
-      lastName
-    }
+      lastName,
+    };
 
     try {
       const result = await signup({variables: user});
       console.log(result);
     } catch (error) {
-      console.error("Error signing up:", error);
+      console.error('Error signing up:', error);
     }
   };
 
@@ -82,7 +81,7 @@ const RegisterPage = () => {
         label="Register with Google"
         onClick={() => {
           // The URL may need adjustment based on the registration endpoint for Google Auth
-          window.open("http://localhost:3000/auth/google");
+          window.open('http://localhost:3000/auth/google');
         }}
       />
     </div>

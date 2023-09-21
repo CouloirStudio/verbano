@@ -1,6 +1,5 @@
-import {comparePasswords, hashPassword} from '../app/resolvers/UserResolvers'; // Adjust path accordingly
+import {comparePasswords, hashPassword} from '../config/passport'; // Adjust path accordingly
 import * as bcrypt from 'bcrypt';
-
 
 jest.mock('../app/models/User');
 
@@ -8,7 +7,6 @@ jest.mock('bcrypt');
 
 const mockCompare = bcrypt.compare as jest.Mock;
 const mockHashFn = bcrypt.hash as jest.Mock;
-
 
 describe('Utility functions', () => {
   it('should hash the password', async () => {
@@ -28,12 +26,16 @@ describe('Utility functions', () => {
   it('should throw an error if hashing fails', async () => {
     mockHashFn.mockRejectedValue(new Error('Error hashing password'));
 
-    await expect(hashPassword('password123')).rejects.toThrowError('Error hashing password');
+    await expect(hashPassword('password123')).rejects.toThrowError(
+      'Error hashing password',
+    );
   });
   it('should throw an error if comparing fails', async () => {
     mockCompare.mockRejectedValue(new Error('Error comparing passwords'));
 
-    await expect(comparePasswords('password123', 'hashed_password123')).rejects.toThrowError('Error comparing passwords');
+    await expect(
+      comparePasswords('password123', 'hashed_password123'),
+    ).rejects.toThrowError('Error comparing passwords');
   });
   it('should compare false if passwords do not match', async () => {
     mockCompare.mockResolvedValue(false);
@@ -42,4 +44,3 @@ describe('Utility functions', () => {
     expect(result).toBeFalsy();
   });
 });
-

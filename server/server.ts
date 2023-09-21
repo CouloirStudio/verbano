@@ -13,12 +13,11 @@ import {connectDB} from '../app/models/Database';
 import typeDefs from '../app/schema/UserSchema';
 import resolvers from '../app/resolvers/UserResolvers';
 import passport from '../config/passport';
-import {ApolloServer, Config, ExpressContext} from "apollo-server-express";
-import session from "express-session";
-import {buildContext} from "graphql-passport";
-import {User} from "../app/models/User";
-import {randomUUID} from "crypto";
-
+import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
+import session from 'express-session';
+import {buildContext} from 'graphql-passport';
+import {User} from '../app/models/User';
+import {randomUUID} from 'crypto';
 
 // Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
@@ -31,29 +30,33 @@ const handle = nextApp.getRequestHandler();
  */
 async function startApolloServer() {
   const app = express();
-  app.use(session({
-    genid: (req) => randomUUID(),
-    secret: "CHANGE_ME_SECRET",
-    resave: false,
-    saveUninitialized: false
-  }))
+  app.use(
+    session({
+      genid: (req) => randomUUID(),
+      secret: 'CHANGE_ME_SECRET',
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
 
   app.get('/auth/google', passport.authenticate('google'));
-  app.get('/auth/google/callback', passport.authenticate('google', {
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', {
       failureRedirect: '/login',
-      failureMessage: true
+      failureMessage: true,
     }),
     function (req, res) {
       res.redirect('/');
-    });
+    },
+  );
 
   app.use(passport.initialize());
   app.use(passport.session());
 
-
   // Middleware setup: Enable CORS and handle JSON requests
   const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: 'http://localhost:3000',
     credentials: true,
   };
   app.use(cors(corsOptions));
@@ -78,8 +81,8 @@ async function startApolloServer() {
     resolvers,
     playground: {
       settings: {
-        "request.credentials": "same-origin"
-      }
+        'request.credentials': 'same-origin',
+      },
     },
     context: ({req, res}) => buildContext({req, res, User}),
   } as Config<ExpressContext>);
@@ -87,7 +90,7 @@ async function startApolloServer() {
   // Ensure Apollo Server starts before integrating with Express
   await server.start();
 
-  server.applyMiddleware({app, cors: false})
+  server.applyMiddleware({app, cors: false});
 
   // Handle all other requests using Next.js
   app.all('*', (req, res) => {
@@ -95,15 +98,12 @@ async function startApolloServer() {
   });
 
   // Start HTTP server and log URLs once ready
-  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
+  await new Promise<void>((resolve) => httpServer.listen({port}, resolve));
   console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
   console.log(`> Next.js on http://localhost:${port}`);
 }
-
 
 // Start the server and handle potential errors
 startApolloServer().catch((error) => {
   console.error('Failed to start server:', error);
 });
-
-

@@ -1,6 +1,6 @@
-import {gql} from "apollo-boost";
+import {gql} from 'apollo-boost';
 
-const CURRENT_USER_QUERY = gql`
+export const CURRENT_USER_QUERY = gql`
     query CurrentUserQuery {
         currentUser {
             id
@@ -10,8 +10,3 @@ const CURRENT_USER_QUERY = gql`
         }
     }
 `;
-
-
-export default {
-  CURRENT_USER_QUERY,
-}

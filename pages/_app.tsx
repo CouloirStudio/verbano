@@ -1,10 +1,10 @@
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import '../styles/globals.scss';
-import type {AppProps} from 'next/app';
+import type { AppProps } from 'next/app';
 import Layout from '../app/components/Layout/index';
-import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
-function MyApp({Component, pageProps}: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   // useEffect(() => {
@@ -18,7 +18,7 @@ function MyApp({Component, pageProps}: AppProps) {
   let client: ApolloClient<any>;
   client = new ApolloClient({
     uri: 'http://localhost:3000/graphql',
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
   });
 
   return (
@@ -27,7 +27,6 @@ function MyApp({Component, pageProps}: AppProps) {
         <Component {...pageProps} />
       </Layout>
     </ApolloProvider>
-
   );
 }
 

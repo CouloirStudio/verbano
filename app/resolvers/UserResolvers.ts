@@ -1,15 +1,19 @@
 import {User} from '../models/User';
-import bcrypt from "bcrypt";
+import {hashPassword} from '../../config/passport';
 
 const resolvers = {
   Query: {
     async currentUser(parent: any, args: any, context: any) {
       return context.getUser();
-    }
+    },
   },
 
   Mutation: {
-    signup: async (parent: any, {firstName, lastName, email, password}: any, context: any) => {
+    signup: async (
+      parent: any,
+      {firstName, lastName, email, password}: any,
+      context: any,
+    ) => {
       // See if user exists
       const oldUser = await User.findOne({email});
       if (oldUser) {
@@ -24,7 +28,7 @@ const resolvers = {
         email: email.toLowerCase(),
         password: hashedPassword,
         firstName: firstName,
-        lastName: lastName
+        lastName: lastName,
       });
 
       const result = await newUser.save();
@@ -33,12 +37,15 @@ const resolvers = {
 
       // Return user
       return {
-        user: result
-      }
+        user: result,
+      };
     },
 
     login: async (parent: any, {email, password}: any, context: any) => {
-      const {user} = await context.authenticate('graphql-local', {email, password});
+      const {user} = await context.authenticate('graphql-local', {
+        email,
+        password,
+      });
       await context.login(user);
 
       return {user};
@@ -54,25 +61,10 @@ const resolvers = {
           }
         });
       });
-    }
-  }
-}
+    },
+  },
+};
 
 export default resolvers;
 
-export const hashPassword = async (password: string): Promise<string> => {
-  try {
-    const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
-  } catch (error) {
-    throw new Error('Error hashing password');
-  }
-};
 
-export const comparePasswords = async (enteredPassword: string, storedPasswordHash: string): Promise<boolean> => {
-  try {
-    return await bcrypt.compare(enteredPassword, storedPasswordHash);
-  } catch (error) {
-    throw new Error('Error comparing passwords');
-  }
-};

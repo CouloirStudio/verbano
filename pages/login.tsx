@@ -1,36 +1,30 @@
 import styles from '../styles/login.module.scss';
 import {useState} from 'react';
-import {useMutation} from "@apollo/client";
-import GoogleButton from 'react-google-button'
+import {useMutation} from '@apollo/client';
+import GoogleButton from 'react-google-button';
 
-const CURRENT_USER_QUERY = require("../app/middleware/queries");
-const LOGIN_MUTATION = require("../app/middleware/mutations");
-
+import {CURRENT_USER_QUERY} from '../app/middleware/queries';
+import {LOGIN_MUTATION} from '../app/middleware/mutations';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [login] = useMutation(
-    LOGIN_MUTATION,
-    {
-      update: (cache, {data: {login}}) => cache.writeQuery({
+  const [login] = useMutation(LOGIN_MUTATION, {
+    update: (cache, {data: {login}}) =>
+      cache.writeQuery({
         query: CURRENT_USER_QUERY,
         data: {currentUser: login.user},
       }),
-    }
-  );
-
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('Logging in with', username, password);
-
     const user = {
       email: username,
-      password: password
-    }
+      password: password,
+    };
 
     const result = await login({variables: user});
     console.log(result);
@@ -63,16 +57,13 @@ const LoginPage = () => {
           </div>
           <button type="submit">Login</button>
         </form>
-
       </div>
       <GoogleButton
         onClick={() => {
-          window.open("http://localhost:3000/auth/google");
-        }
-        }
+          window.open('http://localhost:3000/auth/google');
+        }}
       />
     </div>
-
   );
 };
 
