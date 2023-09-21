@@ -8,7 +8,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
 import { json } from 'express';
-import audioRoutes from './audioRoutes';
+import audioRoutes from '../app/routes/audioRoutes';
 
 // Database connection setup
 import { connectDB } from '../app/models/Database';
