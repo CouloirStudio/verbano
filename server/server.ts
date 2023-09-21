@@ -1,21 +1,20 @@
 // Required imports
 import 'dotenv/config';
-import express, {json} from 'express';
+import express, { json } from 'express';
 import next from 'next';
 import cors from 'cors';
 import http from 'http';
 // Database connection setup
-import {connectDB} from '../app/models/Database';
+import { connectDB } from '../app/models/Database';
 
 // Import GraphQL type definitions and resolvers
 import passport from '../config/passport';
-import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
+import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
 import session from 'express-session';
-import {buildContext} from 'graphql-passport';
-import {User} from '../app/models/User';
-import {randomUUID} from 'crypto';
+// import { buildContext } from 'graphql-passport';
+import { randomUUID } from 'crypto';
 import audioRoutes from '../app/routes/audioRoutes';
-
+import { authenticateJWT } from '../app/middleware/auth';
 
 // GraphQL type definitions and resolvers
 import typeDefs from '../app/schema/index';
@@ -24,7 +23,7 @@ import resolvers from '../app/resolvers/index';
 // Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({dev});
+const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
 /**
@@ -33,12 +32,14 @@ const handle = nextApp.getRequestHandler();
  */
 export function createApp() {
   const app = express();
-  app.use(session({
-    genid: (req) => randomUUID(),
-    secret: process.env.JWT_SECRET as string,
-    resave: false,
-    saveUninitialized: false
-  }))
+  app.use(
+    session({
+      genid: (_req) => randomUUID(),
+      secret: process.env.JWT_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
 
   app.get('/auth/google', passport.authenticate('google'));
   app.get(
@@ -93,27 +94,36 @@ export async function startApolloServer(
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    playground: {
-      settings: {
-        'request.credentials': 'same-origin',
-      },
+    introspection: dev, // enable introspection in development
+    playground: dev
+      ? {
+          settings: {
+            'request.credentials': 'same-origin',
+          },
+        }
+      : false,
+    context: ({ req }) => {
+      // Get the user from the request (set by passport after authentication)
+      const user = req.user || null;
+
+      // Use your JWT authentication function to decode and verify the token
+      let jwtPayload = null;
+      try {
+        jwtPayload = authenticateJWT({ req });
+      } catch (error) {
+        if (typeof error === 'object' && error !== null && 'message' in error) {
+          console.warn('JWT authentication failed:', error.message);
+        }
+      }
+
+      return { user, jwtPayload };
     },
-    context: ({req, res}) => buildContext({req, res, User}),
   } as Config<ExpressContext>);
 
   // Starting Apollo Server before Express integration
   await server.start();
 
-  server.applyMiddleware({app, cors: false});
-  // Add GraphQL route with authentication context
-  app.use(
-    '/graphql',
-    expressMiddleware(server, {
-      context: ({req}) => {
-        return Promise.resolve({req, token: req.headers.token});
-      },
-    }),
-  );
+  server.applyMiddleware({ app, cors: false });
 
   // Handle other requests with Next.js
   app.all('*', (req, res) => {
@@ -124,7 +134,7 @@ export async function startApolloServer(
 
   // Start the HTTP server
   await new Promise<void>((resolve) =>
-    httpServer.listen({port: actualPort}, resolve),
+    httpServer.listen({ port: actualPort }, resolve),
   );
 
   if (!testPort) {

@@ -1,4 +1,4 @@
-import {comparePasswords, hashPassword} from '../config/passport'; // Adjust path accordingly
+import { comparePasswords, hashPassword } from '../config/passport';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('../app/models/User');

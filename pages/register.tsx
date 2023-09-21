@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useMutation} from '@apollo/client';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import GoogleButton from 'react-google-button';
 
 const SIGNUP_MUTATION = require('../app/middleware/mutations');
@@ -22,7 +22,7 @@ const RegisterPage = () => {
     };
 
     try {
-      const result = await signup({variables: user});
+      const result = await signup({ variables: user });
       console.log(result);
     } catch (error) {
       console.error('Error signing up:', error);

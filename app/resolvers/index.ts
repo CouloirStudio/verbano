@@ -1,4 +1,4 @@
-const userResolvers = require('./UserResolvers');
+import userResolvers from './UserResolvers';
 
 const resolvers = {
   ...userResolvers,

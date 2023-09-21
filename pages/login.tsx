@@ -1,20 +1,20 @@
 import styles from '../styles/login.module.scss';
-import {useState} from 'react';
-import {useMutation} from '@apollo/client';
+import { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import GoogleButton from 'react-google-button';
 
-import {CURRENT_USER_QUERY} from '../app/middleware/queries';
-import {LOGIN_MUTATION} from '../app/middleware/mutations';
+import { CURRENT_USER_QUERY } from '../app/middleware/queries';
+import { LOGIN_MUTATION } from '../app/middleware/mutations';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const [login] = useMutation(LOGIN_MUTATION, {
-    update: (cache, {data: {login}}) =>
+    update: (cache, { data: { login } }) =>
       cache.writeQuery({
         query: CURRENT_USER_QUERY,
-        data: {currentUser: login.user},
+        data: { currentUser: login.user },
       }),
   });
 
@@ -26,7 +26,7 @@ const LoginPage = () => {
       password: password,
     };
 
-    const result = await login({variables: user});
+    const result = await login({ variables: user });
     console.log(result);
   };
 

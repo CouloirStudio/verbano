@@ -1,11 +1,10 @@
-import {User} from '../app/models/User';
-import bcrypt from 'bcrypt';
-import {ObjectId} from 'mongoose';
-import {GraphQLLocalStrategy} from 'graphql-passport';
-import passport from 'passport';
 import 'dotenv/config';
-
-const GoogleStrategy = require('passport-google-oauth20');
+import { User } from '../app/models/User';
+import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongoose';
+import { GraphQLLocalStrategy } from 'graphql-passport';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 /**
  * Configure how Passport authenticates users.
@@ -14,12 +13,14 @@ const GoogleStrategy = require('passport-google-oauth20');
 passport.use(
   new GraphQLLocalStrategy(async (email, password, done) => {
     try {
-      const user = await User.findOne({email: email});
+      const user = await User.findOne({ email: email });
       if (!user) {
         throw new Error('Invalid email');
       }
       if (!user.password) {
-        throw new Error('Account created with Google. Please login with Google.')
+        throw new Error(
+          'Account created with Google. Please login with Google.',
+        );
       }
       if (typeof password === 'string') {
         const isMatch = await comparePasswords(password, user.password);
@@ -34,16 +35,30 @@ passport.use(
   }),
 );
 
+const assertEnvVariable = (
+  variable: string | undefined,
+  name: string,
+): string => {
+  if (!variable) {
+    throw new Error(`Environment variable ${name} is missing`);
+  }
+  return variable;
+};
+
 /**
  * Set up passport to use the Google strategy.
  * The strategy requires a client ID and client secret for authentication.
  */
 const googleOptions = {
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  clientID: assertEnvVariable(process.env.GOOGLE_CLIENT_ID, 'GOOGLE_CLIENT_ID'),
+  clientSecret: assertEnvVariable(
+    process.env.GOOGLE_CLIENT_SECRET,
+    'GOOGLE_CLIENT_SECRET',
+  ),
   callbackURL: 'http://localhost:3000/auth/google/callback',
   scope: ['profile', 'email'],
   state: true,
+  passReqToCallback: true as true,
 };
 
 /**
@@ -54,12 +69,13 @@ const googleOptions = {
  * @param done callback function
  */
 const googleCallback = async (
+  req: any,
   accessToken: any,
   refreshToken: any,
   profile: any,
   done: any,
 ) => {
-  const matchingUser = await User.findOne({googleId: profile.id});
+  const matchingUser = await User.findOne({ googleId: profile.id });
   if (matchingUser) {
     done(null, matchingUser);
     return;
@@ -98,7 +114,6 @@ passport.deserializeUser(async (id: ObjectId, done: any) => {
   const user = await User.findById(id);
   done(null, user);
 });
-
 
 export const hashPassword = async (password: string): Promise<string> => {
   try {
