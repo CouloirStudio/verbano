@@ -1,67 +1,123 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './recorder.module.scss';
-import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
-import { useRecorderContext, RecorderProvider } from '../../contexts/RecorderContext';
+import {
+  RecorderProvider,
+  useRecorderContext,
+} from '../../contexts/RecorderContext';
 
-// GraphQL mutation to create a new note entry with an audio location
-const CREATE_NOTE_MUTATION = gql`
-  mutation CreateNote($audioLocation: String!) {
-    addNote(input: {
-      audioLocation: $audioLocation
-    }) {
-      id
-      audioLocation
-    }
-  }
-`;
+import RecordRTC from 'recordrtc';
+import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const Recorder: React.FC = () => {
-    // Retrieve recording state and control functions from the context
-    const { isRecording, startRecording, stopRecording } = useRecorderContext();
+  // Retrieve recording state and control functions from the context
+  const {
+    currentRecorder,
+    isRecording,
+    mediaStream,
+    startRecording,
+    stopRecording,
+    setCurrentRecorder,
+    setAudioBlob,
+    setMediaStream,
+  } = useRecorderContext();
 
-    // Apollo Client hook to call the CREATE_NOTE_MUTATION
-    // const [createNote] = useMutation(CREATE_NOTE_MUTATION);
+  const { setIsError, setErrorMessage } = useErrorModalContext();
+  const toggleRecording = async () => {
+    let recorder: RecordRTC;
 
-    const toggleRecording = async () => {
-        // If already recording, stop and save the audio
-        if (isRecording) {
-            stopRecording();
+    if (!isRecording) {
+      // If not already recording, then start.
+      try {
+        // Getting media stream
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        setMediaStream(stream);
+        // Instantiating Recorder Object
+        recorder = new RecordRTC(stream, {
+          type: 'audio',
+        });
+        // updating recorder context and starting the recorder.
+        startRecording();
+        recorder.startRecording();
+        setCurrentRecorder(recorder);
+      } catch (error) {
+        // Update the error context so that the modal is displayed
+        setErrorMessage(
+          'We encountered an error while accessing the microphone: please ensure your microphone is connected and allowed in the browser. See our troubleshooting guide for details: INSERT LINK HERE',
+        );
+        // this is what will make the error modal appear.
+        setIsError(true);
+        console.error('Error accessing the microphone:' + error);
+      }
+    } else {
+      if (currentRecorder) {
+        currentRecorder.stopRecording(async function () {
+          stopRecording();
+          clearStreams();
 
-            // Mock URL for the audio location (replace with logic to upload to AWS S3)
-            const mockS3Url = "https://aws-s3-bucket/your-recording-file.mp3";
-            /*
-            try {
-                // Call the mutation to create a new note with the audio URL
-                const { data } = await createNote({ variables: { audioLocation: mockS3Url } });
-                console.log('New note created:', data.addNote);
-            } catch (error) {
-                console.error('Error creating note:', error);
+          const blob = currentRecorder.getBlob();
+
+          // Use FormData for sending the audio blob
+          const formData = new FormData();
+          formData.append('audio', blob, 'myAudioBlob.wav'); // Add blob to form data
+
+          try {
+            const response = await fetch('http://localhost:3000/audio/upload', {
+              method: 'POST',
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              console.log('Uploaded successfully. URL:', data.url);
+            } else {
+              throw new Error(data.message || 'Failed to upload.');
             }
-            */
-        } else {
-            // If not recording, start
-            startRecording();
-        }
-    };
+          } catch (error) {
+            console.error('Error uploading audio:', error);
+          }
 
-    return (
-        <div className={styles.recorder}>
-            <button
-                onClick={toggleRecording}
-                className={`${styles.recorderButton} ${isRecording ? styles.recording : ''}`}
-            >
-                {isRecording ? 'Stop Recording' : 'Start Recording'}
-            </button>
-        </div>
-    );
+          setAudioBlob(blob);
+          currentRecorder.destroy();
+          setCurrentRecorder(null);
+        });
+      }
+    }
+  };
+
+  // Clear the Media streams
+  const clearStreams = () => {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearStreams();
+    };
+  }, []);
+
+  return (
+    <div className={styles.recorder}>
+      <button
+        onClick={toggleRecording}
+        className={`${styles.recorderButton} ${
+          isRecording ? styles.recording : ''
+        }`}
+      >
+        {isRecording ? 'Stop Recording' : 'Start Recording'}
+      </button>
+    </div>
+  );
 };
 
-// Wrapped component to provide context to the Recorder component
-export const WrappedRecorder: React.FC = () => (
-    <RecorderProvider>
-        <Recorder />
-    </RecorderProvider>
+const WrappedRecorder: React.FC = () => (
+  <RecorderProvider>
+    <Recorder />
+  </RecorderProvider>
 );
 
 export default WrappedRecorder;

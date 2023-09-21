@@ -1,12 +1,14 @@
 import styles from './header.module.scss';
-import Recorder from '../Recorder';
-import LogoutButton from "@/app/components/Logout";
+import dynamic from 'next/dynamic';
+
+const Recorder = dynamic(() => import('../../components/Recorder'), {
+  ssr: false,
+});
 
 function Header() {
   return (
     <div className={styles.header}>
-      <Recorder/>
-      <LogoutButton/>
+      <Recorder />
     </div>
   );
 }

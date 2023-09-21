@@ -1,5 +1,5 @@
-import mongoose, {Document, Model, Schema} from 'mongoose';
-import bcrypt from "bcrypt";
+import mongoose, { Document, Model, Schema } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
   email: string;
@@ -10,7 +10,6 @@ export interface IUser extends Document {
   dateJoined?: Date;
   settings?: typeof Schema.Types.ObjectId;
   projectIds?: typeof Schema.Types.ObjectId[];
-  facebookId?: string;
   googleId?: string;
 }
 
@@ -48,10 +47,6 @@ const UserSchema = new Schema<IUser>({
     type: Schema.Types.ObjectId,
     ref: 'Project'
   }],
-  facebookId: {
-    type: String,
-    default: null
-  },
   googleId: {
     type: String,
     default: null
@@ -64,7 +59,10 @@ UserSchema.virtual('fullName').get(function (this: IUser) {
 });
 
 //compare passwords method
-UserSchema.methods.comparePasswords = async function (enteredPassword: string, storedPasswordHash: string): Promise<boolean> {
+UserSchema.methods.comparePasswords = async function (
+  enteredPassword: string,
+  storedPasswordHash: string,
+): Promise<boolean> {
   try {
     return await bcrypt.compare(enteredPassword, storedPasswordHash);
   } catch (error) {

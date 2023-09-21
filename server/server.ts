@@ -4,7 +4,7 @@ import express, {json} from 'express';
 import next from 'next';
 import cors from 'cors';
 import http from 'http';
-
+import audioRoutes from './audioRoutes';
 
 // Database connection setup
 import {connectDB} from '../app/models/Database';
@@ -58,13 +58,16 @@ async function startApolloServer() {
   };
   app.use(cors(corsOptions));
   app.use(json());
+  app.use('/audio', audioRoutes);
 
   // Attempt MongoDB connection
-  connectDB().then(() => {
-    console.log('Connected to MongoDB');
-  }).catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+  connectDB()
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+      console.error('Error connecting to MongoDB:', err);
+    });
 
   await nextApp.prepare();
 
@@ -86,22 +89,21 @@ async function startApolloServer() {
 
   server.applyMiddleware({app, cors: false})
 
-
   // Handle all other requests using Next.js
   app.all('*', (req, res) => {
     return handle(req, res);
   });
 
   // Start HTTP server and log URLs once ready
-  await new Promise<void>(resolve => httpServer.listen({port}, resolve));
+  await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server ready at http://localhost:${port}/graphql`);
   console.log(`> Next.js on http://localhost:${port}`);
 }
 
 
 // Start the server and handle potential errors
-startApolloServer().catch(error => {
-  console.error("Failed to start server:", error);
+startApolloServer().catch((error) => {
+  console.error('Failed to start server:', error);
 });
 
 

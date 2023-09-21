@@ -7,13 +7,16 @@ export interface ISettings extends Document {
 
 const SettingsSchema = new Schema<ISettings>({
   darkMode: {
-      type: Boolean,
-      default: false
+    type: Boolean,
+    default: false,
   },
   notifications: {
-      type: Boolean,
-      default: true
-  }
+    type: Boolean,
+    default: true,
+  },
 });
 
-export const Settings: Model<ISettings> = mongoose.model('Settings', SettingsSchema);
+export const Settings: Model<ISettings> = mongoose.model(
+  'Settings',
+  SettingsSchema,
+);
