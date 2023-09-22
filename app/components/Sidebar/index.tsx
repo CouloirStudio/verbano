@@ -16,12 +16,9 @@ function Sidebar() {
       <h1>Sidebar Content</h1>
       {projects.map((project) => (
         <Project key={project.id} name={project.name}>
-          {/* Dummy data: Generating 3-5 Notes for each project */}
-          {Array.from({ length: Math.floor(Math.random() * 3) + 3 }).map(
-            (_, idx) => (
-              <Note key={idx} />
-            ),
-          )}
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <Note key={idx} />
+          ))}
         </Project>
       ))}
     </div>

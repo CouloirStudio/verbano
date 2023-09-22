@@ -6,17 +6,16 @@ import ErrorModal from '@/app/components/ErrorModal';
 
 interface LayoutProps {
   children: React.ReactNode;
-  noHeaderSidebar?: boolean;
 }
 
-function Layout({ children, noHeaderSidebar }: LayoutProps) {
+function Layout({ children }: LayoutProps) {
   return (
     <ErrorModalContextProvider>
       <div className={styles.layoutContainer}>
-        {!noHeaderSidebar && <ErrorModal />}
-        {!noHeaderSidebar && <Header />}
+        <ErrorModal />
+        <Header />
         <div className={styles.contentArea}>
-          {!noHeaderSidebar && <Sidebar />}
+          <Sidebar />
           <main>{children}</main>
         </div>
       </div>
