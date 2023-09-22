@@ -108,7 +108,7 @@ const Recorder: React.FC = () => {
           isRecording ? styles.recording : ''
         }`}
       >
-        {isRecording ? 'Stop Recording' : 'Start Recording'}
+        {isRecording ? 'Stop' : 'Start'}
       </button>
     </div>
   );

@@ -1,8 +1,11 @@
 import styles from './sidebar.module.scss';
+import { useProjectContext } from '../../contexts/ProjectContext';
 import Project from '../Project';
 import Note from '../Note';
 
 function Sidebar() {
+  const { setSelectedNotes } = useProjectContext();
+
   // Dummy data for projects and their names
   const projects = [
     { id: 1, name: 'Project Alpha' },
@@ -11,16 +14,35 @@ function Sidebar() {
     { id: 4, name: 'Project Delta' },
   ];
 
+  const handleProjectClick = (notes: React.ReactNode[]) => {
+    setSelectedNotes(notes);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, notes: React.ReactNode[]) => {
+    if (e.key === 'Enter' || e.key === 'Space') {
+      handleProjectClick(notes);
+    }
+  };
+
   return (
     <div className={styles.sidebar}>
-      <h1>Sidebar Content</h1>
-      {projects.map((project) => (
-        <Project key={project.id} name={project.name}>
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <Note key={idx} />
-          ))}
-        </Project>
-      ))}
+      {projects.map((project) => {
+        const projectNotes = Array.from({ length: 10 }).map((_, idx) => (
+          <Note key={idx} projectName={project.name} noteNumber={idx + 1} />
+        ));
+
+        return (
+          <div
+            key={project.id}
+            onClick={() => handleProjectClick(projectNotes)}
+            onKeyDown={(e) => handleKeyDown(e, projectNotes)}
+            role="button"
+            tabIndex={0}
+          >
+            <Project name={project.name}>{projectNotes}</Project>
+          </div>
+        );
+      })}
     </div>
   );
 }

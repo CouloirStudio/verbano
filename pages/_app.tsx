@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Layout from '../app/components/Layout/index';
+import { ProjectProvider } from '../app/contexts/ProjectContext';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -21,7 +22,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     </ApolloProvider>
   );
 
-  return isLoginOrRegisterPage ? PageContent : <Layout>{PageContent}</Layout>;
+  return (
+    <ProjectProvider>
+      {isLoginOrRegisterPage ? PageContent : <Layout>{PageContent}</Layout>}
+    </ProjectProvider>
+  );
 }
 
 export default MyApp;
