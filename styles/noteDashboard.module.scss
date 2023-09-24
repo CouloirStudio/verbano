@@ -1,0 +1,20 @@
+@import '../app/components/_shared/variables';
+
+.container {
+  height: calc(100vh - $header-height);
+}
+
+.noteWrapper {
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    width: 100vw; 
+    height: 100px;
+    border-bottom: 1px solid #ccc;
+
+    &:first-child {
+      border-top: 1px solid #ccc;
+    }
+  }
+}
