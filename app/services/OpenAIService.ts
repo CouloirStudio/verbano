@@ -1,6 +1,5 @@
+import 'dotenv/config';
 import OpenAI from 'openai';
-
-require('dotenv').config();
 
 class OpenAIService {
   private readonly apiKey: string;
@@ -88,6 +87,10 @@ class OpenAIService {
       console.error(error);
       throw new Error('Failed to generate title.');
     }
+  }
+
+  get openaiForTesting() {
+    return this.openai;
   }
 }
 

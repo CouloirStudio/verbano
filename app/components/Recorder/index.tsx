@@ -51,7 +51,6 @@ const Recorder: React.FC = () => {
         // this is what will make the error modal appear.
         setIsError(true);
         console.error('Error accessing the microphone:' + error);
-
       }
     } else {
       if (currentRecorder) {
