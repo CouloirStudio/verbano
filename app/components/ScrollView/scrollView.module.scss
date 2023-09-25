@@ -1,0 +1,7 @@
+.scrollView {
+  width: 100%;
+  height: 100%;  // This ensures that it takes the full height of its parent
+  overflow-y: auto;  // Vertical scrolling
+  overflow-x: hidden;  // No horizontal scrolling
+  white-space: nowrap;
+}

@@ -1,15 +1,44 @@
 import { gql } from 'apollo-server-express';
 
-const UserSchema = gql`
+const typeDefs = gql`
   type User {
     id: ID!
-    name: String!
+    facebookId: String!
+    googleId: String!
     email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+    profilePicture: String
+    registeredIP: String
+    lastLoginIP: String
+    settings: UserSettings
+    refreshToken: String
+  }
+
+  type UserSettings {
+    darkMode: Boolean
+    notifications: Boolean
   }
 
   type Query {
-    users: [User!]!
+    currentUser: User
+  }
+
+  type AuthPayload {
+    user: User
+  }
+
+  type Mutation {
+    signup(
+      email: String!
+      password: String!
+      firstName: String!
+      lastName: String!
+    ): AuthPayload
+    login(email: String!, password: String!): AuthPayload
+    logout: Boolean
   }
 `;
 
-export default UserSchema;
+export default typeDefs;

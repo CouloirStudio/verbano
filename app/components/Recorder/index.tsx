@@ -5,7 +5,7 @@ import {
   useRecorderContext,
 } from '../../contexts/RecorderContext';
 
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import RecordRTC from 'recordrtc';
 import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const Recorder: React.FC = () => {
@@ -54,18 +54,35 @@ const Recorder: React.FC = () => {
 
       }
     } else {
-      // if current recorder is not null, then stop recording, this is used to be type-safe.
       if (currentRecorder) {
-        currentRecorder.stopRecording(() => {
+        currentRecorder.stopRecording(async function () {
           stopRecording();
-          // Stop the stream when recording stops
           clearStreams();
-          // Get the blob and save it to the context, so it can be accessed by other components
+
           const blob = currentRecorder.getBlob();
+
+          // Use FormData for sending the audio blob
+          const formData = new FormData();
+          formData.append('audio', blob, 'myAudioBlob.wav'); // Add blob to form data
+
+          try {
+            const response = await fetch('http://localhost:3000/audio/upload', {
+              method: 'POST',
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              console.log('Uploaded successfully. URL:', data.url);
+            } else {
+              throw new Error(data.message || 'Failed to upload.');
+            }
+          } catch (error) {
+            console.error('Error uploading audio:', error);
+          }
+
           setAudioBlob(blob);
-          // This is temporary, but will save the audio to your browser, so you know that it is working properly.
-          invokeSaveAsDialog(blob);
-          // Destroy the recorder and set the context for it to null.
           currentRecorder.destroy();
           setCurrentRecorder(null);
         });
@@ -82,7 +99,6 @@ const Recorder: React.FC = () => {
 
   useEffect(() => {
     return () => {
-      // Disconnect the stream when unmounting
       clearStreams();
     };
   }, []);
@@ -95,13 +111,12 @@ const Recorder: React.FC = () => {
           isRecording ? styles.recording : ''
         }`}
       >
-        {isRecording ? 'Stop Recording' : 'Start Recording'}
+        {isRecording ? 'Stop' : 'Start'}
       </button>
     </div>
   );
 };
 
-// Wrapped component to provide context to the Recorder component
 const WrappedRecorder: React.FC = () => (
   <RecorderProvider>
     <Recorder />

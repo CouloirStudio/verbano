@@ -1,4 +1,4 @@
-import { Note } from '../models/dbModels.mongo';
+import { Note } from '../models/Note';
 import {
   ResolverContext,
   GetNoteArgs,

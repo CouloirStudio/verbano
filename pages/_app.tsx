@@ -1,27 +1,31 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Layout from '../app/components/Layout/index';
+import { ProjectProvider } from '../app/contexts/ProjectContext';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const isLoginOrRegisterPage = ['/login', '/register'].includes(
+    router.pathname,
+  );
 
-  useEffect(() => {
-    if (
-      process.env.NODE_ENV === 'development' &&
-      router.pathname === '/login'
-    ) {
-      router.push('/');
-    }
-  }, [router]);
+  const client: ApolloClient<unknown> = new ApolloClient({
+    uri: 'http://localhost:3000/graphql',
+    cache: new InMemoryCache(),
+  });
 
-  const noHeaderSidebar = router.pathname === '/login';
+  const PageContent = (
+    <ApolloProvider client={client}>
+      <Component {...pageProps} />
+    </ApolloProvider>
+  );
 
   return (
-    <Layout noHeaderSidebar={noHeaderSidebar}>
-      <Component {...pageProps} />
-    </Layout>
+    <ProjectProvider>
+      {isLoginOrRegisterPage ? PageContent : <Layout>{PageContent}</Layout>}
+    </ProjectProvider>
   );
 }
 
