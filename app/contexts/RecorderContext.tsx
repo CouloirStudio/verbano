@@ -1,19 +1,18 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-import RecordRTC from 'recordrtc';
 
-type RecorderType = RecordRTC | null;
+type RecorderType = any;
 type AudioBlobType = Blob | null;
 type MediaStreamType = MediaStream | null;
 
 interface RecorderContextType {
   currentRecorder: RecorderType;
   isRecording: boolean;
+  audioBlob: AudioBlobType;
+  mediaStream: MediaStreamType;
   startRecording: () => void;
   stopRecording: () => void;
   setCurrentRecorder: (recorder: RecorderType) => void;
-  audioBlob: AudioBlobType;
   setAudioBlob: (blob: AudioBlobType) => void;
-  mediaStream: MediaStreamType;
   setMediaStream: (stream: MediaStreamType) => void;
 }
 
@@ -22,7 +21,7 @@ const RecorderContext = createContext<RecorderContextType | undefined>(
 );
 
 interface Props {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const RecorderProvider: React.FC<Props> = ({ children }) => {

@@ -1,6 +1,5 @@
+import 'dotenv/config';
 import OpenAI from 'openai';
-
-require('dotenv').config();
 
 class OpenAIService {
   private readonly apiKey: string;

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './errormodal.module.scss';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const ErrorModal = () => {
   const { isError, errorMessage, setIsError } = useErrorModalContext();
