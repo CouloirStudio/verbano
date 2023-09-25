@@ -38,17 +38,20 @@ const Recorder: React.FC = () => {
           type: 'audio',
         });
         // updating recorder context and starting the recorder.
-        startRecording();
+        await startRecording();
         recorder.startRecording();
         setCurrentRecorder(recorder);
       } catch (error) {
         // Update the error context so that the modal is displayed
         setErrorMessage(
-          'We encountered an error while accessing the microphone: please ensure your microphone is connected and allowed in the browser. See our troubleshooting guide for details: INSERT LINK HERE',
+          'We encountered an error while accessing the microphone: ' +
+            'please ensure your microphone is connected and allowed in the browser. ' +
+            'See our troubleshooting guide for details: INSERT LINK HERE',
         );
         // this is what will make the error modal appear.
         setIsError(true);
         console.error('Error accessing the microphone:' + error);
+
       }
     } else {
       if (currentRecorder) {
