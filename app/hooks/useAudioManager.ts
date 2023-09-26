@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RecordRTC from 'recordrtc';
 import { uploadAudio } from '../api/audio';
 import { useRecorderContext } from '../contexts/RecorderContext';
@@ -5,27 +6,30 @@ import { useRecorderContext } from '../contexts/RecorderContext';
 const useAudioManager = () => {
   const {
     currentRecorder,
-    startRecording,
-    stopRecording,
     setCurrentRecorder,
     setAudioBlob,
     setMediaStream,
   } = useRecorderContext();
 
+  const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'processing'>('idle');
+
   const startNewRecording = async () => {
+    setRecordingState('processing');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setMediaStream(stream);
       const recorder = new RecordRTC(stream, { type: 'audio' });
-      startRecording();
       recorder.startRecording();
       setCurrentRecorder(recorder);
+      setRecordingState('recording');
     } catch (error) {
       console.error('Error accessing the microphone:', error);
+      setRecordingState('idle');
     }
   };
 
   const stopAndUploadRecording = async () => {
+    setRecordingState('processing');
     try {
       if (currentRecorder) {
         await currentRecorder.stopRecording(async () => {
@@ -38,17 +42,19 @@ const useAudioManager = () => {
           setAudioBlob(blob);
           currentRecorder.destroy();
           setCurrentRecorder(null);
+          setRecordingState('idle');
         });
-        stopRecording();
       }
     } catch (error) {
       console.error(error);
+      setRecordingState('idle');
     }
   };
 
   return {
     startNewRecording,
     stopAndUploadRecording,
+    recordingState,
   };
 };
 

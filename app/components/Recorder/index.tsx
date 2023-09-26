@@ -6,16 +6,16 @@ import useStreamCleaner from '../../hooks/useStreamCleaner';
 import { useRecorderContext } from '../../contexts/RecorderContext';
 
 const Recorder: React.FC = () => {
-  const { isRecording, mediaStream } = useRecorderContext();
-  const { startNewRecording, stopAndUploadRecording } = useAudioManager();
+  const { mediaStream } = useRecorderContext();
+  const { startNewRecording, stopAndUploadRecording, recordingState } = useAudioManager();
 
   useStreamCleaner(mediaStream);
 
   const toggleRecording = async () => {
     try {
-      if (!isRecording) {
+      if (recordingState === 'idle') {
         await startNewRecording();
-      } else {
+      } else if (recordingState === 'recording') {
         await stopAndUploadRecording();
       }
     } catch (error) {
@@ -25,10 +25,14 @@ const Recorder: React.FC = () => {
 
   return (
     <div className={styles.recorder}>
-      <RecordButton
-        isRecording={isRecording}
-        toggleRecording={toggleRecording}
-      />
+      {recordingState === 'processing' ? (
+        <span>Processing...</span>
+      ) : (
+        <RecordButton
+          isRecording={recordingState === 'recording'}
+          toggleRecording={toggleRecording}
+        />
+      )}
     </div>
   );
 };
