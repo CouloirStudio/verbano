@@ -39,7 +39,20 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
 
     res.json({ success: true, noteId: note._id, url });
   } catch (error) {
-    console.error('Error uploading to S3 or saving to MongoDB:', error);
+    if (error instanceof Error) {
+      console.error('Error in /upload route:', error.message);
+
+      if (error.message.includes('Failed to upload audio to S3')) {
+        return res.status(500).json({
+          success: false,
+          message:
+            'Failed to upload audio to S3. Please check AWS configurations.',
+        });
+      }
+    } else {
+      console.error('An unexpected error occurred:', error);
+    }
+
     res.status(500).json({ success: false, message: 'Failed to upload.' });
   }
 });

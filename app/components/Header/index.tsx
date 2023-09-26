@@ -1,5 +1,7 @@
+import React from 'react';
 import styles from './header.module.scss';
 import dynamic from 'next/dynamic';
+import { RecorderProvider } from '../../contexts/RecorderContext'; // Ensure the correct path
 
 const Recorder = dynamic(() => import('../../components/Recorder'), {
   ssr: false,
@@ -8,7 +10,9 @@ const Recorder = dynamic(() => import('../../components/Recorder'), {
 function Header() {
   return (
     <div className={styles.header}>
-      <Recorder />
+      <RecorderProvider>
+        <Recorder />
+      </RecorderProvider>
     </div>
   );
 }

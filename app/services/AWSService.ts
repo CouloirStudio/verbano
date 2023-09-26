@@ -17,8 +17,17 @@ const uploadAudioToS3 = async (audioBuffer: Buffer): Promise<string> => {
     ContentType: 'audio/wav',
   };
 
-  const result = await s3.upload(uploadParams).promise();
-  return result.Location;
+  try {
+    const result = await s3.upload(uploadParams).promise();
+    return result.Location;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error uploading to S3:', error.message);
+    } else {
+      console.error('An unexpected error occurred:', error);
+    }
+    throw new Error('Failed to upload audio to S3.');
+  }
 };
 
 export { uploadAudioToS3 };
