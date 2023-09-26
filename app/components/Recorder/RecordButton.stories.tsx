@@ -10,9 +10,9 @@ export default {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A button component used to start or stop recording.'
-      }
-    }
+        component: 'A button component used to start or stop recording.',
+      },
+    },
   },
   argTypes: {
     isRecording: {
@@ -25,8 +25,8 @@ export default {
     },
     toggleRecording: {
       action: 'toggleRecording', // It will log 'toggleRecording' when the button is clicked.
-    }
-  }
+    },
+  },
 } as Meta;
 
 const Template: StoryFn<RecordButtonProps> = (initialArgs) => {
@@ -39,12 +39,16 @@ const Template: StoryFn<RecordButtonProps> = (initialArgs) => {
 
   const handleToggle = () => {
     action('toggleRecording')();
-    setIsRecording(prev => !prev);
+    setIsRecording((prev) => !prev);
   };
 
   return (
     <div className={initialArgs.theme}>
-      <RecordButton {...initialArgs} isRecording={isRecording} toggleRecording={handleToggle} />
+      <RecordButton
+        {...initialArgs}
+        isRecording={isRecording}
+        toggleRecording={handleToggle}
+      />
     </div>
   );
 };
@@ -52,10 +56,10 @@ const Template: StoryFn<RecordButtonProps> = (initialArgs) => {
 export const AllModes = Template.bind({});
 AllModes.args = {
   isRecording: false,
-  theme: 'light'  // or 'dark'
+  theme: 'light', // or 'dark'
 };
 AllModes.parameters = {
   docs: {
     storyDescription: 'The RecordButton component with theme modes.',
-  }
-}
+  },
+};

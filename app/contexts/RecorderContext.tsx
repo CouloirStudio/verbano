@@ -13,7 +13,9 @@ interface RecorderContextType {
   setMediaStream: (stream: MediaStreamType) => void;
 }
 
-const RecorderContext = createContext<RecorderContextType | undefined>(undefined);
+const RecorderContext = createContext<RecorderContextType | undefined>(
+  undefined,
+);
 
 interface Props {
   children: React.ReactNode;
@@ -43,7 +45,9 @@ export const RecorderProvider: React.FC<Props> = ({ children }) => {
 export const useRecorderContext = (): RecorderContextType => {
   const context = useContext(RecorderContext);
   if (context === undefined) {
-    throw new Error('useRecorderContext must be used within a RecorderProvider');
+    throw new Error(
+      'useRecorderContext must be used within a RecorderProvider',
+    );
   }
   return context;
 };

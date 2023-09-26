@@ -30,4 +30,15 @@ const uploadAudioToS3 = async (audioBuffer: Buffer): Promise<string> => {
   }
 };
 
-export { uploadAudioToS3 };
+const deleteAudioFromS3 = async (url: string) => {
+  const fileKey = url.split('/').pop(); // Assuming the URL is a direct link to the file
+
+  const deleteParams = {
+    Bucket: S3_BUCKET,
+    Key: `audio-files/${fileKey}`,
+  };
+
+  await s3.deleteObject(deleteParams).promise();
+};
+
+export { uploadAudioToS3, deleteAudioFromS3 };

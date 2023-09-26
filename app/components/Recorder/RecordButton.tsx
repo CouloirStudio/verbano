@@ -7,21 +7,19 @@ export interface RecordButtonProps {
   theme?: 'light' | 'dark';
 }
 
-
 const RecordButton: React.FC<RecordButtonProps> = ({
   isRecording,
   toggleRecording,
-  theme = 'light'  // Default to light theme if not provided
+  theme = 'light', // Default to light theme if not provided
 }) => (
   <button
     onClick={toggleRecording}
     className={`${styles.recorderButton} ${
       isRecording ? styles.recording : ''
-    } ${styles[theme]}`}  // Added theme styles here
+    } ${styles[theme]}`} // Added theme styles here
   >
     {isRecording ? 'Stop' : 'Start'}
   </button>
 );
-
 
 export default RecordButton;
