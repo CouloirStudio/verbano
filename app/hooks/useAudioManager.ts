@@ -2,17 +2,27 @@ import { useState } from 'react';
 import RecordRTC from 'recordrtc';
 import { uploadAudio } from '../api/audio';
 import { useRecorderContext } from '../contexts/RecorderContext';
+import { useErrorModalContext } from '../contexts/ErrorModalContext';
 
 const useAudioManager = () => {
   const {
-    mediaStream, // <-- destructuring mediaStream here
+    mediaStream,
     currentRecorder,
     setCurrentRecorder,
     setAudioBlob,
     setMediaStream,
   } = useRecorderContext();
 
+  const { setErrorMessage, setIsError } = useErrorModalContext();
+
   const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'processing'>('idle');
+
+  const handleError = (message: string, error: any) => {
+    console.error(message, error);
+    setErrorMessage(`${message} ${error.message}`);
+    setIsError(true);
+    setRecordingState('idle');
+  };
 
   const startNewRecording = async () => {
     setRecordingState('processing');
@@ -24,8 +34,7 @@ const useAudioManager = () => {
       setCurrentRecorder(recorder);
       setRecordingState('recording');
     } catch (error) {
-      console.error('Error accessing the microphone:', error);
-      setRecordingState('idle');
+      handleError('Error accessing the microphone:', error);
     }
   };
 
@@ -54,8 +63,7 @@ const useAudioManager = () => {
         });
       }
     } catch (error) {
-      console.error(error);
-      setRecordingState('idle');
+      handleError('Error stopping or uploading recording:', error);
     }
   };
 
