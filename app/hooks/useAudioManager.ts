@@ -2,26 +2,17 @@ import { useState } from 'react';
 import RecordRTC from 'recordrtc';
 import { uploadAudio } from '../api/audio';
 import { useRecorderContext } from '../contexts/RecorderContext';
-import { useErrorModalContext } from '../contexts/ErrorModalContext';
 
 const useAudioManager = () => {
   const {
+    mediaStream, // <-- destructuring mediaStream here
     currentRecorder,
     setCurrentRecorder,
     setAudioBlob,
     setMediaStream,
   } = useRecorderContext();
 
-  const { setErrorMessage, setIsError } = useErrorModalContext();
-
   const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'processing'>('idle');
-
-  const handleError = (message: string, error: any) => {
-    console.error(message, error);
-    setErrorMessage(`${message} ${error.message}`);
-    setIsError(true);
-    setRecordingState('idle');
-  };
 
   const startNewRecording = async () => {
     setRecordingState('processing');
@@ -33,7 +24,8 @@ const useAudioManager = () => {
       setCurrentRecorder(recorder);
       setRecordingState('recording');
     } catch (error) {
-      handleError('Error accessing the microphone:', error);
+      console.error('Error accessing the microphone:', error);
+      setRecordingState('idle');
     }
   };
 
@@ -51,11 +43,19 @@ const useAudioManager = () => {
           setAudioBlob(blob);
           currentRecorder.destroy();
           setCurrentRecorder(null);
+          
+          // Cleaning up the media stream immediately after recording stops
+          if (mediaStream) {
+            mediaStream.getTracks().forEach((track) => track.stop());
+            setMediaStream(null);
+          }
+          
           setRecordingState('idle');
         });
       }
     } catch (error) {
-      handleError('Error stopping or uploading recording:', error);
+      console.error(error);
+      setRecordingState('idle');
     }
   };
 
