@@ -88,6 +88,10 @@ class OpenAIService {
       throw new Error('Failed to generate title.');
     }
   }
+
+  get openaiForTesting() {
+    return this.openai;
+  }
 }
 
 export default OpenAIService;

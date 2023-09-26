@@ -44,10 +44,18 @@ jest.mock('recordrtc', () => {
 });
 
 beforeEach(() => {
-  // Clear any recorded calls on the mock functions before each test
+  // Define a mock object for navigator.mediaDevices
+  Object.defineProperty(window.navigator, 'mediaDevices', {
+    value: {},
+    configurable: true,
+    writable: true,
+  });
+
   jest.clearAllMocks();
+
   mockGetUserMedia = jest.fn();
   mockClearStreams = jest.fn();
+  // Now, it's safe to mock the getUserMedia method
   navigator.mediaDevices.getUserMedia = mockGetUserMedia.mockResolvedValue({
     getTracks: () => [],
   });
@@ -67,7 +75,7 @@ describe('Recorder Component Tests', () => {
         <Recorder />
       </ErrorModalContextProvider>,
     );
-    expect(screen.getByText('Start Recording')).toBeInTheDocument();
+    expect(screen.getByText('Start')).toBeInTheDocument();
   });
 
   /**
@@ -85,20 +93,20 @@ describe('Recorder Component Tests', () => {
     );
 
     // Click to start recording
-    const startRecordingButton = screen.getByText('Start Recording');
+    const startRecordingButton = screen.getByText('Start');
     fireEvent.click(startRecordingButton);
 
     await waitFor(() => {
-      const stopRecordingButton = screen.getByText('Stop Recording');
+      const stopRecordingButton = screen.getByText('Stop');
       expect(stopRecordingButton).toBeInTheDocument();
     });
 
     // Click to stop recording
-    const stopRecordingButton = screen.getByText('Stop Recording');
+    const stopRecordingButton = screen.getByText('Stop');
     fireEvent.click(stopRecordingButton);
 
     await waitFor(() => {
-      const startRecordingButton = screen.getByText('Start Recording');
+      const startRecordingButton = screen.getByText('Start');
       expect(startRecordingButton).toBeInTheDocument();
     });
   });
@@ -117,7 +125,7 @@ describe('Recorder Component Tests', () => {
     );
 
     // Click to start recording
-    const startRecordingButton = screen.getByText('Start Recording');
+    const startRecordingButton = screen.getByText('Start');
     fireEvent.click(startRecordingButton);
 
     // Ensure that clearStreams function is not called
@@ -138,10 +146,10 @@ describe('Recorder Component Tests', () => {
       </ErrorModalContextProvider>,
     );
 
-    const startRecordingButton = screen.getByText('Start Recording');
+    const startRecordingButton = screen.getByText('Start');
     fireEvent.click(startRecordingButton);
     await waitFor(() => {
-      const stopRecordingButton = screen.getByText('Stop Recording');
+      const stopRecordingButton = screen.getByText('Stop');
       expect(stopRecordingButton).toBeInTheDocument();
     });
 
