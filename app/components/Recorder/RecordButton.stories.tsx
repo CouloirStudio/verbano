@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Meta, StoryFn } from '@storybook/react'; // Using StoryFn as suggested
+import React, { useState, useEffect } from 'react';
+import { Meta, StoryFn } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import RecordButton, { RecordButtonProps } from './RecordButton';
 
@@ -24,56 +24,38 @@ export default {
       },
     },
     toggleRecording: {
-      action: 'clicked',
-      description: 'Function to toggle the recording state',
-      table: {
-        type: { summary: 'function' },
-      },
-    },
-    backgroundColor: {
-      control: 'color',
-      description: 'Background color of the story container',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'transparent' },
-      },
+      action: 'toggleRecording', // It will log 'toggleRecording' when the button is clicked.
     }
   }
 } as Meta;
 
 const Template: StoryFn<RecordButtonProps> = (initialArgs) => {
   const [isRecording, setIsRecording] = useState(initialArgs.isRecording);
-  
+
+  // Listen for changes in initialArgs.isRecording and update the local state
+  useEffect(() => {
+    setIsRecording(initialArgs.isRecording);
+  }, [initialArgs.isRecording]);
+
   const handleToggle = () => {
     action('toggleRecording')();
     setIsRecording(prev => !prev);
   };
 
   return (
-    <div style={{ backgroundColor: initialArgs.backgroundColor || 'transparent' }}>
+    <div className={initialArgs.theme}>
       <RecordButton {...initialArgs} isRecording={isRecording} toggleRecording={handleToggle} />
     </div>
   );
 };
 
-export const Default = Template.bind({});
-Default.args = {
+export const AllModes = Template.bind({});
+AllModes.args = {
   isRecording: false,
-  backgroundColor: 'transparent',
+  theme: 'light'  // or 'dark'
 };
-Default.parameters = {
+AllModes.parameters = {
   docs: {
-    storyDescription: 'A default state for the RecordButton component.',
-  }
-}
-
-export const Recording = Template.bind({});
-Recording.args = {
-  isRecording: true,
-  backgroundColor: 'transparent',
-};
-Recording.parameters = {
-  docs: {
-    storyDescription: 'The RecordButton component when it is actively recording.',
+    storyDescription: 'The RecordButton component with theme modes.',
   }
 }
