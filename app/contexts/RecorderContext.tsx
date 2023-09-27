@@ -1,16 +1,11 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-type RecorderType = any;
+// Removed unused types
 type AudioBlobType = Blob | null;
-type MediaStreamType = MediaStream | null;
 
 interface RecorderContextType {
-  currentRecorder: RecorderType;
   audioBlob: AudioBlobType;
-  mediaStream: MediaStreamType;
-  setCurrentRecorder: (recorder: RecorderType) => void;
   setAudioBlob: (blob: AudioBlobType) => void;
-  setMediaStream: (stream: MediaStreamType) => void;
 }
 
 const RecorderContext = createContext<RecorderContextType | undefined>(
@@ -21,20 +16,17 @@ interface Props {
   children: React.ReactNode;
 }
 
+/**
+ * Provides a context for audio recording, including the audio blob and any associated metadata or settings.
+ */
 export const RecorderProvider: React.FC<Props> = ({ children }) => {
-  const [currentRecorder, setCurrentRecorder] = useState<RecorderType>(null);
   const [audioBlob, setAudioBlob] = useState<AudioBlobType>(null);
-  const [mediaStream, setMediaStream] = useState<MediaStreamType>(null);
 
   return (
     <RecorderContext.Provider
       value={{
-        currentRecorder,
         audioBlob,
-        mediaStream,
-        setCurrentRecorder,
         setAudioBlob,
-        setMediaStream,
       }}
     >
       {children}
