@@ -1,65 +1,60 @@
 import express from 'express';
 import multer from 'multer';
-import { uploadAudioToS3, deleteAudioFromS3 } from '../services/AWSService';
+import { uploadAudioToS3 } from '../services/AWSService';
+
+const router = express.Router();
+
+const storage = multer.memoryStorage(); // Store the file in memory
+const upload = multer({ storage: storage });
+
 import { Note } from '../models/Note';
 import { Project } from '../models/Project';
 
-const router = express.Router();
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-const PROJECT_NAME = 'TestProject';
-const FAILED_TO_UPLOAD_MESSAGE = 'Failed to upload.';
+router.post('/upload', upload.single('audio'), async (req, res) => {
+  if (!req.file || !req.file.buffer) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'No file uploaded.' });
+  }
 
-router.post('/audio/upload', upload.single('audio'), async (req, res) => {
   try {
-    validateRequest(req);
-
     const audioBuffer = req.file.buffer;
-    const url = await handleAudioUpload(audioBuffer);
+    const url = await uploadAudioToS3(audioBuffer);
 
-    const noteId = await saveNote(url);
-    res.json({ success: true, noteId, url });
+    // Get the TestProject ID
+    const testProject = await Project.findOne({ projectName: 'TestProject' });
+
+    if (!testProject) {
+      throw new Error('TestProject not found');
+    }
+
+    // Create a new Note entry with the URL and associate with TestProject
+    const note = new Note({
+      audioLocation: url,
+      projectId: testProject._id,
+      noteName: new Date().toISOString(), // Using date as note name for now.
+    });
+
+    await note.save();
+
+    res.json({ success: true, noteId: note._id, url });
   } catch (error) {
-    handleError(error, res);
+    if (error instanceof Error) {
+      console.error('Error in /upload route:', error.message);
+
+      if (error.message.includes('Failed to upload audio to S3')) {
+        return res.status(500).json({
+          success: false,
+          message:
+            'Failed to upload audio to S3. Please check AWS configurations.',
+        });
+      }
+    } else {
+      console.error('An unexpected error occurred:', error);
+    }
+
+    res.status(500).json({ success: false, message: 'Failed to upload.' });
   }
 });
-
-function validateRequest(req) {
-  if (!req.file || !req.file.buffer) {
-    throw new Error('No file uploaded.');
-  }
-}
-
-async function handleAudioUpload(audioBuffer: Buffer): Promise<string> {
-  const url = await uploadAudioToS3(audioBuffer);
-  const testProject = await Project.findOne({ projectName: PROJECT_NAME });
-
-  if (!testProject) {
-    await deleteAudioFromS3(url);
-    throw new Error('TestProject not found');
-  }
-  return url;
-}
-
-async function saveNote(url: string): Promise<string> {
-  const testProject = await Project.findOne({ projectName: PROJECT_NAME });
-  const note = new Note({
-    audioLocation: url,
-    projectId: testProject._id,
-    noteName: new Date().toISOString(),
-  });
-  await note.save();
-  return note._id;
-}
-
-function handleError(error, res) {
-  if (error.message.includes('Failed to upload audio to S3')) {
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to upload audio to S3. Please check AWS configurations.',
-    });
-  }
-  res.status(500).json({ success: false, message: FAILED_TO_UPLOAD_MESSAGE });
-}
 
 export default router;
