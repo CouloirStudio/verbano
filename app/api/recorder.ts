@@ -18,9 +18,10 @@ export class Recorder {
   // Request access to the user's microphone
   async initialize(): Promise<void> {
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-      //Feature is not supported in browser
-      //return a custom error
-      return Promise.reject(new Error('Your browser is incompatible.'));
+      // Feature is not supported in browser
+      return Promise.reject(
+        new Error('Your browser does not support audio recording.'),
+      );
     }
 
     try {
@@ -31,14 +32,27 @@ export class Recorder {
 
       this.mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          // at a later date if we want to we can set a timeslice so that it gradually sends the audio instead of all at once at the end.
           this.audioChunks.push(event.data);
         }
       };
     } catch (error) {
-      // error accessing microphone
-      // return custom error
-      return Promise.reject(new Error('Cannot access the microphone.'));
+      // Enhanced error handling for permissions
+      if (error.name === 'NotAllowedError') {
+        return Promise.reject(
+          new Error(
+            'Microphone access is denied. Please allow access to continue.',
+          ),
+        );
+      } else if (error.name === 'NotFoundError') {
+        return Promise.reject(new Error('No microphone found on this device.'));
+      } else {
+        // General error accessing microphone
+        return Promise.reject(
+          new Error(
+            'Cannot access the microphone. Please ensure you have a working microphone and try again.',
+          ),
+        );
+      }
     }
   }
 
@@ -50,26 +64,27 @@ export class Recorder {
     }
   }
 
+  //...existing code
+
   // Stop recording
   stopRecording(): Promise<Blob> {
     return new Promise((resolve) => {
       if (!this.mediaRecorder) {
         throw new Error('Media Recorder is not instantiated.');
       }
-      //save mime type to set the Blob type later
       const mimeType = this.mediaRecorder.mimeType;
 
-      //listen to the stop event in order to create & return a single Blob object
-      this.mediaRecorder.addEventListener('stop', () => {
-        //create a single blob object, as we might have gathered a few Blob objects that needs to be joined as one
+      const onStop = () => {
         const audioBlob = new Blob(this.audioChunks, { type: mimeType });
-
         if (this.audioChunks.length === 0) {
           throw new Error('No audio data recorded.');
         }
-        //resolve promise with the single audio blob representing the recorded audio
         resolve(audioBlob);
-      });
+
+        // Cleanup event listener
+        this.mediaRecorder.removeEventListener('stop', onStop);
+      };
+      this.mediaRecorder.addEventListener('stop', onStop);
       this.mediaRecorder.stop();
     });
   }

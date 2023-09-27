@@ -15,7 +15,6 @@ const useAudioManager = () => {
     'idle' | 'recording' | 'processing'
   >('idle');
 
-
   const handleError = (error: any) => {
     console.error(error);
     setErrorMessage(`${error.message}`);
