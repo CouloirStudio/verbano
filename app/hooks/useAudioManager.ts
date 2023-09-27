@@ -15,11 +15,17 @@ const useAudioManager = () => {
 
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
-  const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'processing'>('idle');
+  const [recordingState, setRecordingState] = useState<
+    'idle' | 'recording' | 'processing'
+  >('idle');
 
-  const handleError = (message: string, error: any) => {
+  const handleError = (message: string, error: unknown) => {
     console.error(message, error);
-    setErrorMessage(`${message} ${error.message}`);
+    let errorMessage = 'An unexpected error occurred';
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      errorMessage = (error as { message?: string }).message || errorMessage;
+    }
+    setErrorMessage(`${message} ${errorMessage}`);
     setIsError(true);
     setRecordingState('idle');
   };
@@ -52,13 +58,13 @@ const useAudioManager = () => {
           setAudioBlob(blob);
           currentRecorder.destroy();
           setCurrentRecorder(null);
-          
+
           // Cleaning up the media stream immediately after recording stops
           if (mediaStream) {
             mediaStream.getTracks().forEach((track) => track.stop());
             setMediaStream(null);
           }
-          
+
           setRecordingState('idle');
         });
       }
