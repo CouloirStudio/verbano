@@ -1,6 +1,15 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  extends: ['next/core-web-vitals', 'plugin:react/recommended', 'plugin:@typescript-eslint/recommended', 'plugin:jsx-a11y/recommended', 'plugin:prettier/recommended', 'plugin:testing-library/react', 'plugin:jest-dom/recommended', 'plugin:storybook/recommended'],
+  extends: [
+    'next/core-web-vitals',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:prettier/recommended',
+    'plugin:testing-library/react',
+    'plugin:jest-dom/recommended',
+    'plugin:storybook/recommended',
+  ],
   plugins: ['react', '@typescript-eslint', 'jsx-a11y', 'prettier'],
   env: {
     browser: true,
