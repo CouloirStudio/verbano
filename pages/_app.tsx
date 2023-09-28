@@ -1,11 +1,13 @@
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import '../styles/globals.scss';
-import type { AppProps } from 'next/app';
+import type {AppProps} from 'next/app';
 import Layout from '../app/components/Layout/index';
-import { ProjectProvider } from '../app/contexts/ProjectContext';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import {ProjectProvider} from '../app/contexts/ProjectContext';
+import {ApolloClient, ApolloProvider, InMemoryCache} from '@apollo/client';
+import {ErrorModalContextProvider} from "@/app/contexts/ErrorModalContext";
+import ErrorModal from "@/app/components/ErrorModal";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({Component, pageProps}: AppProps) {
   const router = useRouter();
   const isLoginOrRegisterPage = ['/login', '/register'].includes(
     router.pathname,
@@ -18,7 +20,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const PageContent = (
     <ApolloProvider client={client}>
-      <Component {...pageProps} />
+      <ErrorModalContextProvider>
+        <ErrorModal/>
+        <Component {...pageProps} />
+      </ErrorModalContextProvider>
     </ApolloProvider>
   );
 

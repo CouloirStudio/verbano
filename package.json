@@ -77,6 +77,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-google-button": "^0.7.2",
+    "react-icons": "^4.11.0",
     "recordrtc": "^5.6.2",
     "sass": "^1.66.1",
     "ts-jest": "^29.1.1",
