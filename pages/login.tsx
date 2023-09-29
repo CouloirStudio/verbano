@@ -61,7 +61,7 @@ const LoginPage = () => {
               backgroundColor: '#de5246',
             }
           }} startIcon={<FaGoogle/>} variant="contained" color="primary" onClick={() => {
-            window.open('http://localhost:3000/auth/google');
+            window.location.href = 'http://localhost:3000/auth/google';
           }}>Login with Google</Button>
           <Divider variant="middle"/>
 
