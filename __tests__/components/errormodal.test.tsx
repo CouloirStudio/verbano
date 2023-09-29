@@ -1,11 +1,8 @@
-import React, { useEffect } from 'react';
-import { render, screen } from '@testing-library/react';
-import ErrorModal from '@/app/components/ErrorModal';
-import '@testing-library/jest-dom';
-import {
-  ErrorModalContextProvider,
-  useErrorModalContext,
-} from '@/app/contexts/ErrorModalContext';
+import React, { useEffect } from "react";
+import { render, screen } from "@testing-library/react";
+import ErrorModal from "@/app/components/ErrorModal";
+import { expect } from "@jest/globals";
+import { ErrorModalContextProvider, useErrorModalContext } from "@/app/contexts/ErrorModalContext";
 
 // This is a simple set of tests for the ErrorModal component and the accompanying ErrorModalContext.
 describe('ErrorModal Component', () => {
@@ -40,6 +37,7 @@ describe('ErrorModal Component', () => {
         <TestingComponent />
       </ErrorModalContextProvider>,
     );
+
     expect(screen.getByText('banana')).toBeInTheDocument();
   });
 });
