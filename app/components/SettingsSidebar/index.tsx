@@ -1,5 +1,5 @@
 import styles from './settingsSidebar.module.scss';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import Link from 'next/link';
 
 export const SettingsSidebar = () => {
@@ -22,17 +22,16 @@ export const SettingsSidebar = () => {
     }
 
     const settingsOptions: string[] = [
-        'Go Back',
-        // `${DummyUser.firstName}  ${DummyUser.lastName}`,
-        // 'Profile',
-        'General',
+        `Welcome ${DummyUser.firstName}`,
+        'Back to Home',
+        'Profile',
+        // 'General',
         // 'Appearance',
         //'Security',
-        'Login Credentials',
         // 'Two-Factor Authentication',
         // 'Billing',
         // 'Manage Billing',
-        'Delete Account',
+        // 'Delete Account',
         'Logout',
     ];
 
@@ -40,21 +39,19 @@ export const SettingsSidebar = () => {
         <div className={`${styles.container} ${styles.fullHeight}`}>
             {settingsOptions.map((settingsOption, index) => (
                 <ul key={index} className={styles.customUl}>
-                    {index === 1 || index === 5 || index === 8 ? (
-                        <li className={`${styles.nonClickable} ${styles.nonClickableLI}`}>
+                    <li>
+                        <Link
+                            href={index === 1 ? '/' : `/settings/${settingsOption.toLowerCase()}`}>
                             {settingsOption}
-                        </li>
-                    ) : (
-                        <li>
-                            <Link
-                                href={index === 0 ? '/' : `/settings/${settingsOption.toLowerCase()}`}
-                            >
-                                    {settingsOption}
-                            </Link>
-                        </li>
-                    )}
+                        </Link>
+                    </li>
                 </ul>
             ))}
         </div>
     );
 };
+// {index === 1 || index === 5 || index === 8 ? (
+//     <li className={`${styles.nonClickable} ${styles.nonClickableLI}`}>
+//         {settingsOption}
+//     </li>
+// ) :
