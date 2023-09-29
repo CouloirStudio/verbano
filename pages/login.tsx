@@ -1,14 +1,17 @@
 import styles from '../styles/login.module.scss';
 import {useState} from 'react';
 import {useMutation} from '@apollo/client';
-import GoogleButton from 'react-google-button';
 import EmailField from "../app/components/Login/EmailField";
+
 
 import {CURRENT_USER_QUERY} from '../app/middleware/queries';
 import {LOGIN_MUTATION} from '../app/middleware/mutations';
 import PasswordField from "@/app/components/Login/PasswordField";
 import {ErrorModalContextProvider, useErrorModalContext} from "@/app/contexts/ErrorModalContext";
 import ErrorModal from "@/app/components/ErrorModal";
+import {Button, Divider} from "@mui/material";
+import {FaGoogle} from "react-icons/fa";
+
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -36,6 +39,9 @@ const LoginPage = () => {
     try {
       const result = await login({variables: user});
       console.log(result);
+
+      // TODO: Redirect to home page, but safely, maybe with the router or something. Don't really know how to do it.
+      window.location.href = '/';
     } catch (e: any) {
       setErrorMessage(e.message || 'An unknown error occurred');
       setIsError(true);
@@ -45,23 +51,36 @@ const LoginPage = () => {
   return (
     <ErrorModalContextProvider>
       <div className={styles.container}>
-        <div className={styles.loginForm}>
-
-          <ErrorModal/>
-          <h2>Login</h2>
-          <form onSubmit={handleSubmit}>
-
-            <EmailField value={username} onChange={(e) => setUsername(e.target.value)}/>
-            <PasswordField value={password} onChange={(e) => setPassword(e.target.value)}/>
-            <button type="submit">Login</button>
-          </form>
-
-        </div>
-        <GoogleButton
-          onClick={() => {
+        <div className={styles.loginContainer}>
+          <h1>Login</h1>
+          <p>Don't have an account? <a href={"/register"}>Register here!</a></p>
+          <Divider variant="middle"/>
+          <Button sx={{
+            backgroundColor: '#de5246',
+            '&:hover': {
+              backgroundColor: '#de5246',
+            }
+          }} startIcon={<FaGoogle/>} variant="contained" color="primary" onClick={() => {
             window.open('http://localhost:3000/auth/google');
-          }}
-        />
+          }}>Login with Google</Button>
+          <Divider variant="middle"/>
+
+          <div className={styles.loginForm}>
+
+            <ErrorModal/>
+
+            <form onSubmit={handleSubmit}>
+
+              <EmailField value={username} onChange={(e) => setUsername(e.target.value)}/>
+              <PasswordField value={password} onChange={(e) => setPassword(e.target.value)}/>
+              <Button sx={{
+                width: '100%',
+              }} variant="contained" color="primary" type="submit">Login</Button>
+            </form>
+          </div>
+        </div>
+
+
       </div>
     </ErrorModalContextProvider>
   );
