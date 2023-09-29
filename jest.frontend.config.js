@@ -8,7 +8,7 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import("jest").Config} */
 const config = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.mjs'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
