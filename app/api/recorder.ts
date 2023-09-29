@@ -57,7 +57,6 @@ export class Recorder {
             new Error('No microphone found on this device.'),
           );
         } else {
-          console.log(error);
           return Promise.reject(
             new Error(
               'Cannot access the microphone. Please ensure you have a working microphone and try again.',
@@ -75,7 +74,6 @@ export class Recorder {
     }
     this.audioChunks = [];
     this.mediaRecorder.start();
-    console.log('Recorder started.');
   }
 
   // Stop recording
@@ -98,12 +96,10 @@ export class Recorder {
         if (this.mediaRecorder) {
           // Cleanup event listener
           this.mediaRecorder.removeEventListener('stop', onStop);
-          console.log('listener removed.');
         }
       };
       this.mediaRecorder.addEventListener('stop', onStop);
       this.mediaRecorder.stop();
-      console.log('Recorder stopped');
     });
   }
 
@@ -115,7 +111,6 @@ export class Recorder {
       });
       this.mediaStream = undefined;
       this.mediaRecorder = undefined;
-      console.log('Recorder has been reset.');
     }
   }
 }
