@@ -1,27 +1,38 @@
+// Required imports
 import 'dotenv/config';
-import express, { json } from 'express';
+import express, {json} from 'express';
 import next from 'next';
 import cors from 'cors';
 import http from 'http';
-import { connectDB } from '../app/models/Database';
+// Database connection setup
+import {connectDB} from '../app/models/Database';
+
+// Import GraphQL type definitions and resolvers
 import passport from '../config/passport';
-import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
+import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
 import session from 'express-session';
-import { randomUUID } from 'crypto';
+// import { buildContext } from 'graphql-passport';
+import {randomUUID} from 'crypto';
 import audioRoutes from '../app/routes/audioRoutes';
+
+// GraphQL type definitions and resolvers
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
-import { buildContext } from 'graphql-passport';
-import { User } from '../app/models';
+import {buildContext} from 'graphql-passport';
+import {User} from '../app/models';
 
+// Server configuration
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev });
+const nextApp = next({dev});
 const handle = nextApp.getRequestHandler();
 
+/**
+ * Creates an Express app instance with the necessary middleware.
+ * @returns The configured Express app instance.
+ */
 export function createApp() {
   const app = express();
-
   app.use(
     session({
       genid: (_req) => randomUUID(),
@@ -31,7 +42,9 @@ export function createApp() {
     }),
   );
 
-  app.get('/auth/google', passport.authenticate('google'));
+  app.get('/auth/google', passport.authenticate('google', {
+    prompt: 'select_account',
+  }),);
   app.get(
     '/auth/google/callback',
     passport.authenticate('google', {
@@ -46,6 +59,7 @@ export function createApp() {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Middleware setup: Enable CORS and handle JSON requests
   const corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
@@ -53,14 +67,20 @@ export function createApp() {
   app.use(cors(corsOptions));
   app.use(json());
   app.use('/audio', audioRoutes);
-
   return app;
 }
 
+/**
+ * Initializes and starts the Apollo Server with Express and Next.js.
+ * @param app - The Express app instance to which the Apollo Server is attached.
+ * @param testPort - Optional. For testing, it provides a dynamic port.
+ * @returns - Returns the HTTP server instance.
+ */
 export async function startApolloServer(
   app: express.Express,
   testPort?: number,
 ): Promise<http.Server> {
+  // MongoDB connection
   await connectDB()
     .then(() => {
       console.log('Connected to MongoDB');
@@ -69,34 +89,40 @@ export async function startApolloServer(
       console.error('Error connecting to MongoDB:', err);
     });
 
+  // Prepare Next.js app
   await nextApp.prepare();
 
+  // Apollo Server setup
   const httpServer = http.createServer(app);
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    introspection: dev,
+    introspection: dev, // enable introspection in development
     playground: dev
       ? {
-          settings: {
-            'request.credentials': 'same-origin',
-          },
-        }
+        settings: {
+          'request.credentials': 'same-origin',
+        },
+      }
       : false,
-    context: ({ req, res }) => buildContext({ req, res, User }),
+    context: ({req, res}) => buildContext({req, res, User}),
   } as Config<ExpressContext>);
 
+  // Starting Apollo Server before Express integration
   await server.start();
-  server.applyMiddleware({ app, cors: false });
 
+  server.applyMiddleware({app, cors: false});
+
+  // Handle other requests with Next.js
   app.all('*', (req, res) => {
     return handle(req, res);
   });
 
   const actualPort = testPort !== undefined ? testPort : port;
 
+  // Start the HTTP server
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: actualPort }, resolve),
+    httpServer.listen({port: actualPort}, resolve),
   );
 
   if (!testPort) {
@@ -107,10 +133,8 @@ export async function startApolloServer(
   return httpServer;
 }
 
-// Initialize and start the server only if NOT in a test environment
-if (process.env.NODE_ENV !== 'test') {
-  const app = createApp();
-  startApolloServer(app).catch((error) => {
-    console.error('Failed to start server:', error);
-  });
-}
+// Initialize the app and start the server
+const app = createApp();
+startApolloServer(app).catch((error) => {
+  console.error('Failed to start server:', error);
+});

@@ -1,0 +1,47 @@
+.inputField {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  width: 100%;
+
+
+  input {
+    padding: 10px 35px;
+    font-size: 1rem;
+    flex: 1;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+
+  input:focus ~ span,
+  input:valid ~ span {
+    transform: translate(10px, -8px);
+    font-size: .8rem;
+    color: mediumpurple;
+    padding: 0 5px;
+    background-color: #f4f4f4;
+  }
+
+
+  .icon {
+    position: absolute;
+    left: 0;
+    margin-right: 8px;
+    padding: 10px 10px;
+    color: gray;
+
+  }
+
+  span {
+    font-size: .8rem;
+    position: absolute;
+    left: 0;
+    padding: 11px 35px;
+    pointer-events: none;
+    text-transform: uppercase;
+    color: gray;
+    transition: 0.5s;
+  }
+}
