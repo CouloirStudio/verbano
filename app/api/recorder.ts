@@ -1,8 +1,8 @@
 export class Recorder {
   private static instance: Recorder | undefined;
-  private mediaStream: MediaStream | undefined;
-  private mediaRecorder: MediaRecorder | undefined;
-  private audioChunks: Blob[] = [];
+  public audioChunks: Blob[] = [];
+  public mediaStream: MediaStream | undefined;
+  public mediaRecorder: MediaRecorder | undefined;
 
   // constructor for getting empty Recorder
   private constructor() {}
@@ -25,52 +25,67 @@ export class Recorder {
     }
 
     try {
+      // Get the microphone stream from the browser.
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
       });
+      // Create a MediaRecorder object
       this.mediaRecorder = new MediaRecorder(this.mediaStream);
 
+      // Add event that catches audio chunks from the recorder.
       this.mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           this.audioChunks.push(event.data);
         }
       };
+      console.log('Recorder initialized.');
     } catch (error) {
       // Enhanced error handling for permissions
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (error.name === 'NotAllowedError') {
         return Promise.reject(
           new Error(
             'Microphone access is denied. Please allow access to continue.',
           ),
         );
-      } else if (error.name === 'NotFoundError') {
-        return Promise.reject(new Error('No microphone found on this device.'));
       } else {
-        // General error accessing microphone
-        return Promise.reject(
-          new Error(
-            'Cannot access the microphone. Please ensure you have a working microphone and try again.',
-          ),
-        );
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (error.name === 'NotFoundError') {
+          return Promise.reject(
+            new Error('No microphone found on this device.'),
+          );
+        } else {
+          console.log(error);
+          return Promise.reject(
+            new Error(
+              'Cannot access the microphone. Please ensure you have a working microphone and try again.',
+            ),
+          );
+        }
       }
     }
   }
 
   // Start recording
-  startRecording(): void {
-    if (this.mediaRecorder) {
-      this.audioChunks = [];
-      this.mediaRecorder.start();
+  startRecording(): any {
+    if (!this.mediaRecorder) {
+      throw new Error('Media Recorder is not initialized');
     }
+    this.audioChunks = [];
+    this.mediaRecorder.start();
+    console.log('Recorder started.');
   }
-
-  //...existing code
 
   // Stop recording
   stopRecording(): Promise<Blob> {
+    if (!this.mediaRecorder) {
+      throw new Error('Media Recorder is not initialized');
+    }
     return new Promise((resolve) => {
       if (!this.mediaRecorder) {
-        throw new Error('Media Recorder is not instantiated.');
+        return Promise.reject(new Error('Media Recorder is not initialized'));
       }
       const mimeType = this.mediaRecorder.mimeType;
 
@@ -80,12 +95,15 @@ export class Recorder {
           throw new Error('No audio data recorded.');
         }
         resolve(audioBlob);
-
-        // Cleanup event listener
-        this.mediaRecorder.removeEventListener('stop', onStop);
+        if (this.mediaRecorder) {
+          // Cleanup event listener
+          this.mediaRecorder.removeEventListener('stop', onStop);
+          console.log('listener removed.');
+        }
       };
       this.mediaRecorder.addEventListener('stop', onStop);
       this.mediaRecorder.stop();
+      console.log('Recorder stopped');
     });
   }
 
@@ -97,6 +115,7 @@ export class Recorder {
       });
       this.mediaStream = undefined;
       this.mediaRecorder = undefined;
+      console.log('Recorder has been reset.');
     }
   }
 }
