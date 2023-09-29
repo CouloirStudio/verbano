@@ -7,9 +7,9 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const isLoginOrRegisterPage = ['/login', '/register'].includes(
-    router.pathname,
-  );
+  const isSettingsPage = router.pathname.startsWith('/settings');
+  const isLoginOrRegisterOrSettingsPage = ['/login', '/register']
+          .includes(router.pathname) || router.pathname.startsWith('/settings');
 
   const client: ApolloClient<unknown> = new ApolloClient({
     uri: 'http://localhost:3000/graphql',
@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ProjectProvider>
-      {isLoginOrRegisterPage ? PageContent : <Layout>{PageContent}</Layout>}
+      {isLoginOrRegisterOrSettingsPage ? PageContent : <Layout>{PageContent}</Layout>}
     </ProjectProvider>
   );
 }
