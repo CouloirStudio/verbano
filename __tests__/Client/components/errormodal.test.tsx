@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { render, screen } from '@testing-library/react';
 import ErrorModal from '@/app/components/ErrorModal';
-import '@testing-library/jest-dom';
+import { expect } from '@jest/globals';
 import {
   ErrorModalContextProvider,
   useErrorModalContext,
@@ -40,6 +40,7 @@ describe('ErrorModal Component', () => {
         <TestingComponent />
       </ErrorModalContextProvider>,
     );
+
     expect(screen.getByText('banana')).toBeInTheDocument();
   });
 });
