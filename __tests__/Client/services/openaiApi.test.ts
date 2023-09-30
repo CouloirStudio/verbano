@@ -1,4 +1,4 @@
-import OpenAIService from "../../app/services/OpenAIService";
+import OpenAIService from "../../../app/services/OpenAIService";
 import "openai/shims/node";
 import { expect } from "@jest/globals";
 

@@ -1,10 +1,10 @@
 import request from 'supertest';
 import express from 'express';
-import audioRoutes from '../../app/routes/audioRoutes';
-import { startApolloServer, createApp } from '../../server/server';
+import audioRoutes from '../../../app/routes/audioRoutes';
+import { createApp, startApolloServer } from '../../../server/server';
 import http from 'http';
 
-jest.mock('../../app/models/Database', () => ({
+jest.mock('../../../app/models/Database', () => ({
   connectDB: jest.fn().mockResolvedValue(null),
 }));
 
