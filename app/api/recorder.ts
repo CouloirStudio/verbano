@@ -17,8 +17,8 @@ export class Recorder {
 
   // Request access to the user's microphone
   async initialize(): Promise<void> {
+    // Check if the feature is supported in the browser
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-      // Feature is not supported in browser
       return Promise.reject(
         new Error('Your browser does not support audio recording.'),
       );
@@ -41,8 +41,6 @@ export class Recorder {
       console.log('Recorder initialized.');
     } catch (error) {
       // Enhanced error handling for permissions
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (error.name === 'NotAllowedError') {
         return Promise.reject(
           new Error(
@@ -50,8 +48,6 @@ export class Recorder {
           ),
         );
       } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (error.name === 'NotFoundError') {
           return Promise.reject(
             new Error('No microphone found on this device.'),
@@ -72,6 +68,7 @@ export class Recorder {
     if (!this.mediaRecorder) {
       throw new Error('Media Recorder is not initialized');
     }
+    // making sure that chunks are reset
     this.audioChunks = [];
     this.mediaRecorder.start();
   }
@@ -81,14 +78,19 @@ export class Recorder {
     if (!this.mediaRecorder) {
       throw new Error('Media Recorder is not initialized');
     }
+    // audio chunks get resolved into an audio blob
     return new Promise((resolve) => {
       if (!this.mediaRecorder) {
         return Promise.reject(new Error('Media Recorder is not initialized'));
       }
+      // getting the mime type for creating the audio blob
       const mimeType = this.mediaRecorder.mimeType;
 
+      // function to be added to the recorder that will trigger when the 'stop' event is fired from the Media Recorder object
+      // It is done this way so that it can be added and removed.
       const onStop = () => {
         const audioBlob = new Blob(this.audioChunks, { type: mimeType });
+        // Checking for no audio
         if (this.audioChunks.length === 0) {
           throw new Error('No audio data recorded.');
         }
@@ -98,12 +100,14 @@ export class Recorder {
           this.mediaRecorder.removeEventListener('stop', onStop);
         }
       };
+      // attach the event listener we just defined
       this.mediaRecorder.addEventListener('stop', onStop);
+      // this will fire the 'stop' event that triggers he onStop
       this.mediaRecorder.stop();
     });
   }
 
-  // Clean up resources
+  // Clean up resources such as media streams and reset the recorder for the next use
   cleanup(): void {
     if (this.mediaStream) {
       this.mediaStream.getTracks().forEach((track) => {
