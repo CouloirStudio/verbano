@@ -1,24 +1,24 @@
+import { useQuery } from '@apollo/client';
+import { GET_PROJECTS_AND_NOTES } from '../../graphql/queries/getNotes';
 import styles from './sidebar.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import Project from '../Project';
-import Note from '../Note';
+import { NoteType, ProjectType } from '../../resolvers/types';
 
 function Sidebar() {
   const { setSelectedNotes } = useProjectContext();
+  const { data, loading, error } = useQuery<{ listProjects: ProjectType[] }>(
+    GET_PROJECTS_AND_NOTES,
+  );
 
-  // Dummy data for projects and their names
-  const projects = [
-    { id: 1, name: 'Project Alpha' },
-    { id: 2, name: 'Project Beta' },
-    { id: 3, name: 'Project Gamma' },
-    { id: 4, name: 'Project Delta' },
-  ];
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  const handleProjectClick = (notes: React.ReactNode[]) => {
+  const handleProjectClick = (notes: NoteType[]) => {
     setSelectedNotes(notes);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, notes: React.ReactNode[]) => {
+  const handleKeyDown = (e: React.KeyboardEvent, notes: NoteType[]) => {
     if (e.key === 'Enter' || e.key === 'Space') {
       handleProjectClick(notes);
     }
@@ -26,23 +26,17 @@ function Sidebar() {
 
   return (
     <div className={styles.sidebar}>
-      {projects.map((project) => {
-        const projectNotes = Array.from({ length: 10 }).map((_, idx) => (
-          <Note key={idx} projectName={project.name} noteNumber={idx + 1} />
-        ));
-
-        return (
-          <div
-            key={project.id}
-            onClick={() => handleProjectClick(projectNotes)}
-            onKeyDown={(e) => handleKeyDown(e, projectNotes)}
-            role="button"
-            tabIndex={0}
-          >
-            <Project name={project.name}>{projectNotes}</Project>
-          </div>
-        );
-      })}
+      {data?.listProjects.map((project: ProjectType) => (
+        <div
+          key={project.id}
+          onClick={() => handleProjectClick(project.notes)}
+          onKeyDown={(e) => handleKeyDown(e, project.notes)}
+          role="button"
+          tabIndex={0}
+        >
+          <Project name={project.name} notes={project.notes} />
+        </div>
+      ))}
     </div>
   );
 }

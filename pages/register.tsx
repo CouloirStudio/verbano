@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import GoogleButton from 'react-google-button';
-
-const SIGNUP_MUTATION = require('../app/middleware/mutations');
+import styles from '../styles/login.module.scss';
+import { SIGNUP_MUTATION } from '../app/graphql/mutations/addUsers';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');

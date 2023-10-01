@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import GoogleButton from 'react-google-button';
 
-import { CURRENT_USER_QUERY } from '../app/middleware/queries';
-import { LOGIN_MUTATION } from '../app/middleware/mutations';
+import { CURRENT_USER_QUERY } from '../app/graphql/queries/getUsers';
+import { LOGIN_MUTATION } from '../app/graphql/mutations/addUsers';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
