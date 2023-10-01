@@ -10,6 +10,7 @@ import { UPDATE_FULL_NAME_MUTATION } from '../../app/graphql/mutations/addSettin
 import UpdateEmailField from '@/app/components/Settings/UpdateEmailField';
 import UpdateFullName from '@/app/components/Settings/UpdateFullNameField';
 import { SettingsSidebar } from '@/app/components/Settings/SettingsSidebar';
+import { useErrorModalContext } from '../../app/contexts/ErrorModalContext';
 import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
 
 // Define an interface for the expected shape of the currentUser data
@@ -31,29 +32,58 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState('');
   const [hashedPassword, setHashedPassword] = useState(''); // Store the hashed password
   const [currentPassword, setCurrentPassword] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
-  const { loading, error, data } =
-    useQuery<CurrentUserData>(CURRENT_USER_QUERY);
 
-  // Use the useMutation hook to define the update function for your mutation
+  const { setErrorMessage, setIsError } = useErrorModalContext();
+
+  const { loading, error, data } = useQuery<CurrentUserData>(
+    CURRENT_USER_QUERY,
+    {
+      onError: (error) => {
+        // Handle errors from the query
+        console.error('Error fetching user data:', error.message);
+        setErrorMessage(error.message); // Set the error message from the error context
+        setIsError(true);
+      },
+    },
+  );
+
   const [updateFullName] = useMutation(UPDATE_FULL_NAME_MUTATION, {
+    onError: (error) => {
+      // Handle errors from the mutation
+      console.error('Error updating full name:', error.message);
+      setErrorMessage(error.message);
+      setIsError(true);
+    },
     // Define the update function to update the cache
     update: (cache, { data: { updateFullName } }) => {
-      // Read the current user's data from the cache
+      console.log('Received updateFullName data:', updateFullName);
+
       const userData = cache.readQuery<CurrentUserData>({
         query: CURRENT_USER_QUERY,
       });
 
-      if (userData && userData.currentUser) {
-        // Update the user's first name and last name in the cache
-        userData.currentUser.firstName = updateFullName.firstName;
-        userData.currentUser.lastName = updateFullName.lastName;
+      console.log('Current cache data:', userData);
 
-        // Write the updated data back to the cache
+      if (userData && userData.currentUser) {
+        // Create a deep copy of the user data
+        const updatedUserData = {
+          ...userData,
+          currentUser: {
+            ...userData.currentUser,
+            firstName: updateFullName.firstName,
+            lastName: updateFullName.lastName,
+          },
+        };
+
         cache.writeQuery({
           query: CURRENT_USER_QUERY,
-          data: userData,
+          data: updatedUserData,
         });
+
+        console.log('Updated cache data:', userData);
       }
     },
   });
@@ -71,14 +101,12 @@ const Profile = () => {
   }, [loading, error, data]);
 
   // Function to handle full name change
-  const handleFullNameChange = async () => {
+  const handleFullNameChange = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
     try {
       if (data && data.currentUser && data.currentUser.email) {
-        // Update state variables with new values
-        setFirstName(firstName); // Make sure firstName, lastName, and email are updated.
-        setLastName(lastName);
-        setEmail(email);
-
         const result = await updateFullName({
           variables: {
             email: email,
@@ -90,23 +118,26 @@ const Profile = () => {
         // Handle the result, e.g., show a success message or update state
         if (result && result.data && result.data.updateFullName) {
           const updatedUser = result.data.updateFullName;
-          setFirstName(updatedUser.firstName); // Update local state
+          setFirstName(updatedUser.firstName);
           setLastName(updatedUser.lastName);
           setEmail(updatedUser.email);
-          alert('Full name updated successfully!');
+          setSuccessMessage('Full name updated successfully!');
+          setIsSuccess(true);
         } else {
-          alert('Full name update failed.');
+          setErrorMessage('Full name update failed.');
+          setIsError(true);
         }
       } else {
         // Handle the case where data or currentUser is undefined
-        alert('User data is missing');
+        setErrorMessage('User data is missing.');
+        setIsError(true);
       }
     } catch (error) {
       // Log the specific error to the console
-      alert(error);
+      console.error('Error:', error);
       // Display an error message to the user
-      // alert('An error occurred while updating your full name');
-      // alert(error);
+      setErrorMessage('An error occurred while updating your full name.');
+      setIsError(true);
     }
   };
 
@@ -159,9 +190,12 @@ const Profile = () => {
           {/*<form onSubmit={handlePasswordChange}>*/}
           <form onSubmit={handleFullNameChange}>
             <UpdateFullName
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              firstName={firstName}
+              lastName={lastName}
+              onFirstNameChange={(e) => setFirstName(e.target.value)}
+              onLastNameChange={(e) => setLastName(e.target.value)}
             />
+
             <UpdateEmailField
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -10,7 +10,7 @@ interface EmailInputProps {
 const UpdateEmailField: React.FC<EmailInputProps> = ({ value, onChange }) => {
   return (
     <InputField label="Update Email" icon={<AiOutlineMail />}>
-      <input type="text" value={value} onChange={onChange} required={true} />
+      <input type="email" value={value} onChange={onChange} required />
     </InputField>
   );
 };

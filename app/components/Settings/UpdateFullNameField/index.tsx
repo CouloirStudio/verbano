@@ -3,15 +3,37 @@ import InputField from '@/app/components/Login/InputField';
 import { AiOutlineUser } from 'react-icons/ai';
 
 interface FullNameInputProps {
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  firstName: string;
+  lastName: string;
+  onFirstNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onLastNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const UpdateFullName: React.FC<FullNameInputProps> = ({ value, onChange }) => {
+const UpdateFullName: React.FC<FullNameInputProps> = ({
+  firstName,
+  lastName,
+  onFirstNameChange,
+  onLastNameChange,
+}) => {
   return (
-    <InputField label="Update Name" icon={<AiOutlineUser />}>
-      <input type="text" value={value} onChange={onChange} required={true} />
-    </InputField>
+    <div>
+      <InputField label="First Name" icon={<AiOutlineUser />}>
+        <input
+          type="text"
+          value={firstName}
+          onChange={onFirstNameChange}
+          required
+        />
+      </InputField>
+      <InputField label="Last Name" icon={<AiOutlineUser />}>
+        <input
+          type="text"
+          value={lastName}
+          onChange={onLastNameChange}
+          required
+        />
+      </InputField>
+    </div>
   );
 };
 
