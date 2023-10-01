@@ -1,7 +1,8 @@
-import { comparePasswords, hashPassword } from '../app/config/passport';
+import { comparePasswords, hashPassword } from '../../app/config/passport';
 import * as bcrypt from 'bcrypt';
+import { expect } from '@jest/globals';
 
-jest.mock('../app/models/User');
+jest.mock('../../app/models/User');
 
 jest.mock('bcrypt');
 
