@@ -2,14 +2,14 @@ import styles from './note.module.scss';
 
 type NoteProps = {
   projectName: string;
-  noteNumber: number;
+  noteName: string;
   children?: React.ReactNode;
 };
 
-function Note({ projectName, noteNumber }: NoteProps) {
+function Note({ projectName, noteName }: NoteProps) {
   return (
     <div className={styles.note}>
-      {projectName}: Note #{noteNumber}
+      {projectName}: Note {noteName}
     </div>
   );
 }

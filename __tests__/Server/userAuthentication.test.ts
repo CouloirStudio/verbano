@@ -1,4 +1,4 @@
-import { comparePasswords, hashPassword } from '../../config/passport';
+import { comparePasswords, hashPassword } from '../../app/config/passport';
 import * as bcrypt from 'bcrypt';
 import { expect } from '@jest/globals';
 
