@@ -5,8 +5,8 @@ import Layout from '../app/components/Layout/index';
 import { ProjectProvider } from '../app/contexts/ProjectContext';
 import { ApolloProvider } from '@apollo/client';
 import client from '../app/config/apolloClient';
-import { ErrorModalContextProvider } from '../app/contexts/ErrorModalContext'; // replace with your import path
-import ErrorModal from '../app/components/ErrorModal'; // replace with your import path
+import { ErrorModalContextProvider } from '../app/contexts/ErrorModalContext';
+import ErrorModal from '../app/components/ErrorModal';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
