@@ -3,20 +3,22 @@ import { GET_PROJECTS_AND_NOTES } from '../../graphql/queries/getNotes';
 import styles from './sidebar.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import Project from '../Project';
-import Note from '../Note';
+import { NoteType, ProjectType } from '../../resolvers/types';
 
 function Sidebar() {
   const { setSelectedNotes } = useProjectContext();
-  const { data, loading, error } = useQuery(GET_PROJECTS_AND_NOTES);
+  const { data, loading, error } = useQuery<{ listProjects: ProjectType[] }>(
+    GET_PROJECTS_AND_NOTES,
+  );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const handleProjectClick = (notes) => {
+  const handleProjectClick = (notes: NoteType[]) => {
     setSelectedNotes(notes);
   };
 
-  const handleKeyDown = (e, notes) => {
+  const handleKeyDown = (e: React.KeyboardEvent, notes: NoteType[]) => {
     if (e.key === 'Enter' || e.key === 'Space') {
       handleProjectClick(notes);
     }
@@ -24,7 +26,7 @@ function Sidebar() {
 
   return (
     <div className={styles.sidebar}>
-      {data.listProjects.map((project) => (
+      {data?.listProjects.map((project: ProjectType) => (
         <div
           key={project.id}
           onClick={() => handleProjectClick(project.notes)}
@@ -32,15 +34,7 @@ function Sidebar() {
           role="button"
           tabIndex={0}
         >
-          <Project name={project.name}>
-            {project.notes.map((note) => (
-              <Note
-                key={note.id}
-                projectName={project.name}
-                noteNumber={note.noteName}
-              />
-            ))}
-          </Project>
+          <Project name={project.name} notes={project.notes} />
         </div>
       ))}
     </div>

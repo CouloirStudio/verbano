@@ -42,3 +42,20 @@ export interface UpdateNoteArgs {
 export interface DeleteNoteArgs {
   id: string;
 }
+
+export type NoteType = {
+  id: string;
+  audioLocation: string;
+  dateCreated?: Date;
+  transcription?: string;
+  tags: string[];
+  projectId: string;
+  noteName: string;
+  noteDescription?: string;
+};
+
+export type ProjectType = {
+  id: string;
+  name: string;
+  notes: NoteType[];
+};
