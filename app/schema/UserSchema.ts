@@ -38,6 +38,7 @@ const typeDefs = gql`
     ): AuthPayload
     login(email: String!, password: String!): AuthPayload
     logout: Boolean
+    updateFullName(email: String!, firstName: String!, lastName: String!): User
   }
 `;
 
