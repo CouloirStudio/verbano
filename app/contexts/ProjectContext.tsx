@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
+import { NoteType } from '../resolvers/types';
 
 type ProjectContextType = {
-  selectedNotes: React.ReactNode[];
-  setSelectedNotes: (notes: React.ReactNode[]) => void;
+  selectedNotes: NoteType[];
+  setSelectedNotes: (notes: NoteType[]) => void;
 };
 
 type ProjectProviderProps = {
@@ -22,7 +23,7 @@ export const useProjectContext = () => {
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
-  const [selectedNotes, setSelectedNotes] = useState<React.ReactNode[]>([]);
+  const [selectedNotes, setSelectedNotes] = useState<NoteType[]>([]);
   return (
     <ProjectContext.Provider value={{ selectedNotes, setSelectedNotes }}>
       {children}
