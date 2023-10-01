@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { SettingsSidebar } from "@/app/components/SettingsSidebar";
+import { SettingsSidebar } from "../../app/components/Settings/SettingsSidebar";
 import styles from './/styles/globalSettings.module.scss'
 const General = () => {
     const [firstName, setFirstName] = useState('');
