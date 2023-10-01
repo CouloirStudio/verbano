@@ -1,37 +1,35 @@
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import '../styles/globals.scss';
-import type {AppProps} from 'next/app';
+import type { AppProps } from 'next/app';
 import Layout from '../app/components/Layout/index';
-import {ProjectProvider} from '../app/contexts/ProjectContext';
-import {ApolloClient, ApolloProvider, InMemoryCache} from '@apollo/client';
-import {ErrorModalContextProvider} from "@/app/contexts/ErrorModalContext";
-import ErrorModal from "@/app/components/ErrorModal";
+import { ProjectProvider } from '../app/contexts/ProjectContext';
+import { ApolloProvider } from '@apollo/client';
+import client from '../app/config/apolloClient';
+import { ErrorModalContextProvider } from '../app/contexts/ErrorModalContext'; // replace with your import path
+import ErrorModal from '../app/components/ErrorModal'; // replace with your import path
 
-function MyApp({Component, pageProps}: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const isSettingsPage = router.pathname.startsWith('/settings');
-  const isLoginOrRegisterOrSettingsPage = ['/login', '/register']
-          .includes(router.pathname) || router.pathname.startsWith('/settings');
-
-  const client: ApolloClient<unknown> = new ApolloClient({
-    uri: 'http://localhost:3000/graphql',
-    cache: new InMemoryCache(),
-  });
+  const isExcludedPage =
+    ['/login', '/register'].includes(router.pathname) ||
+    router.pathname.startsWith('/settings');
 
   const PageContent = (
     <ApolloProvider client={client}>
       <ErrorModalContextProvider>
-        <ErrorModal/>
-        <Component {...pageProps} />
+        <ErrorModal />
+        {isExcludedPage ? (
+          <Component {...pageProps} />
+        ) : (
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        )}
       </ErrorModalContextProvider>
     </ApolloProvider>
   );
 
-  return (
-    <ProjectProvider>
-      {isLoginOrRegisterOrSettingsPage ? PageContent : <Layout>{PageContent}</Layout>}
-    </ProjectProvider>
-  );
+  return <ProjectProvider>{PageContent}</ProjectProvider>;
 }
 
 export default MyApp;

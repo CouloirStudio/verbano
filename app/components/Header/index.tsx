@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './header.module.scss';
 import dynamic from 'next/dynamic';
-import { RecorderProvider } from '../../contexts/RecorderContext'; // Ensure the correct path
+import { RecorderProvider } from '../../contexts/RecorderContext';
 
 const Recorder = dynamic(() => import('../../components/Recorder'), {
   ssr: false,

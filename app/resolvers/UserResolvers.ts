@@ -1,18 +1,18 @@
-import {User} from '../models/User';
-import {hashPassword} from '../../config/passport';
+import { User } from '../models/User';
+import { hashPassword } from '../config/passport';
 
 const resolvers = {
   Query: {
     async currentUser(parent: any, args: any, context: any) {
-      return context.getUser()
+      return context.getUser();
     },
   },
 
   Mutation: {
     signup: async (
-        parent: any,
-        { firstName, lastName, email, password }: any,
-        context: any,
+      parent: any,
+      { firstName, lastName, email, password }: any,
+      context: any,
     ) => {
       // See if user exists
       const oldUser = await User.findOne({ email });
@@ -63,7 +63,14 @@ const resolvers = {
       });
     },
 
-    updateFullName: async (_: any, { email, firstName, lastName }: { email: string, firstName: string, lastName: string }) => {
+    updateFullName: async (
+      _: any,
+      {
+        email,
+        firstName,
+        lastName,
+      }: { email: string; firstName: string; lastName: string },
+    ) => {
       try {
         // Check if a user with the provided email exists
         const user = await User.findOne({ email });
