@@ -7,3 +7,66 @@
   display: flex;
   height: 100vh; /* Full viewport height */
 }
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+/* Styling for the subtitle */
+.infoContainer .subtitle1 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Styling for form labels */
+.infoContainer label {
+  display: block;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* Styling for form input fields */
+.infoContainer input {
+  //width: 100%;
+  //padding: 8px;
+  //font-size: 14px;
+  //border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+/* Styling for buttons */
+.updateButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff; /* Change to your desired button color */
+  color: #fff; /* Text color */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Styling for the "Danger Zone" heading */
+.infoContainer h3 {
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.deleteAccountButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ff0000; /* Red color, change as needed */
+  color: #fff; /* Text color */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+/* Styling for the "Delete Account" button */
+/* You can customize this button's color and styles as needed */
