@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { User } from '../app/models/User';
+import { User } from '../models/User';
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongoose';
 import { GraphQLLocalStrategy } from 'graphql-passport';

@@ -4,7 +4,7 @@ import next from 'next';
 import cors from 'cors';
 import http from 'http';
 import { connectDB } from '../app/models/Database';
-import passport from '../config/passport';
+import passport from '../app/config/passport';
 import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
 import session from 'express-session';
 import { randomUUID } from 'crypto';

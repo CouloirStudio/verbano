@@ -1,5 +1,5 @@
 import { User } from '../models/User';
-import { hashPassword } from '../../config/passport';
+import { hashPassword } from '../config/passport';
 
 const resolvers = {
   Query: {

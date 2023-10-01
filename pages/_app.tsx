@@ -3,7 +3,8 @@ import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Layout from '../app/components/Layout/index';
 import { ProjectProvider } from '../app/contexts/ProjectContext';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
+import client from '../app/config/apolloClient';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -11,21 +12,18 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.pathname,
   );
 
-  const client: ApolloClient<unknown> = new ApolloClient({
-    uri: 'http://localhost:3000/graphql',
-    cache: new InMemoryCache(),
-  });
-
-  const PageContent = (
-    <ApolloProvider client={client}>
-      <Component {...pageProps} />
-    </ApolloProvider>
-  );
-
   return (
-    <ProjectProvider>
-      {isLoginOrRegisterPage ? PageContent : <Layout>{PageContent}</Layout>}
-    </ProjectProvider>
+    <ApolloProvider client={client}>
+      <ProjectProvider>
+        {isLoginOrRegisterPage ? (
+          <Component {...pageProps} />
+        ) : (
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        )}
+      </ProjectProvider>
+    </ApolloProvider>
   );
 }
 

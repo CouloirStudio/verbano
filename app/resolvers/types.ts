@@ -1,8 +1,16 @@
 import { Request } from 'express';
+import { GraphQLResolveInfo } from 'graphql';
 
 export interface ResolverContext {
   req: Request;
 }
+
+export type Resolver<TArgs = unknown, TResult = unknown> = (
+  parent: unknown,
+  args: TArgs,
+  context: ResolverContext,
+  info: GraphQLResolveInfo,
+) => Promise<TResult>;
 
 export interface GetNoteArgs {
   id: string;

@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-interface INote extends Document {
+export interface INote extends Document {
   audioLocation: string;
   dateCreated?: Date;
   transcription?: string;
