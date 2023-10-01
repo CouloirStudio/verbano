@@ -61,7 +61,7 @@ export function createApp() {
 
   // Middleware setup: Enable CORS and handle JSON requests
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://studio.apollographql.com', '*'],
     credentials: true,
   };
   app.use(cors(corsOptions));
