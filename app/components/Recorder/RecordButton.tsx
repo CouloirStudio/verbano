@@ -13,6 +13,7 @@ const RecordButton: React.FC<RecordButtonProps> = ({
   theme = 'light', // Default to light theme if not provided
 }) => (
   <button
+    id={'recorderButton'}
     onClick={toggleRecording}
     className={`${styles.recorderButton} ${
       isRecording ? styles.recording : ''

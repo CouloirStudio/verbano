@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { uploadAudio } from '../api/audio';
 import { useRecorderContext } from '../contexts/RecorderContext';
 import { useErrorModalContext } from '../contexts/ErrorModalContext';
-import { Recorder } from '../api/recorder';
+import { AudioRecorder } from '../api/recorder';
 
 const useAudioManager = () => {
   // getting recorder instance
-  const mediaRecorder = Recorder.getRecorder();
+  const mediaRecorder = AudioRecorder.getRecorder();
   const { setAudioBlob } = useRecorderContext();
 
   const { setErrorMessage, setIsError } = useErrorModalContext();
