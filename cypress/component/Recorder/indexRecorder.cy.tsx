@@ -45,9 +45,7 @@ describe('<Recorder />', () => {
   });
 
   it('Renders Error Modal', () => {
-    cy.stub(navigator.mediaDevices, 'getUserMedia').returns(
-      new Error('Ruh Roh Raggy'),
-    );
+    cy.stub(navigator.mediaDevices, 'getUserMedia').returns(new Error());
     cy.get('#recorderButton').click();
     cy.get('#errorTitle').should('exist');
     cy.get('#errorMessage').should(
