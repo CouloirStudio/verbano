@@ -31,7 +31,12 @@ export function createApp() {
     }),
   );
 
-  app.get('/auth/google', passport.authenticate('google'));
+  app.get(
+    '/auth/google',
+    passport.authenticate('google', {
+      prompt: 'select_account',
+    }),
+  );
   app.get(
     '/auth/google/callback',
     passport.authenticate('google', {

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useMutation} from '@apollo/client';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import GoogleButton from 'react-google-button';
 import styles from '../styles/login.module.scss';
 import { SIGNUP_MUTATION } from '../app/graphql/mutations/addUsers';
@@ -22,7 +22,7 @@ const RegisterPage = () => {
     };
 
     try {
-      const result = await signup({variables: user});
+      const result = await signup({ variables: user });
       console.log(result);
     } catch (error) {
       console.error('Error signing up:', error);
