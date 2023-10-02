@@ -23,7 +23,9 @@ const ErrorModal = () => {
       {isError && (
         <div className={styles.ErrorModalOverlay}>
           <div className={styles.ErrorModal}>
-            <span className={styles.title}>Woopsies!</span>
+            <span id={'errorTitle'} className={styles.title}>
+              Woopsies!
+            </span>
             <p className={styles['modal-error']}>{errorMessage}</p>
             <button className={styles.button} onClick={dismissModal}>
               Dismiss

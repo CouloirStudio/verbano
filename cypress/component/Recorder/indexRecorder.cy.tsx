@@ -1,5 +1,5 @@
 import React from 'react';
-import Recorder from '../../app/components/Recorder';
+import Recorder from '../../../app/components/Recorder';
 import { RecorderProvider } from '@/app/contexts/RecorderContext';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
 
@@ -13,9 +13,9 @@ describe('<Recorder />', () => {
         </ErrorModalContextProvider>
       </RecorderProvider>,
     );
-    cy.get('button').click();
-
-    cy.get('button').should('have.text', 'Stop');
+    cy.get('#recorderButton').should('have.text', 'Start');
+    cy.get('#recorderButton').click();
+    cy.get('#recorderButton').should('have.text', 'Stop');
   });
 
   it('stops recording', () => {
@@ -26,10 +26,10 @@ describe('<Recorder />', () => {
         </ErrorModalContextProvider>
       </RecorderProvider>,
     );
-
-    cy.get('button').click();
-    cy.wait(2000);
-    cy.get('button').click();
+    cy.get('#recorderButton').click();
+    cy.wait(1000);
+    cy.get('#recorderButton').should('have.text', 'Stop');
+    cy.get('#recorderButton').click();
     cy.intercept(
       {
         method: 'POST',
@@ -37,5 +37,9 @@ describe('<Recorder />', () => {
       },
       ['url'],
     );
+    cy.wait(1000);
+    cy.get('#recorderButton').should('have.text', 'Start');
   });
+
+  it('Renders Error Modal', () => {});
 });

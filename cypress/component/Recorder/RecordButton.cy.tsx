@@ -1,5 +1,5 @@
 import React from 'react';
-import RecordButton from '../../app/components/Recorder/RecordButton';
+import RecordButton from '../../../app/components/Recorder/RecordButton';
 
 describe('<RecordButton />', () => {
   it('renders', () => {
