@@ -38,7 +38,6 @@ export class Recorder {
           this.audioChunks.push(event.data);
         }
       };
-      console.log('Recorder initialized.');
     } catch (error) {
       // Enhanced error handling for permissions
       if (error.name === 'NotAllowedError') {
@@ -53,6 +52,7 @@ export class Recorder {
             new Error('No microphone found on this device.'),
           );
         } else {
+          console.log('scooby');
           return Promise.reject(
             new Error(
               'Cannot access the microphone. Please ensure you have a working microphone and try again.',
