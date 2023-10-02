@@ -29,39 +29,31 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
-    - name: Check branch name and suggest tag
-      id: branch_check
+    - name: Install dependencies
+      run: yarn add @actions/core
+
+    - name: Generate Job Summary
       run: |
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        echo "Branch name is $BRANCH_NAME"
         
+        TAG="none"
         case $BRANCH_NAME in
           bug/*)
-            echo "Suggested tag: bug"
-            echo "::set-output name=tag::bug"
+            TAG="bug"
             ;;
           feature/*)
-            echo "Suggested tag: feature"
-            echo "::set-output name=tag::feature"
+            TAG="feature"
             ;;
           test/*)
-            echo "Suggested tag: test"
-            echo "::set-output name=tag::test"
-            ;;
-          *)
-            echo "No specific tag suggestion based on branch name."
-            echo "::set-output name=tag::none"
+            TAG="test"
             ;;
         esac
 
-    - name: Job summary
-      run: |
-        echo "Frontend Jest tests have been executed."
-        echo "Reminder:"
-        echo "1. Ensure your pull request branch is up to date with main."
-        echo "2. Assign a reviewer to your pull request."
-        if [ "${{ steps.branch_check.outputs.tag }}" != "none" ]; then
-          echo "3. Consider adding the suggested tag: ${{ steps.branch_check.outputs.tag }}"
-        else
-          echo "3. Assign a meaningful tag to your pull request."
-        fi
+        echo '### 🎙️ Job Summary' >> $GITHUB_STEP_SUMMARY
+        echo '- Frontend Jest tests have been executed.' >> $GITHUB_STEP_SUMMARY
+        echo '- Branch: **'$BRANCH_NAME'**' >> $GITHUB_STEP_SUMMARY
+        echo '- Suggested Tag: **'$TAG'**' >> $GITHUB_STEP_SUMMARY
+        echo '### 🔔 Reminders:' >> $GITHUB_STEP_SUMMARY
+        echo '1. Ensure your pull request branch is up to date with main.' >> $GITHUB_STEP_SUMMARY
+        echo '2. Assign a reviewer to your pull request.' >> $GITHUB_STEP_SUMMARY
+        echo '3. Assign a meaningful tag to your pull request.' >> $GITHUB_STEP_SUMMARY
