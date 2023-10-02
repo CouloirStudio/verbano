@@ -2,25 +2,21 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     name: Run Jest Tests
     runs-on: ubuntu-latest
-
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
-
     - name: Use Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '18.17.1'
-
     - name: Install dependencies
       run: yarn install --frozen-lockfile
-
     - name: Run frontend jest tests
       run: yarn test:frontend
 
@@ -29,26 +25,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
     - name: Install dependencies
       run: yarn add @actions/core
-
+    - name: Debug - Before summary
+      run: echo "Generating Job Summary..."
     - name: Generate Job Summary
       run: |
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        
         TAG="none"
         case $BRANCH_NAME in
-          bug/*)
-            TAG="bug"
-            ;;
-          feature/*)
-            TAG="feature"
-            ;;
-          test/*)
-            TAG="test"
-            ;;
+          bug/*) TAG="bug";;
+          feature/*) TAG="feature";;
+          test/*) TAG="test";;
         esac
-
         echo '### 🎙️ Job Summary' >> $GITHUB_STEP_SUMMARY
         echo '- Frontend Jest tests have been executed.' >> $GITHUB_STEP_SUMMARY
         echo '- Branch: **'$BRANCH_NAME'**' >> $GITHUB_STEP_SUMMARY
@@ -57,3 +48,5 @@ jobs:
         echo '1. Ensure your pull request branch is up to date with main.' >> $GITHUB_STEP_SUMMARY
         echo '2. Assign a reviewer to your pull request.' >> $GITHUB_STEP_SUMMARY
         echo '3. Assign a meaningful tag to your pull request.' >> $GITHUB_STEP_SUMMARY
+    - name: Debug - After summary
+      run: echo "Job Summary generated!"
