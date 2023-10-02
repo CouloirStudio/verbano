@@ -1,13 +1,13 @@
-import { Recorder } from '@/app/api/recorder';
+import { AudioRecorder } from '@/app/api/recorder';
 import { expect } from '@jest/globals';
 
 describe('Recorder', () => {
-  let recorder: Recorder;
+  let recorder: AudioRecorder;
 
   let eventHandlers = {};
 
   beforeEach(() => {
-    recorder = Recorder.getRecorder();
+    recorder = AudioRecorder.getRecorder();
     Object.defineProperty(global, 'MediaRecorder', {
       writable: true,
       value: jest.fn().mockImplementation(() => ({
@@ -40,7 +40,7 @@ describe('Recorder', () => {
   });
 
   it('should create an instance of Recorder', () => {
-    expect(recorder).toBeInstanceOf(Recorder);
+    expect(recorder).toBeInstanceOf(AudioRecorder);
   });
 
   describe('initialize', () => {

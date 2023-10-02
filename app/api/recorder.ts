@@ -1,5 +1,5 @@
-export class Recorder {
-  private static instance: Recorder | undefined;
+export class AudioRecorder {
+  private static instance: AudioRecorder | undefined;
   public audioChunks: Blob[] = [];
   public mediaStream: MediaStream | undefined;
   public mediaRecorder: MediaRecorder | undefined;
@@ -8,11 +8,11 @@ export class Recorder {
   private constructor() {}
 
   //implementing singleton design pattern, as there should not be two recorders at once.
-  public static getRecorder(): Recorder {
-    if (!Recorder.instance) {
-      Recorder.instance = new Recorder();
+  public static getRecorder(): AudioRecorder {
+    if (!AudioRecorder.instance) {
+      AudioRecorder.instance = new AudioRecorder();
     }
-    return Recorder.instance;
+    return AudioRecorder.instance;
   }
 
   // Request access to the user's microphone
@@ -52,7 +52,6 @@ export class Recorder {
             new Error('No microphone found on this device.'),
           );
         } else {
-          console.log('scooby');
           return Promise.reject(
             new Error(
               'Cannot access the microphone. Please ensure you have a working microphone and try again.',

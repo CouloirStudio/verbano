@@ -26,7 +26,9 @@ const ErrorModal = () => {
             <span id={'errorTitle'} className={styles.title}>
               Woopsies!
             </span>
-            <p className={styles['modal-error']}>{errorMessage}</p>
+            <p id={'errorMessage'} className={styles['modal-error']}>
+              {errorMessage}
+            </p>
             <button className={styles.button} onClick={dismissModal}>
               Dismiss
             </button>
