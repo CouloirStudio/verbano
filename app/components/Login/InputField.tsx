@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 import styles from './login.module.scss';
 
 interface InputFieldProps {
@@ -7,7 +7,7 @@ interface InputFieldProps {
   icon?: ReactNode;
 }
 
-const InputField: React.FC<InputFieldProps> = ({label, children, icon}) => {
+const InputField: React.FC<InputFieldProps> = ({ label, children, icon }) => {
   return (
     <div className={styles.inputField}>
       {children}

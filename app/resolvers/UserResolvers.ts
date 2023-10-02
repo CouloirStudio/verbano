@@ -1,5 +1,5 @@
-import {User} from '../models/User';
-import {hashPassword} from '../../config/passport';
+import { User } from '../models/User';
+import { hashPassword } from '../config/passport';
 
 const resolvers = {
   Query: {
@@ -11,11 +11,11 @@ const resolvers = {
   Mutation: {
     signup: async (
       parent: any,
-      {firstName, lastName, email, password}: any,
+      { firstName, lastName, email, password }: any,
       context: any,
     ) => {
       // See if user exists
-      const oldUser = await User.findOne({email});
+      const oldUser = await User.findOne({ email });
       if (oldUser) {
         throw new Error('User already exists');
       }
@@ -41,17 +41,17 @@ const resolvers = {
       };
     },
 
-    login: async (parent: any, {email, password}: any, context: any) => {
-      const {user} = await context.authenticate('graphql-local', {
+    login: async (parent: any, { email, password }: any, context: any) => {
+      const { user } = await context.authenticate('graphql-local', {
         email,
         password,
       });
       await context.login(user);
 
-      return {user};
+      return { user };
     },
 
-    async logout(_: any, __: any, {req}: any) {
+    async logout(_: any, __: any, { req }: any) {
       return new Promise((resolve, reject) => {
         req.logout((err: any) => {
           if (err) {

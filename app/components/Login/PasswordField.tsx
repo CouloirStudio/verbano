@@ -1,18 +1,15 @@
-import React, {ChangeEvent} from 'react';
+import React, { ChangeEvent } from 'react';
 import InputField from './InputField';
-import {AiOutlineLock} from "react-icons/ai";
+import { AiOutlineLock } from 'react-icons/ai';
 
 interface PasswordInputProps {
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const PasswordInput: React.FC<PasswordInputProps> = ({value, onChange}) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({ value, onChange }) => {
   return (
-    <InputField
-      label="Password"
-      icon={<AiOutlineLock/>}
-    >
+    <InputField label="Password" icon={<AiOutlineLock />}>
       <input
         type="password"
         value={value}
