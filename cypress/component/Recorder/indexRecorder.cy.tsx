@@ -1,4 +1,5 @@
 import React from 'react';
+import { AudioRecorder } from '../../../app/api/recorder';
 import Recorder from '../../../app/components/Recorder';
 import ErrorModal from '../../../app/components/ErrorModal';
 import { RecorderProvider } from '@/app/contexts/RecorderContext';
@@ -15,6 +16,8 @@ describe('<Recorder />', () => {
         </ErrorModalContextProvider>
       </RecorderProvider>,
     );
+    const recorder = AudioRecorder.getRecorder();
+    cy.stub(recorder, 'cleanup');
   });
   it('starts recording', () => {
     cy.get('#recorderButton').should('have.text', 'Start');
@@ -47,5 +50,9 @@ describe('<Recorder />', () => {
     );
     cy.get('#recorderButton').click();
     cy.get('#errorTitle').should('exist');
+    cy.get('#errorMessage').should(
+      'have.text',
+      'Cannot access the microphone. Please ensure you have a working microphone and try again.',
+    );
   });
 });
