@@ -1,13 +1,16 @@
-name: CI
+name: Run Tests
 
 on:
   pull_request:
     branches: [main]
+    types: [synchronize, opened, reopened]
 
 jobs:
   test:
     name: Run Jest Tests
     runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.set-test-output.outputs.status }}
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
@@ -19,34 +22,19 @@ jobs:
       run: yarn install --frozen-lockfile
     - name: Run frontend jest tests
       run: yarn test:frontend
+    - id: set-test-output
+      run: echo "::set-output name=status::success"
+      if: success()
+    - id: set-test-output-failure
+      run: echo "::set-output name=status::failure"
+      if: failure()
 
   create-summary:
-    name: Create Job Summary
+    name: Create Job Summary for Test Results
     runs-on: ubuntu-latest
-    needs: [test]
     steps:
-    - name: Check out repository code
-      uses: actions/checkout@v2
-    - name: Install dependencies
-      run: yarn add @actions/core
-    - name: Debug - Before summary
-      run: echo "Generating Job Summary..."
-    - name: Generate Job Summary
+    - name: Generate Test Job Summary
       run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        TAG="none"
-        case $BRANCH_NAME in
-          bug/*) TAG="bug";;
-          feature/*) TAG="feature";;
-          test/*) TAG="test";;
-        esac
-        echo '### 🎙️ Job Summary' >> $GITHUB_STEP_SUMMARY
-        echo '- Frontend Jest tests have been executed.' >> $GITHUB_STEP_SUMMARY
-        echo '- Branch: **'$BRANCH_NAME'**' >> $GITHUB_STEP_SUMMARY
-        echo '- Suggested Tag: **'$TAG'**' >> $GITHUB_STEP_SUMMARY
-        echo '### 🔔 Reminders:' >> $GITHUB_STEP_SUMMARY
-        echo '1. Ensure your pull request branch is up to date with main.' >> $GITHUB_STEP_SUMMARY
-        echo '2. Assign a reviewer to your pull request.' >> $GITHUB_STEP_SUMMARY
-        echo '3. Assign a meaningful tag to your pull request.' >> $GITHUB_STEP_SUMMARY
-    - name: Debug - After summary
-      run: echo "Job Summary generated!"
+        TEST_STATUS=${{ needs.test.outputs.status }}
+        echo '### 🚀 Job Summary' >> $GITHUB_STEP_SUMMARY
+        echo '- Frontend Jest tests result: **'$TEST_STATUS'**.' >> $GITHUB_STEP_SUMMARY
