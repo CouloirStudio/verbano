@@ -15,18 +15,7 @@ import {
   UPDATE_EMAIL_MUTATION,
   UPDATE_PASSWORD_MUTATION
 } from '@/app/graphql/mutations/addSettings';
-
-
-// Define an interface for the expected shape of the currentUser data
-interface CurrentUserData {
-  currentUser: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    password: string;
-  } | null;
-}
+import CurrentUserData from './interface/CurrentUserData';
 
 const Profile = () => {
   const [email, setEmail] = useState('');
@@ -138,45 +127,45 @@ const Profile = () => {
   }, [loading, error, data]);
 
   // Function to handle full name change
-  const handleFullNameChange = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    try {
-      if (data && data.currentUser && data.currentUser.email) {
-        const result = await updateFullName({
-          variables: {
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
-          },
-        });
-
-        // Handle the result, e.g., show a success message or update state
-        if (result && result.data && result.data.updateFullName) {
-          const updatedUser = result.data.updateFullName;
-          setFirstName(updatedUser.firstName);
-          setLastName(updatedUser.lastName);
-          setEmail(updatedUser.email);
-          setSuccessMessage('Full name updated successfully!');
-          setIsSuccess(true);
-        } else {
-          setErrorMessage('Full name update failed.');
-          setIsError(true);
-        }
-      } else {
-        // Handle the case where data or currentUser is undefined
-        setErrorMessage('User data is missing.');
-        setIsError(true);
-      }
-    } catch (error) {
-      // Log the specific error to the console
-      console.error('Error:', error);
-      // Display an error message to the user
-      setErrorMessage('An error occurred while updating your full name.');
-      setIsError(true);
-    }
-  };
+  // const handleFullNameChange = async (
+  //   event: React.FormEvent<HTMLFormElement>,
+  // ) => {
+  //   event.preventDefault();
+  //   try {
+  //     if (data && data.currentUser && data.currentUser.email) {
+  //       const result = await updateFullName({
+  //         variables: {
+  //           email: email,
+  //           firstName: firstName,
+  //           lastName: lastName,
+  //         },
+  //       });
+  //
+  //       // Handle the result, e.g., show a success message or update state
+  //       if (result && result.data && result.data.updateFullName) {
+  //         const updatedUser = result.data.updateFullName;
+  //         setFirstName(updatedUser.firstName);
+  //         setLastName(updatedUser.lastName);
+  //         setEmail(updatedUser.email);
+  //         setSuccessMessage('Full name updated successfully!');
+  //         setIsSuccess(true);
+  //       } else {
+  //         setErrorMessage('Full name update failed.');
+  //         setIsError(true);
+  //       }
+  //     } else {
+  //       // Handle the case where data or currentUser is undefined
+  //       setErrorMessage('User data is missing.');
+  //       setIsError(true);
+  //     }
+  //   } catch (error) {
+  //     // Log the specific error to the console
+  //     console.error('Error:', error);
+  //     // Display an error message to the user
+  //     setErrorMessage('An error occurred while updating your full name.');
+  //     setIsError(true);
+  //   }
+  // };
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -236,7 +225,7 @@ const Profile = () => {
               setIsSuccess(true);
 
               // Fetch the updated user data to ensure it's up-to-date
-              refetch(); // Add this line to refetch the user data
+              await refetch(); // Add this line to refetch the user data
             } else {
               setErrorMessage('Full name update failed.');
               setIsError(true);
@@ -245,7 +234,7 @@ const Profile = () => {
             // If only email was updated, set success message and refetch
             setSuccessMessage('Changes saved successfully!');
             setIsSuccess(true);
-            refetch();
+            await refetch();
           }
         } else {
           // No updates were made
@@ -262,9 +251,6 @@ const Profile = () => {
       setIsError(true);
     }
   };
-
-
-
 
   return (
     <div className={styles.container}>
