@@ -1,17 +1,21 @@
-import bcrypt from 'bcryptjs';
 import Typography from '@mui/material/Typography';
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
-import { CURRENT_USER_QUERY } from '../../app/graphql/queries/getUsers';
 import styles from '../../styles/globalSettings.module.scss';
 import classes from '../../styles/globalSettings.module.scss';
-import { UPDATE_FULL_NAME_MUTATION } from '../../app/graphql/mutations/addSettings';
+import { CURRENT_USER_QUERY } from '@/app/graphql/queries/getUsers';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import UpdateEmailField from '@/app/components/Settings/UpdateEmailField';
 import UpdateFullName from '@/app/components/Settings/UpdateFullNameField';
 import { SettingsSidebar } from '@/app/components/Settings/SettingsSidebar';
-import { useErrorModalContext } from '../../app/contexts/ErrorModalContext';
 import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
+import {
+  UPDATE_FULL_NAME_MUTATION,
+  UPDATE_EMAIL_MUTATION,
+  UPDATE_PASSWORD_MUTATION
+} from '@/app/graphql/mutations/addSettings';
+
 
 // Define an interface for the expected shape of the currentUser data
 interface CurrentUserData {
@@ -38,7 +42,7 @@ const Profile = () => {
 
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
-  const { loading, error, data } = useQuery<CurrentUserData>(
+  const { loading, error, data, refetch } = useQuery<CurrentUserData>(
     CURRENT_USER_QUERY,
     {
       onError: (error) => {
@@ -49,6 +53,40 @@ const Profile = () => {
       },
     },
   );
+
+  const [updateEmail] = useMutation(UPDATE_EMAIL_MUTATION, {
+    onError: (error) => {
+      console.error('Error updating email', error.message);
+      setErrorMessage(error.message);
+      setIsError(true);
+    },
+    update: (cache, { data: { updateEmail } }) => {
+      console.log('Received updated email data: ', updateEmail);
+
+      const userData = cache.readQuery<CurrentUserData>({
+        query: CURRENT_USER_QUERY,
+      });
+
+      console.log('Current cache data: ', userData)
+
+      if (userData && userData.currentUser) {
+
+        const updatedUserData = {
+          ...userData,
+          currentUser: {
+            ...userData.currentUser,
+            email: updateEmail.email
+          },
+        };
+
+        cache.writeQuery({
+          query: CURRENT_USER_QUERY,
+          data: updatedUserData,
+        })
+        console.log('Updated cache data:', userData);
+      }
+    },
+  });
 
   const [updateFullName] = useMutation(UPDATE_FULL_NAME_MUTATION, {
     onError: (error) => {
@@ -82,7 +120,6 @@ const Profile = () => {
           query: CURRENT_USER_QUERY,
           data: updatedUserData,
         });
-
         console.log('Updated cache data:', userData);
       }
     },
@@ -141,45 +178,98 @@ const Profile = () => {
     }
   };
 
-  // Function to handle password change
-  // const handlePasswordChange = async (e: { preventDefault: () => void; }) => {
-  //     e.preventDefault();
-  //
-  //     // Use bcrypt to compare the entered current password with the stored hashed password
-  //     bcrypt.compare(currentPassword, hashedPassword, (err: Error, result: string) => {
-  //         if (err) {
-  //             // Handle error
-  //             alert('An error occurred while checking the password.');
-  //         } else if (result) {
-  //             // Passwords match, allow the user to update the password
-  //             // Implement logic to update the password here (e.g., using a mutation)
-  //             alert('Password updated successfully!');
-  //         } else {
-  //             // Passwords do not match, display an error message
-  //             alert('Current password is incorrect');
-  //         }
-  //     });
-  // };
-  //
-  // if (loading) {
-  //     return <p>Loading...</p>;
-  // }
-  //
-  // if (error) {
-  //     console.error('Error fetching user data:', error);
-  //     return <p>Error fetching data</p>;
-  // }
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      if (data && data.currentUser) {
+        const updates: { email?: string; firstName?: string; lastName?: string } = {};
+
+        // Always update the email field if it's different
+        if (email !== data.currentUser.email) {
+          updates.email = email;
+        }
+
+        // Update first name and last name if either is different
+        if (firstName !== data.currentUser.firstName || lastName !== data.currentUser.lastName) {
+          updates.firstName = firstName;
+          updates.lastName = lastName;
+        }
+
+        // Check if any updates are pending
+        if (Object.keys(updates).length > 0) {
+          // Perform the email update first
+          let updatedEmail = email;
+          if (updates.email) {
+            const resultEmail = await updateEmail({
+              variables: {
+                email: data.currentUser.email,
+                newEmail: email,
+              },
+            });
+            if (resultEmail && resultEmail.data && resultEmail.data.updateEmail) {
+              updatedEmail = resultEmail.data.updateEmail.email;
+            } else {
+              setErrorMessage('Email update failed.');
+              setIsError(true);
+              return;
+            }
+          }
+
+          // Perform the full name update if needed
+          if (updates.firstName || updates.lastName) {
+            const resultFullName = await updateFullName({
+              variables: {
+                email: updatedEmail, // Use the updated email value here
+                firstName: firstName,
+                lastName: lastName,
+              },
+            });
+            if (resultFullName && resultFullName.data && resultFullName.data.updateFullName) {
+              // Update the state with the new data
+              const updatedUserFullName = resultFullName.data.updateFullName;
+              setFirstName(updatedUserFullName.firstName);
+              setLastName(updatedUserFullName.lastName);
+              setEmail(updatedEmail); // Use the updated email value here
+
+              // Set a success message
+              setSuccessMessage('Changes saved successfully!');
+              setIsSuccess(true);
+
+              // Fetch the updated user data to ensure it's up-to-date
+              refetch(); // Add this line to refetch the user data
+            } else {
+              setErrorMessage('Full name update failed.');
+              setIsError(true);
+            }
+          } else {
+            // If only email was updated, set success message and refetch
+            setSuccessMessage('Changes saved successfully!');
+            setIsSuccess(true);
+            refetch();
+          }
+        } else {
+          // No updates were made
+          setSuccessMessage('No changes were made.');
+          setIsSuccess(true);
+        }
+      } else {
+        setErrorMessage('User data is missing.');
+        setIsError(true);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('An error occurred while updating your information.');
+      setIsError(true);
+    }
+  };
+
+
+
 
   return (
     <div className={styles.container}>
       <SettingsSidebar />
       <div className={classes.infoContainer}>
-        {/*<p>*/}
-        {/*    {currentPassword}*/}
-        {/*</p>*/}
-        {/*<p>*/}
-        {/*    Hashed pass: {hashedPassword}*/}
-        {/*</p>*/}
         <Typography variant="h4" className={styles.h1Tag}>
           Profile
         </Typography>
@@ -188,7 +278,7 @@ const Profile = () => {
         </Typography>
         <section>
           {/*<form onSubmit={handlePasswordChange}>*/}
-          <form onSubmit={handleFullNameChange}>
+          <form onSubmit={handleFormSubmit}>
             <UpdateFullName
               firstName={firstName}
               lastName={lastName}
@@ -200,21 +290,11 @@ const Profile = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {/*<Typography*/}
-            {/*    variant="subtitle1"*/}
-            {/*    className={classes.subtitle1}>*/}
-            {/*    Update your password*/}
-            {/*</Typography>*/}
-            {/*<UpdatePasswordField*/}
-            {/*    value={currentPassword}*/}
-            {/*    onChange={(e) => setCurrentPassword(e.target.value)}*/}
-            {/*    text="Current Password"*/}
-            {/*/>*/}
-            {/*<UpdatePasswordField*/}
-            {/*    value={newPassword}*/}
-            {/*    onChange={(e) => setNewPassword(e.target.value)}*/}
-            {/*    text="New Password"*/}
-            {/*/>*/}
+            <Typography
+                variant="subtitle1"
+                className={classes.subtitle1}>
+                Update your password
+            </Typography>
             <button type="submit" className={classes.updateButton}>
               Save Changes
             </button>
@@ -230,3 +310,4 @@ const Profile = () => {
 };
 
 export default Profile;
+//TODO export functions to seperate files
