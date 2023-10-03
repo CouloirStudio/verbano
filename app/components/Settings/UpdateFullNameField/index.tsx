@@ -16,8 +16,8 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
   onLastNameChange,
 }) => {
   return (
-    <div>
-      <InputField label="First Name" icon={<AiOutlineUser />}>
+    <>
+      <InputField label="Update First Name" icon={<AiOutlineUser />}>
         <input
           type="text"
           value={firstName}
@@ -25,7 +25,7 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
           required
         />
       </InputField>
-      <InputField label="Last Name" icon={<AiOutlineUser />}>
+      <InputField label="Update Last Name" icon={<AiOutlineUser />}>
         <input
           type="text"
           value={lastName}
@@ -33,7 +33,7 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
           required
         />
       </InputField>
-    </div>
+    </>
   );
 };
 

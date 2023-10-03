@@ -33,7 +33,6 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({
           type="password"
           value={value}
           onChange={handleInputChange}
-          required
         />
       </InputField>
       {error && <p style={{ color: 'red' }}>{error}</p>}

@@ -14,6 +14,8 @@ import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
 
 export const SettingsSidebar: React.FC = () => {
   const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
 
   const route: NextRouter = useRouter();
 
@@ -25,6 +27,8 @@ export const SettingsSidebar: React.FC = () => {
     if (!loading && !error && data && data.currentUser) {
       const currentUser = data.currentUser;
       setFirstName(currentUser.firstName);
+      setLastName(currentUser.lastName)
+      setEmail(currentUser.email)
     } else if (error) {
       setErrorMessage('An error occurred while fetching user data.');
       setIsError(true);
@@ -32,7 +36,7 @@ export const SettingsSidebar: React.FC = () => {
   }, [loading, error, data]);
 
   const settingsOptions: string[] = [
-    `Welcome ${firstName}`,
+    `Welcome ${firstName} ${lastName} Email ${email}`,
     'Back to Home',
     'Profile',
     'Logout',
