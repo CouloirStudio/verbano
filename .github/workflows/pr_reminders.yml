@@ -8,8 +8,12 @@ on:
 jobs:
   reminders:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.generate-summary.outputs.tag }}
+      branch-name: ${{ steps.generate-summary.outputs.branch-name }}
     steps:
     - name: Generate Reminders Summary
+      id: generate-summary
       run: |
         BRANCH_NAME=${{ github.event.pull_request.head.ref }}
         case "$BRANCH_NAME" in
@@ -26,19 +30,16 @@ jobs:
             TAG="none"
             ;;
         esac
-        echo '### 🔔 Reminders:' >> $GITHUB_STEP_SUMMARY
-        echo '1. Ensure your pull request branch is up to date with main.' >> $GITHUB_STEP_SUMMARY
-        echo '2. Assign a reviewer to your pull request.' >> $GITHUB_STEP_SUMMARY
-        echo '3. Assign the suggested tag: **'$TAG'** to your pull request.' >> $GITHUB_STEP_SUMMARY
-        echo '4. Branch name: **'$BRANCH_NAME'**' >> $GITHUB_STEP_SUMMARY
+        echo "::set-output name=tag::$TAG"
+        echo "::set-output name=branch-name::$BRANCH_NAME"
 
     - name: Post Reminders Summary as PR Comment
       run: |
         COMMENT_BODY="### 🔔 Reminders:\n"
         COMMENT_BODY+="1. Ensure your pull request branch is up to date with main.\n"
         COMMENT_BODY+="2. Assign a reviewer to your pull request.\n"
-        COMMENT_BODY+="3. Assign the suggested tag: **$TAG** to your pull request.\n"
-        COMMENT_BODY+="4. Branch name: **$BRANCH_NAME**"
+        COMMENT_BODY+="3. Assign the suggested tag: **${{ steps.generate-summary.outputs.tag }}** to your pull request.\n"
+        COMMENT_BODY+="4. Branch name: **${{ steps.generate-summary.outputs.branch-name }}**"
         echo "$COMMENT_BODY" > comment.txt
         curl -v \
           -X POST \
