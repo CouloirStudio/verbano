@@ -17,7 +17,7 @@ jobs:
 
           curl -s \
             -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"assignees":["'"$PR_AUTHOR"'"]}' \
             "$PR_URL/assignees"
