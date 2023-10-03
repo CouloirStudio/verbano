@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Generate Reminders Summary
+      id: generate-summary
       run: |
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
         TAG="none"
@@ -18,6 +19,10 @@ jobs:
           feature/*) TAG="feature";;
           test/*) TAG="test";;
         esac
+
+        echo "::set-output name=branch_name::$BRANCH_NAME"
+        echo "::set-output name=tag::$TAG"
+
         echo '### 🔔 Reminders:' >> $GITHUB_STEP_SUMMARY
         echo '1. Ensure your pull request branch is up to date with main.' >> $GITHUB_STEP_SUMMARY
         echo '2. Assign a reviewer to your pull request.' >> $GITHUB_STEP_SUMMARY
@@ -26,11 +31,15 @@ jobs:
 
     - name: Post Reminders Summary as PR Comment
       run: |
+        BRANCH_NAME=${{ steps.generate-summary.outputs.branch_name }}
+        TAG=${{ steps.generate-summary.outputs.tag }}
+
         COMMENT_BODY="### 🔔 Reminders:\n"
         COMMENT_BODY+="1. Ensure your pull request branch is up to date with main.\n"
         COMMENT_BODY+="2. Assign a reviewer to your pull request.\n"
         COMMENT_BODY+="3. Assign the suggested tag: **$TAG** to your pull request.\n"
         COMMENT_BODY+="4. Branch name: **$BRANCH_NAME**"
+        
         echo "$COMMENT_BODY" > comment.txt
         curl -v \
           -X POST \
