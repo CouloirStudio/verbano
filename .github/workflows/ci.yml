@@ -43,9 +43,9 @@ jobs:
         COMMENT_BODY="### 🚀 Job Summary\n"
         COMMENT_BODY+="- Frontend Jest tests result: **${{ needs.test.outputs.status }}**."
         echo "$COMMENT_BODY" > comment.txt
-        curl \
+        curl -v \
           -X POST \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -d "{\"body\": \"$(cat comment.txt)\"}" \
           https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments
