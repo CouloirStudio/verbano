@@ -40,10 +40,30 @@
 }
 
 .playing {
-  background-color: #e35656 !important;
+
+  background-color: #e35656;
+  color: white;
 
   &:hover {
-    background-color: #863434 !important;
+    background-color: #863434;
+  }
+
+  &.light {
+    background-color: #e35656;
+    color: white;
+
+    &:hover {
+      background-color: #863434;
+    }
+  }
+
+  &.dark {
+    background-color: #963838; // dark theme button color
+    color: #f5f5f5; // dark theme text color
+
+    &:hover {
+      background-color: #481c1c;
+    }
   }
 }
 
