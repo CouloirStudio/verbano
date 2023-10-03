@@ -297,3 +297,4 @@ const Profile = () => {
 
 export default Profile;
 //TODO export functions to seperate files
+//TODO create functionality to update password
