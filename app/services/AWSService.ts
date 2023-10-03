@@ -41,4 +41,7 @@ const deleteAudioFromS3 = async (url: string) => {
   await s3.deleteObject(deleteParams).promise();
 };
 
-export { uploadAudioToS3, deleteAudioFromS3 };
+const getAudioFromS3 = async () => {
+  return new Blob();
+};
+export { uploadAudioToS3, deleteAudioFromS3, getAudioFromS3 };
