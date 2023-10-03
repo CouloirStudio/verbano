@@ -1,5 +1,6 @@
-import { User } from '../models/User';
-import { hashPassword } from '../config/passport';
+import {User} from '../../app/models';
+import {hashPassword} from '../config/passport';
+import verifyPassword from './verifyPassword';
 
 const resolvers = {
   Query: {
@@ -10,12 +11,12 @@ const resolvers = {
 
   Mutation: {
     signup: async (
-      parent: any,
-      { firstName, lastName, email, password }: any,
-      context: any,
+        parent: any,
+        {firstName, lastName, email, password}: any,
+        context: any,
     ) => {
       // See if user exists
-      const oldUser = await User.findOne({ email });
+      const oldUser = await User.findOne({email});
       if (oldUser) {
         throw new Error('User already exists');
       }
@@ -41,17 +42,17 @@ const resolvers = {
       };
     },
 
-    login: async (parent: any, { email, password }: any, context: any) => {
-      const { user } = await context.authenticate('graphql-local', {
+    login: async (parent: any, {email, password}: any, context: any) => {
+      const {user} = await context.authenticate('graphql-local', {
         email,
         password,
       });
       await context.login(user);
 
-      return { user };
+      return {user};
     },
 
-    async logout(_: any, __: any, { req }: any) {
+    async logout(_: any, __: any, {req}: any) {
       return new Promise((resolve, reject) => {
         req.logout((err: any) => {
           if (err) {
@@ -64,16 +65,16 @@ const resolvers = {
     },
 
     updateFullName: async (
-      _: any,
-      {
-        email,
-        firstName,
-        lastName,
-      }: { email: string; firstName: string; lastName: string },
+        _: any,
+        {
+          email,
+          firstName,
+          lastName,
+        }: { email: string; firstName: string; lastName: string },
     ) => {
       try {
         // Check if a user with the provided email exists
-        const user = await User.findOne({ email });
+        const user = await User.findOne({email});
 
         if (!user) {
           throw new Error('User not found');
@@ -96,7 +97,69 @@ const resolvers = {
         }
       }
     },
-  },
+    updateEmail: async (_: any, {email, newEmail}: { email: string; newEmail: string },) => {
+      try {
+        // Find the user with the provided current email
+        const user = await User.findOne({email});
+
+        // If the user does not exist, throw an error
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        // Update the user's email
+        user.email = newEmail;
+
+        // Save the updated user to the database
+        await user.save();
+
+        // Return the updated user object
+        return user;
+      } catch (error) {
+        // Handle errors and throw appropriate error messages
+        if (error instanceof Error) {
+          throw new Error(`Failed to update email: ${error.message}`);
+        } else {
+          throw new Error('An unknown error occurred');
+        }
+      }
+    },
+    updatePassword: async (_: any, {password, newPassword, email}: { password: string; newPassword: string; email: string }, context: any,) => {
+      try {
+
+        // Get the authenticated user
+        const user = await User.findOne({ email });
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        // Verify the current password
+        const isPasswordValid = await verifyPassword(password, user.password);
+
+        if (!isPasswordValid) {
+          throw new Error('Current password is incorrect');
+        }
+
+        // Hash the new password
+        // Update the user's password
+        user.password = await hashPassword(newPassword);
+
+        // Save the updated user to the database
+        await user.save();
+
+        // Return a success message or a boolean indicating success
+        return user;
+      } catch (error) {
+        // Handle errors and throw appropriate error messages
+        if (error instanceof Error) {
+          throw new Error(`Failed to update password: ${error.message}`);
+        } else {
+          throw new Error('An unknown error occurred');
+        }
+      }
+    },
+  }
 };
+
 
 export default resolvers;
