@@ -1,5 +1,5 @@
-export class Recorder {
-  private static instance: Recorder | undefined;
+export class AudioRecorder {
+  private static instance: AudioRecorder | undefined;
   public audioChunks: Blob[] = [];
   public mediaStream: MediaStream | undefined;
   public mediaRecorder: MediaRecorder | undefined;
@@ -8,11 +8,11 @@ export class Recorder {
   private constructor() {}
 
   //implementing singleton design pattern, as there should not be two recorders at once.
-  public static getRecorder(): Recorder {
-    if (!Recorder.instance) {
-      Recorder.instance = new Recorder();
+  public static getRecorder(): AudioRecorder {
+    if (!AudioRecorder.instance) {
+      AudioRecorder.instance = new AudioRecorder();
     }
-    return Recorder.instance;
+    return AudioRecorder.instance;
   }
 
   // Request access to the user's microphone
@@ -38,7 +38,6 @@ export class Recorder {
           this.audioChunks.push(event.data);
         }
       };
-      console.log('Recorder initialized.');
     } catch (error) {
       // Enhanced error handling for permissions
       if (error.name === 'NotAllowedError') {

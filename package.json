@@ -10,7 +10,7 @@
     "start": "cross-env NODE_ENV=production node server/build/server/server.js",
     "test:frontend": "jest --config jest.frontend.config.js --runInBand  --detectOpenHandles",
     "test:backend": "jest --config jest.backend.config.cjs --runInBand  --detectOpenHandles",
-    "test": "yarn test:frontend && yarn test:backend",
+    "test": "yarn test:frontend && yarn test:backend && cypress open --component",
     "cypress:open": "cypress open",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

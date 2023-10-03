@@ -9,22 +9,40 @@ import {
 
 const NoteResolvers = {
   Query: {
-    async getNote(_: any, args: GetNoteArgs, context: ResolverContext) {
-      return await Note.findById(args.id);
+    async getNote(_: unknown, args: GetNoteArgs, _context: ResolverContext) {
+      const note = await Note.findById(args.id);
+      if (!note) {
+        console.error(`No note found with ID ${args.id}.`);
+        return null;
+      }
+      return note;
     },
     async listNotes() {
-      return await Note.find();
+      const notes = await Note.find();
+      if (!notes) {
+        console.error('No notes found.');
+        return [];
+      }
+      return notes;
     },
   },
   Mutation: {
-    async addNote(_: any, args: AddNoteArgs, context: ResolverContext) {
+    async addNote(_: unknown, args: AddNoteArgs, _context: ResolverContext) {
       const note = new Note(args.input);
       return await note.save();
     },
-    async updateNote(_: any, args: UpdateNoteArgs, context: ResolverContext) {
+    async updateNote(
+      _: unknown,
+      args: UpdateNoteArgs,
+      _context: ResolverContext,
+    ) {
       return await Note.findByIdAndUpdate(args.id, args.input, { new: true });
     },
-    async deleteNote(_: any, args: DeleteNoteArgs, context: ResolverContext) {
+    async deleteNote(
+      _: unknown,
+      args: DeleteNoteArgs,
+      _context: ResolverContext,
+    ) {
       const deleted = await Note.findByIdAndDelete(args.id);
       return !!deleted; // Return true if a note was deleted
     },

@@ -1,0 +1,25 @@
+name: PR Reminders
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened]
+
+jobs:
+  reminders:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Generate Reminders Summary
+      run: |
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG="none"
+        case $BRANCH_NAME in
+          bug/*) TAG="bug";;
+          feature/*) TAG="feature";;
+          test/*) TAG="test";;
+        esac
+        echo '### 🔔 Reminders:' >> $GITHUB_STEP_SUMMARY
+        echo '1. Ensure your pull request branch is up to date with main.' >> $GITHUB_STEP_SUMMARY
+        echo '2. Assign a reviewer to your pull request.' >> $GITHUB_STEP_SUMMARY
+        echo '3. Assign the suggested tag: **'$TAG'** to your pull request.' >> $GITHUB_STEP_SUMMARY
+        echo '4. Branch name: **'$BRANCH_NAME'**' >> $GITHUB_STEP_SUMMARY

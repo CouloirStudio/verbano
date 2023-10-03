@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import EmailField from '../app/components/Login/EmailField';
 
-import { CURRENT_USER_QUERY } from '../app/graphql/queries/getUsers';
-import { LOGIN_MUTATION } from '../app/graphql/mutations/addUsers';
 import PasswordField from '@/app/components/Login/PasswordField';
 import {
   ErrorModalContextProvider,
@@ -13,6 +11,9 @@ import {
 import ErrorModal from '@/app/components/ErrorModal';
 import { Button, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
+
+import { CURRENT_USER_QUERY } from '../app/graphql/queries/getUsers';
+import { LOGIN_MUTATION } from '../app/graphql/mutations/addUsers';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
