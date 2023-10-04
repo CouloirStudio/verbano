@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk';
 
 AWS.config.update({
-  accessKeyId: 'AKIAT4Q55F6JPUHTE7Z3',
-  secretAccessKey: '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',
-  region: 'us-west-2',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
 });
 
 const S3_BUCKET = process.env.S3_BUCKET || 'verbano-dev-audio';
