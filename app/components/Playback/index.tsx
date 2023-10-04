@@ -7,9 +7,10 @@ const Playback: React.FC = () => {
   const { startPlayback, pausePlayback, playbackState } = usePlaybackManager();
   const togglePlayback = async () => {
     try {
-      if (playbackState === 'idle') {
+      if (playbackState === 'idle' || playbackState === 'paused') {
         await startPlayback();
       } else if (playbackState === 'playing') {
+        console.log('pausing')
         await pausePlayback();
       }
     } catch (error) {
@@ -24,6 +25,8 @@ const Playback: React.FC = () => {
       ) : (
         <PlaybackButton
           isPlaying={playbackState === 'playing'}
+          isPaused={playbackState === 'paused'}
+          isIdle={playbackState == 'idle'}
           togglePlayback={togglePlayback}
         />
       )}

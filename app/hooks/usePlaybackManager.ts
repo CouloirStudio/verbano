@@ -5,12 +5,15 @@ import { AudioPlayer } from '@/app/api/playback';
 
 const usePlaybackManager = () => {
   const { setErrorMessage, setIsError } = useErrorModalContext();
-
+  // Save the state of the playback
   const [playbackState, setPlaybackState] = useState<
-    'idle' | 'playing' | 'processing'
+    'idle' | 'playing' | 'processing' | 'paused'
   >('idle');
 
-  let audioPlayer: AudioPlayer | undefined;
+  // Save the state of the audio player
+  const[audioPlayer, setAudioPlayer] = useState<AudioPlayer>(new AudioPlayer());
+
+  // Handle any errors that may come up
   const handleError = (error: any) => {
     console.error(error);
     setErrorMessage(`${error.message}`);
@@ -18,28 +21,40 @@ const usePlaybackManager = () => {
     setPlaybackState('idle');
   };
 
+  // This method gets called when we are first starting playback and when we are resuming it.
+  // It also handles loading the Audio Player when the play button is first hit.
   const startPlayback = async () => {
     try {
-      audioPlayer = AudioPlayer.getAudioPlayer();
-      setPlaybackState('processing');
-      const source = await getAudioFromS3(
-        's3://verbano-dev-audio/audio-files/1696394886454.wav',
-      );
-      const blobURL = URL.createObjectURL(source);
-      await audioPlayer.loadAudioPlayer(blobURL);
-      audioPlayer.audio?.addEventListener('ended', () => {
-        setPlaybackState('idle');
-      });
-      await audioPlayer.startAudioPlayer();
-      setPlaybackState('playing');
+        // Check if it is already loaded before loading it with new data
+        if (!audioPlayer.isLoaded) {
+          setPlaybackState('processing');
+          // get the audio from S3 and make it into a blob URL for the audio element to use.
+          const source = await getAudioFromS3(
+            's3://verbano-dev-audio/audio-files/1696394886454.wav',
+          );
+          const blobURL = URL.createObjectURL(source);
+          await audioPlayer.loadAudioPlayer(blobURL);
+          // listen for when playback ends to update state
+          audioPlayer.audio?.addEventListener('ended', () => {
+            setPlaybackState('idle');
+          });
+        }
+        await audioPlayer.startAudioPlayer();
+        setPlaybackState('playing');
     } catch (error) {
       handleError(error);
     }
+
   };
 
+  // Pause the Audio Player and update state
   const pausePlayback = async () => {
-    audioPlayer?.pauseAudioPlayer();
-    setPlaybackState('idle');
+    try{
+        audioPlayer.pauseAudioPlayer();
+        setPlaybackState('paused');
+    }catch(error){
+      handleError(error);
+    }
   };
 
   return {
