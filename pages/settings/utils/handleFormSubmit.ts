@@ -3,12 +3,12 @@ import { setErrorMessageType, ReactFormEvent, setIsErrorType, setFirstNameType, 
 
 const handleFormSubmit = async (
     event: ReactFormEvent<HTMLFormElement>,
-    data: any, // Replace 'any' with the actual type of your data
+    data: any,
     email: string,
     firstName: string,
     lastName: string,
-    updateEmail: MutationFunction, // Replace 'MutationFunction' with the actual type
-    updateFullName: MutationFunction, // Replace 'MutationFunction' with the actual type
+    updateEmail: MutationFunction,
+    updateFullName: MutationFunction,
     setErrorMessage: setErrorMessageType,
     setIsError: setIsErrorType,
     setFirstName: setFirstNameType,
