@@ -21,7 +21,7 @@ const usePlaybackManager = () => {
     setPlaybackState('idle');
   };
 
-  // This method gets called when we are first starting playback and when we are resuming it.
+  // This method gets called when play or resume is hit
   // It also handles loading the Audio Player when the play button is first hit.
   const startPlayback = async () => {
     try {
@@ -33,14 +33,19 @@ const usePlaybackManager = () => {
             's3://verbano-dev-audio/audio-files/1696394886454.wav',
           );
           const blobURL = URL.createObjectURL(source);
+          //load the audio player with data
           await audioPlayer.loadAudioPlayer(blobURL);
-          // listen for when playback ends to update state
-          audioPlayer.audio?.addEventListener('ended', () => {
-            setPlaybackState('idle');
-          });
         }
-        await audioPlayer.startAudioPlayer();
-        setPlaybackState('playing');
+
+      // listen for when playback ends to update state
+      const onEnd = () =>{
+        setPlaybackState('idle');
+        audioPlayer.audio?.removeEventListener('ended', onEnd);
+      }
+      audioPlayer.audio?.addEventListener('ended', onEnd);
+        //start the audio player
+      await audioPlayer.startAudioPlayer();
+      setPlaybackState('playing');
     } catch (error) {
       handleError(error);
     }

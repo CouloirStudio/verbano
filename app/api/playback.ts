@@ -1,5 +1,4 @@
 // The purpose of this class is to abstract the usage of the HTMLAudioElement API
-// and also handle any errors that may be thrown.
 
 export class AudioPlayer {
   private static instance: AudioPlayer | undefined;
@@ -17,7 +16,7 @@ export class AudioPlayer {
         console.log('audio ready');
         this.isLoaded = true;
         resolve();
-        this.audio.removeEventListener(onReady);
+        this.audio?.removeEventListener('canplaythrough', OnReady);
       };
       this.audio.addEventListener('canplaythrough', OnReady);
     });
