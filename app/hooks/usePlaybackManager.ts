@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getAudioFromS3 } from '../services/AWSService';
 import { useErrorModalContext } from '../contexts/ErrorModalContext';
+import { AudioPlayer } from '@/app/api/playback';
 
 const usePlaybackManager = () => {
   const { setErrorMessage, setIsError } = useErrorModalContext();
@@ -9,6 +10,7 @@ const usePlaybackManager = () => {
     'idle' | 'playing' | 'processing'
   >('idle');
 
+  let audioPlayer: AudioPlayer | undefined;
   const handleError = (error: any) => {
     console.error(error);
     setErrorMessage(`${error.message}`);
@@ -18,7 +20,15 @@ const usePlaybackManager = () => {
 
   const startPlayback = async () => {
     try {
-      await getAudioFromS3();
+      audioPlayer = AudioPlayer.getAudioPlayer();
+      setPlaybackState('processing');
+      const source = await getAudioFromS3();
+      const blobURL = URL.createObjectURL(source);
+      await audioPlayer.loadAudioPlayer(blobURL);
+      audioPlayer.audio?.addEventListener('ended', () => {
+        setPlaybackState('idle');
+      });
+      await audioPlayer.startAudioPlayer();
       setPlaybackState('playing');
     } catch (error) {
       handleError(error);
@@ -26,6 +36,7 @@ const usePlaybackManager = () => {
   };
 
   const pausePlayback = async () => {
+    audioPlayer?.pauseAudioPlayer();
     setPlaybackState('idle');
   };
 
