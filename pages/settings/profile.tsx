@@ -6,7 +6,7 @@ import styles from '../../styles/globalSettings.module.scss';
 import classes from '../../styles/globalSettings.module.scss';
 import { CURRENT_USER_QUERY } from '@/app/graphql/queries/getUsers';
 import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import UpdateEmailField from '@/app/components/Settings/UpdateEmailField';
+import UpdateEmailField from '@/app/components/Settings/UpdateEmailField/index';
 import UpdateFullName from '@/app/components/Settings/UpdateFullNameField';
 import { SettingsSidebar } from '@/app/components/Settings/SettingsSidebar';
 import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
@@ -126,47 +126,6 @@ const Profile = () => {
     }
   }, [loading, error, data]);
 
-  // Function to handle full name change
-  // const handleFullNameChange = async (
-  //   event: React.FormEvent<HTMLFormElement>,
-  // ) => {
-  //   event.preventDefault();
-  //   try {
-  //     if (data && data.currentUser && data.currentUser.email) {
-  //       const result = await updateFullName({
-  //         variables: {
-  //           email: email,
-  //           firstName: firstName,
-  //           lastName: lastName,
-  //         },
-  //       });
-  //
-  //       // Handle the result, e.g., show a success message or update state
-  //       if (result && result.data && result.data.updateFullName) {
-  //         const updatedUser = result.data.updateFullName;
-  //         setFirstName(updatedUser.firstName);
-  //         setLastName(updatedUser.lastName);
-  //         setEmail(updatedUser.email);
-  //         setSuccessMessage('Full name updated successfully!');
-  //         setIsSuccess(true);
-  //       } else {
-  //         setErrorMessage('Full name update failed.');
-  //         setIsError(true);
-  //       }
-  //     } else {
-  //       // Handle the case where data or currentUser is undefined
-  //       setErrorMessage('User data is missing.');
-  //       setIsError(true);
-  //     }
-  //   } catch (error) {
-  //     // Log the specific error to the console
-  //     console.error('Error:', error);
-  //     // Display an error message to the user
-  //     setErrorMessage('An error occurred while updating your full name.');
-  //     setIsError(true);
-  //   }
-  // };
-
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -200,7 +159,7 @@ const Profile = () => {
             } else {
               setErrorMessage('Email update failed.');
               setIsError(true);
-              return;
+              //return;
             }
           }
 
@@ -296,5 +255,3 @@ const Profile = () => {
 };
 
 export default Profile;
-//TODO export functions to seperate files
-//TODO create functionality to update password
