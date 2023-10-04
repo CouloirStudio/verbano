@@ -14,31 +14,38 @@ const resolvers = {
       { firstName, lastName, email, password }: any,
       context: any,
     ) => {
-      // See if user exists
-      const oldUser = await User.findOne({ email });
-      if (oldUser) {
-        throw new Error('User already exists');
+      try {
+        // Check if user exists
+        const oldUser = await User.findOne({ email });
+        if (oldUser) {
+          throw new Error('User already exists');
+        }
+
+        // Hash the password
+        const hashedPassword = await hashPassword(password);
+
+        // Create user
+        const newUser = new User({
+          email: email.toLowerCase(),
+          password: hashedPassword,
+          firstName: firstName,
+          lastName: lastName,
+        });
+
+        const result = await newUser.save();
+        console.log('New User Saved:', result);
+
+        await context.login(result);
+        console.log('User Logged In:', result);
+
+        // Return user
+        return {
+          user: result,
+        };
+      } catch (error) {
+        console.error('Error during user creation:', error);
+        throw new Error('Internal server error');
       }
-
-      // Entered password
-      const hashedPassword = await hashPassword(password);
-
-      // Create user
-      const newUser = new User({
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        firstName: firstName,
-        lastName: lastName,
-      });
-
-      const result = await newUser.save();
-
-      await context.login(result);
-
-      // Return user
-      return {
-        user: result,
-      };
     },
 
     login: async (parent: any, { email, password }: any, context: any) => {

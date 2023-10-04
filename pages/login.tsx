@@ -1,8 +1,8 @@
 import styles from '../styles/login.module.scss';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 import EmailField from '../app/components/Login/EmailField';
-
 import PasswordField from '@/app/components/Login/PasswordField';
 import {
   ErrorModalContextProvider,
@@ -11,23 +11,25 @@ import {
 import ErrorModal from '@/app/components/ErrorModal';
 import { Button, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
-
 import { CURRENT_USER_QUERY } from '../app/graphql/queries/getUsers';
 import { LOGIN_MUTATION } from '../app/graphql/mutations/addUsers';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { setIsError, setErrorMessage } = useErrorModalContext();
+  const router = useRouter();
 
   const [login] = useMutation(LOGIN_MUTATION, {
-    update: (cache, { data: { login } }) =>
-      cache.writeQuery({
-        query: CURRENT_USER_QUERY,
-        data: { currentUser: login.user },
-      }),
+    update: (cache, { data: { login } }) => {
+      if (login && login.user) {
+        cache.writeQuery({
+          query: CURRENT_USER_QUERY,
+          data: { currentUser: login.user },
+        });
+      }
+    },
   });
-
-  const { setIsError, setErrorMessage } = useErrorModalContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,9 +42,7 @@ const LoginPage = () => {
     try {
       const result = await login({ variables: user });
       console.log(result);
-
-      // TODO: Redirect to home page, but safely, maybe with the router or something. Don't really know how to do it.
-      window.location.href = '/';
+      router.push('/');
     } catch (e: any) {
       setErrorMessage(e.message || 'An unknown error occurred');
       setIsError(true);
@@ -69,7 +69,7 @@ const LoginPage = () => {
             variant="contained"
             color="primary"
             onClick={() => {
-              window.location.href = 'http://localhost:3000/auth/google';
+              window.open('http://localhost:3000/auth/google');
             }}
           >
             Login with Google
