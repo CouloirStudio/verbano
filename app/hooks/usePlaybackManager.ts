@@ -22,7 +22,9 @@ const usePlaybackManager = () => {
     try {
       audioPlayer = AudioPlayer.getAudioPlayer();
       setPlaybackState('processing');
-      const source = await getAudioFromS3();
+      const source = await getAudioFromS3(
+        's3://verbano-dev-audio/audio-files/1696394886454.wav',
+      );
       const blobURL = URL.createObjectURL(source);
       await audioPlayer.loadAudioPlayer(blobURL);
       audioPlayer.audio?.addEventListener('ended', () => {

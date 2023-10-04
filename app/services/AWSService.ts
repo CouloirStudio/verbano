@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk';
 
 AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
+  accessKeyId: 'AKIAT4Q55F6JPUHTE7Z3',
+  secretAccessKey: '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',
+  region: 'us-west-2',
 });
 
 const S3_BUCKET = process.env.S3_BUCKET || 'verbano-dev-audio';
@@ -41,7 +41,13 @@ const deleteAudioFromS3 = async (url: string) => {
   await s3.deleteObject(deleteParams).promise();
 };
 
-const getAudioFromS3 = async () => {
-  return new Blob();
+const getAudioFromS3 = async (url: string) => {
+  const fileKey = url.split('/').pop();
+  const getParams = {
+    Bucket: S3_BUCKET,
+    Key: `audio-files/${fileKey}`,
+  };
+
+  await s3.getObject(getParams).promise();
 };
 export { uploadAudioToS3, deleteAudioFromS3, getAudioFromS3 };
