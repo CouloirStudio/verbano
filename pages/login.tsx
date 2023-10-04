@@ -41,6 +41,7 @@ const LoginPage = () => {
       // TODO: Redirect to home page, but safely, maybe with the router or something. Don't really know how to do it.
       window.location.href = '/';
     } catch (e: any) {
+      console.log(e);
       setErrorMessage(e.message || 'An unknown error occurred');
       setIsError(true);
     }
