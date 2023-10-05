@@ -1,60 +1,82 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getAudioFromS3 } from '../services/AWSService';
 import { useErrorModalContext } from '../contexts/ErrorModalContext';
 import { AudioPlayer } from '@/app/api/playback';
 
+// Define possible states of the playback
+type PlaybackStateType = 'idle' | 'playing' | 'processing' | 'paused';
+
+/**
+ * Custom hook to manage audio playback and related states.
+ */
 const usePlaybackManager = () => {
+  // Context to handle error messages in a modal
   const { setErrorMessage, setIsError } = useErrorModalContext();
-  // Save the state of the playback
-  const [playbackState, setPlaybackState] = useState<
-    'idle' | 'playing' | 'processing' | 'paused'
-  >('idle');
 
-  // Save the state of the audio player
-  const [audioPlayer, setAudioPlayer] = useState<AudioPlayer>(
-    new AudioPlayer(),
-  );
+  // Playback state management
+  const [playbackState, setPlaybackState] = useState<PlaybackStateType>('idle');
 
-  // Handle any errors that may come up
-  const handleError = (error: any) => {
+  // Reference to the audio player instance for persistent state
+  const audioPlayerRef = useRef(new AudioPlayer());
+
+  /**
+   * Unified error handling.
+   * Logs error to console, displays an error message, and resets playback state.
+   */
+  const handleError = (error: unknown) => {
     console.error(error);
-    setErrorMessage(`${error.message}`);
+    if (error instanceof Error) {
+      setErrorMessage(error.message);
+    } else {
+      setErrorMessage('An unexpected error occurred.');
+    }
     setIsError(true);
     setPlaybackState('idle');
   };
 
-  // This method gets called when play or resume is hit
-  // It also handles loading the Audio Player when the play button is first hit.
+  // Effect to handle playback ending: cleanup listeners for performance
+  useEffect(() => {
+    const currentAudioPlayer = audioPlayerRef.current;
+
+    const onEnd = () => {
+      setPlaybackState('idle');
+      currentAudioPlayer.audio?.removeEventListener('ended', onEnd);
+    };
+
+    currentAudioPlayer.audio?.addEventListener('ended', onEnd);
+
+    // Cleanup the listener when the component is unmounted
+    return () => {
+      currentAudioPlayer.audio?.removeEventListener('ended', onEnd);
+    };
+  }, []);
+
+  /**
+   * Starts or resumes audio playback.
+   * Handles loading of audio data if the player is not already loaded.
+   */
   const startPlayback = async (url: string) => {
     try {
-      // Check if it is already loaded before loading it with new data
-      if (!audioPlayer.isLoaded) {
+      if (!audioPlayerRef.current.isLoaded) {
         setPlaybackState('processing');
-        // get the audio from S3 and make it into a blob URL for the audio element to use.
         const source = await getAudioFromS3(url);
         const blobURL = URL.createObjectURL(source);
-        //load the audio player with data
-        await audioPlayer.loadAudioPlayer(blobURL);
+        await audioPlayerRef.current.loadAudioPlayer(blobURL);
       }
 
-      // listen for when playback ends to update state
-      const onEnd = () => {
-        setPlaybackState('idle');
-        audioPlayer.audio?.removeEventListener('ended', onEnd);
-      };
-      audioPlayer.audio?.addEventListener('ended', onEnd);
-      //start the audio player
-      await audioPlayer.startAudioPlayer();
+      await audioPlayerRef.current.startAudioPlayer();
       setPlaybackState('playing');
     } catch (error) {
       handleError(error);
     }
   };
 
-  // Pause the Audio Player and update state
+  /**
+   * Pauses audio playback and updates state.
+   */
   const pausePlayback = async () => {
     try {
-      audioPlayer.pauseAudioPlayer();
+      audioPlayerRef.current.pauseAudioPlayer();
       setPlaybackState('paused');
     } catch (error) {
       handleError(error);

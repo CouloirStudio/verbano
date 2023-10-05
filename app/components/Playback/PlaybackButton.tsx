@@ -1,41 +1,45 @@
 import React from 'react';
 import styles from './playback.module.scss';
 
+export type PlaybackState = 'playing' | 'paused' | 'idle';
+
 export interface PlaybackButtonProps {
-  isPlaying: boolean;
-  isPaused: boolean;
-  isIdle: boolean;
+  playbackState: PlaybackState;
   togglePlayback: () => void;
   theme?: 'light' | 'dark';
 }
 
 const PlaybackButton: React.FC<PlaybackButtonProps> = ({
-  isPlaying,
-  isPaused,
-  isIdle,
+  playbackState,
   togglePlayback,
-  theme = 'light', // Default to light theme if not provided
-}) => (
-  <button
-    id={'playbackButton'}
-    onClick={togglePlayback}
-    className={`${styles.playbackButton} ${isPlaying ? styles.playing : '' } ${
-      styles[theme]
-    }`}
-  >
-    { buttonLabel(isPlaying, isPaused, isIdle) }
-  </button>
-);
+  theme = 'light',
+}) => {
+  const { playbackButton, playing, light, dark } = styles;
 
-function buttonLabel(isPlaying: boolean, isPaused: boolean, isIdle: boolean): string {
-  if (isPlaying)
-    return 'Pause'
-  else if (isPaused)
-    return 'Resume'
-  else if (isIdle)
-    return 'Play'
+  return (
+    <button
+      id="playbackButton"
+      onClick={togglePlayback}
+      className={`${playbackButton} ${
+        playbackState === 'playing' ? playing : ''
+      } ${theme === 'light' ? light : dark}`}
+    >
+      {getButtonLabel(playbackState)}
+    </button>
+  );
+};
 
-  return ''
+function getButtonLabel(playbackState: PlaybackState): string {
+  switch (playbackState) {
+    case 'playing':
+      return 'Pause';
+    case 'paused':
+      return 'Resume';
+    case 'idle':
+      return 'Play';
+    default:
+      return '';
+  }
 }
 
 export default PlaybackButton;

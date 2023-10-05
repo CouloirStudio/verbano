@@ -1,5 +1,5 @@
 import React from 'react';
-import Playback from './index';
+import Playback from './Playback';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
 import ErrorModal from '@/app/components/ErrorModal';
 

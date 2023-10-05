@@ -15,38 +15,48 @@ export default {
     },
   },
   argTypes: {
-    isRecording: {
-      control: 'boolean',
-      description: 'Whether the button is currently playing or not',
+    playbackState: {
+      control: 'radio',
+      options: ['playing', 'paused', 'idle'],
+      description: 'State of the playback',
       table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
+        type: { summary: 'string' },
+        defaultValue: { summary: 'idle' },
       },
     },
-    toggleRecording: {
-      action: 'togglePlayback', // It will log 'toggleRecording' when the button is clicked.
+    togglePlayback: {
+      action: 'togglePlayback',
+    },
+    theme: {
+      control: 'radio',
+      options: ['light', 'dark'],
+      description: 'Theme mode for the button',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'light' },
+      },
     },
   },
 } as Meta;
 
 const Template: StoryFn<PlaybackButtonProps> = (initialArgs) => {
-  const [isPlaying, setIsPlaying] = useState(initialArgs.isPlaying);
+  const [playbackState, setPlaybackState] = useState(initialArgs.playbackState);
 
-  // Listen for changes in initialArgs.isRecording and update the local state
+  // Listen for changes in initialArgs.playbackState and update the local state
   useEffect(() => {
-    setIsPlaying(initialArgs.isPlaying);
-  }, [initialArgs.isPlaying]);
+    setPlaybackState(initialArgs.playbackState);
+  }, [initialArgs.playbackState]);
 
   const handleToggle = () => {
-    action('toggleRecording')();
-    setIsPlaying((prev) => !prev);
+    action('togglePlayback')();
+    setPlaybackState((prev) => (prev === 'playing' ? 'paused' : 'playing'));
   };
 
   return (
     <div className={initialArgs.theme}>
       <PlaybackButton
         {...initialArgs}
-        isPlaying={isPlaying}
+        playbackState={playbackState}
         togglePlayback={handleToggle}
       />
     </div>
@@ -55,8 +65,8 @@ const Template: StoryFn<PlaybackButtonProps> = (initialArgs) => {
 
 export const AllModes = Template.bind({});
 AllModes.args = {
-  isPlaying: false,
-  theme: 'light', // or 'dark'
+  playbackState: 'idle',
+  theme: 'light',
 };
 AllModes.parameters = {
   docs: {
