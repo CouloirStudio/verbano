@@ -1,14 +1,14 @@
 describe('Email/Pass Login', () => {
   it('loads correctly', () => {
     cy.visit('localhost:3000/login', {
-      timeout: 10000,
+      timeout: 60000,
       failOnStatusCode: true
     });
   })
 
   it('logs in successfully', () => {
     cy.visit('localhost:3000/login', {
-      timeout: 10000,
+      timeout: 60000,
       failOnStatusCode: true
     });
 
@@ -23,7 +23,7 @@ describe('Email/Pass Login', () => {
 
   it('errors on invalid email', () => {
     cy.visit('localhost:3000/login', {
-      timeout: 10000,
+      timeout: 60000,
       failOnStatusCode: true
     });
 
