@@ -37,14 +37,10 @@ export const UserMutations = {
   },
 
   async login(parent: any, {email, password}: any, context: any) {
-    console.log('before auth');
-
     const {user} = await context.authenticate('graphql-local', {
       email,
       password,
     });
-
-    console.log('user', user);
 
     if (!user) {
       throw new Error('Invalid credentials');
