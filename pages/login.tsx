@@ -87,6 +87,7 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <Button
+                id={'loginButton'}
                 sx={{
                   width: '100%',
                 }}
