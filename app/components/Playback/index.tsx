@@ -8,9 +8,11 @@ const Playback: React.FC = () => {
   const togglePlayback = async () => {
     try {
       if (playbackState === 'idle' || playbackState === 'paused') {
-        await startPlayback();
+        await startPlayback(
+          's3://verbano-dev-audio/audio-files/1696394886454.wav',
+        );
       } else if (playbackState === 'playing') {
-        console.log('pausing')
+        console.log('pausing');
         await pausePlayback();
       }
     } catch (error) {
