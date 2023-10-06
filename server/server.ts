@@ -8,11 +8,11 @@ import passport from '../app/config/passport';
 import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
 import session from 'express-session';
 import {randomUUID} from 'crypto';
-import audioRoutes from '../app/routes/audioRoutes';
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
 import {buildContext} from 'graphql-passport';
 import {User} from '../app/models';
+import audioRoutes from "../app/routes/audioRoutes";
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -31,12 +31,19 @@ export function createApp() {
     }),
   );
 
+  const corsOptions = {
+    origin: '*',
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+
   app.use(passport.initialize());
   app.use(passport.session());
 
-  app.get('/', function (req, res, next) {
-    isAuthenticated(req, res, next);
-  });
+
+  // app.get('/', function (req, res, next) {
+  //   isAuthenticated(req, res, next);
+  // });
 
   app.get(
     '/auth/google',
@@ -55,25 +62,25 @@ export function createApp() {
     },
   );
 
-  function isAuthenticated(req: any, res: any, next: any) {
-    if (req.user) {
-      return next();
-    }
-    res.redirect('/login');
-  }
-
-
-  const corsOptions = {
-    origin: '*',
-    credentials: true,
-  };
-  app.use(cors(corsOptions));
   app.use(json());
   app.use('/audio', audioRoutes);
 
-
   return app;
 }
+
+function isAuthenticated(req: any, res: any, next: any) {
+  if (
+    req.user ||
+    ['/login', '/signup', '/graphql'].includes(req.path) ||
+    req.path.startsWith('/_next')
+  ) {
+    next();
+  } else {
+    console.log('Redirecting to /login');
+    res.redirect('/login');
+  }
+}
+
 
 export async function startApolloServer(
   app: express.Express,
@@ -107,9 +114,12 @@ export async function startApolloServer(
   await server.start();
   server.applyMiddleware({app, cors: false});
 
+  app.use(isAuthenticated);
+
   app.all('*', (req, res) => {
     return handle(req, res);
   });
+
 
   const actualPort = testPort !== undefined ? testPort : port;
 
@@ -132,5 +142,8 @@ if (process.env.NODE_ENV !== 'test') {
     console.error('Failed to start server:', error);
   });
 }
+
+
+
 
 
