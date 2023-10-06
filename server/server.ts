@@ -64,7 +64,7 @@ export function createApp() {
 
 
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: '*',
     credentials: true,
   };
   app.use(cors(corsOptions));
@@ -132,3 +132,5 @@ if (process.env.NODE_ENV !== 'test') {
     console.error('Failed to start server:', error);
   });
 }
+
+

@@ -9,3 +9,17 @@
   align-items: center;
   justify-content: center;
 }
+
+.linkContainer {
+  margin-left: 100px; // Will have to adjust css
+}
+
+.link {
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
