@@ -75,24 +75,30 @@ const googleCallback = async (
   profile: any,
   done: any,
 ) => {
-  const matchingUser = await User.findOne({ googleId: profile.id });
-  if (matchingUser) {
-    done(null, matchingUser);
-    return;
+  try {
+    const matchingUser = await User.findOne({ googleId: profile.id });
+    if (matchingUser) {
+      done(null, matchingUser);
+      return;
+    }
+
+    const id = profile.id;
+    const email = profile.emails[0].value;
+    const firstName = profile.name.givenName;
+    const lastName = profile.name.familyName;
+
+    // Create new user
+    const newUser = await new User({
+      googleId: id,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+    }).save();
+
+    done(null, newUser);
+  } catch (error) {
+    done(error, null);
   }
-  const id = profile.id;
-  const email = profile.emails[0].value;
-  const firstName = profile.name.givenName;
-  const lastName = profile.name.familyName;
-  //create new user
-  const newUser = await new User({
-    googleId: id,
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-  }).save();
-  done(null, newUser);
-  done(null, null);
 };
 
 passport.use(new GoogleStrategy(googleOptions, googleCallback));

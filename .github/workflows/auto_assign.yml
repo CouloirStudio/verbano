@@ -1,0 +1,24 @@
+name: Auto Assign PR Creator
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  auto-assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign PR creator
+        run: |
+          PR_AUTHOR=$(jq -r ".pull_request.user.login" "$GITHUB_EVENT_PATH")
+          PR_URL=$(jq -r ".pull_request.issue_url" "$GITHUB_EVENT_PATH")
+
+          echo "Assigning PR to author $PR_AUTHOR"
+
+          curl -s \
+            -X POST \
+            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"assignees":["'"$PR_AUTHOR"'"]}' \
+            "$PR_URL/assignees"
+
