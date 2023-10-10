@@ -37,8 +37,8 @@ export const getAudio = async (
 
   if (response.ok) {
     console.log(response);
-    return response.blob(); // Return the response as a Blob
+    return response.blob();
   } else {
-    throw new Error('Response not OK');
+    throw new Error('Response not OK. ' + response.statusText);
   }
 };

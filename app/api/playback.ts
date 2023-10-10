@@ -1,15 +1,16 @@
 // The purpose of this class is to abstract the usage of the HTMLAudioElement API
 
 export class AudioPlayer {
-  private static instance: AudioPlayer | undefined;
   public audio: HTMLAudioElement | undefined;
   public isLoaded: boolean = false;
+
   public constructor() {}
 
   // Loads the audio element using a blob url and waits for the data to be loaded.
   public loadAudioPlayer(src: string) {
     return new Promise<void>((resolve) => {
-      this.audio = new Audio(src);
+      console.log(src);
+      this.audio = new Audio();
       // Making the caller of this method wait for the canPlayThrough event.
       // Which is fired when all the audio is loaded.
       const OnReady = () => {
@@ -19,6 +20,9 @@ export class AudioPlayer {
         this.audio?.removeEventListener('canplaythrough', OnReady);
       };
       this.audio.addEventListener('canplaythrough', OnReady);
+      this.audio.src = src;
+      this.audio.load();
+      console.log(this.audio);
     });
   }
 
