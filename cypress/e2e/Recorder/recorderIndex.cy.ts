@@ -25,6 +25,7 @@ describe('Record Audio', () => {
     cy.get('#recorderButton').should('have.text', 'Stop');
     cy.get('#errorTitle').should('not.exist');
   });
+
   it('Stops Recording', () => {
     cy.visit('localhost:3000', {
       timeout: 60000,
@@ -53,7 +54,7 @@ describe('Record Audio', () => {
       timeout: 60000,
       failOnStatusCode: true,
     });
-    cy.stub(navigator.mediaDevices, 'getUserMedia').returns(new Error());
+    cy.stub(window.navigator.mediaDevices, 'getUserMedia').returns(new Error());
     cy.get('#recorderButton').click();
     cy.get('#errorTitle').should('exist');
     cy.get('#errorMessage').should(
