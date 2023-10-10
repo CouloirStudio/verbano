@@ -16,7 +16,7 @@ const usePlaybackManager = () => {
   // Playback state management
   const [playbackState, setPlaybackState] = useState<PlaybackStateType>('idle');
 
-  // Reference to the audio player instance for persistent state
+  // A single AudioPlayer object is used throughout the hook and needs to have a persistent state throughout the lifetime of the component.
   const audioPlayerRef = useRef(new AudioPlayer());
 
   /**
