@@ -1,4 +1,7 @@
-export const uploadAudio = async (blob: Blob, baseURL: string) => {
+export const uploadAudio = async (
+  blob: Blob,
+  baseURL: string,
+): Promise<any> => {
   console.log(blob, blob instanceof Blob); // Logging blob info
 
   const formData = new FormData();
@@ -17,7 +20,10 @@ export const uploadAudio = async (blob: Blob, baseURL: string) => {
   return data;
 };
 
-export const getAudio = async (baseURL: string, audioURL: string) => {
+export const getAudio = async (
+  baseURL: string,
+  audioURL: string,
+): Promise<Blob> => {
   // Create a data object to send as JSON
   const data = { url: audioURL };
 
