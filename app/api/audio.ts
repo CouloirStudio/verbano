@@ -16,3 +16,22 @@ export const uploadAudio = async (blob: Blob) => {
   }
   return data;
 };
+
+export const getAudio = async (url: string) => {
+  // Create a data object to send as JSON
+  const data = { url: url };
+
+  const response = await fetch('http://localhost:3000/audio/retrieve', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json', // Specify that you're sending JSON data
+    },
+    body: JSON.stringify(data), // Convert the data object to a JSON string
+  });
+
+  if (response.ok) {
+    return response.blob(); // Return the response as a Blob
+  } else {
+    throw new Error('Response not OK');
+  }
+};

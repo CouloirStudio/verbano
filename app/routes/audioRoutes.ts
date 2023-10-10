@@ -1,14 +1,13 @@
 import express from 'express';
 import multer from 'multer';
-import { uploadAudioToS3 } from '../services/AWSService';
+import { getAudioFromS3, uploadAudioToS3 } from '../services/AWSService';
+import { Note } from '../models/Note';
+import { Project } from '../models/Project';
 
 const router = express.Router();
 
 const storage = multer.memoryStorage(); // Store the file in memory
 const upload = multer({ storage: storage });
-
-import { Note } from '../models/Note';
-import { Project } from '../models/Project';
 
 router.post('/upload', upload.single('audio'), async (req, res) => {
   if (!req.file || !req.file.buffer) {
@@ -54,6 +53,30 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
     }
 
     res.status(500).json({ success: false, message: 'Failed to upload.' });
+  }
+});
+
+router.post('/retrieve', async (req, res) => {
+  try {
+    // Parse the incoming JSON data from the request body
+    const { url } = req.body;
+    if (!url) {
+      return res
+        .status(400)
+        .json({ error: 'URL is required in the request body' });
+    }
+
+    // Call your function to get audio using the URL
+    const audioBlob = await getAudioFromS3(url);
+
+    // Set the response content type to audio/wav
+    res.setHeader('Content-Type', 'audio/wav');
+
+    // Send the audio blob as the response
+    res.send(audioBlob);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

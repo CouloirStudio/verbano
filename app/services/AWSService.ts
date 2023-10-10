@@ -43,20 +43,19 @@ const deleteAudioFromS3 = async (url: string) => {
 };
 
 const getAudioFromS3 = async (url: string) => {
+  console.log('getting audio');
   const fileKey = url.split('/').pop();
   const getParams = {
     Bucket: S3_BUCKET,
     Key: `audio-files/${fileKey}`,
   };
-
   try {
     // Getting audio file
     const response = await s3.getObject(getParams).promise();
     if (response.Body) {
-      // Convert the response.Body (buffer) to a blob
-      // @ts-ignore
-      const blob = new Blob([response.Body], { type: 'audio/mpeg' }); // Replace 'audio/mpeg' with the appropriate MIME type
-      return blob;
+      // returns data fetched from AWS
+      console.log(response.Body);
+      return response.Body;
     } else {
       throw new Error('Failed to get object from S3');
     }
