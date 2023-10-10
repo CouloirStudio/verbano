@@ -30,7 +30,7 @@ export class AudioPlayer {
   public startAudioPlayer = async (): Promise<void> => {
     if (!this.audio) {
       throw new Error('audio player not initialized.');
-    } else if (this.audio) {
+    } else {
       await this.audio.play();
     }
   };
@@ -39,7 +39,7 @@ export class AudioPlayer {
   public pauseAudioPlayer(): void {
     if (!this.audio) {
       throw new Error('audio player not initialized.');
-    } else if (this.audio) {
+    } else {
       this.audio.pause();
     }
   }
