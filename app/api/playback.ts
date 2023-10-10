@@ -7,7 +7,7 @@ export class AudioPlayer {
   public constructor() {}
 
   // Loads the audio element using a blob url and waits for the data to be loaded.
-  public loadAudioPlayer(src: string) {
+  public loadAudioPlayer(src: string): Promise<void> {
     return new Promise<void>((resolve) => {
       console.log(src);
       this.audio = new Audio();
@@ -27,7 +27,7 @@ export class AudioPlayer {
   }
 
   // starts the audio player
-  public startAudioPlayer = async () => {
+  public startAudioPlayer = async (): Promise<void> => {
     if (!this.audio) {
       throw new Error('audio player not initialized.');
     } else if (this.audio) {
@@ -36,7 +36,7 @@ export class AudioPlayer {
   };
 
   //pauses the audio player
-  public pauseAudioPlayer() {
+  public pauseAudioPlayer(): void {
     if (!this.audio) {
       throw new Error('audio player not initialized.');
     } else if (this.audio) {
