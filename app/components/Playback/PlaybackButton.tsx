@@ -41,8 +41,10 @@ function getButtonLabel(playbackState: PlaybackState): string {
       return 'Resume';
     case PlaybackState.IDLE:
       return 'Play';
-    default:
-      return '';
+    default: {
+      console.log('invalid state passed' + playbackState);
+      return 'error';
+    }
   }
 }
 
