@@ -34,6 +34,11 @@ const usePlaybackManager = () => {
     setPlaybackState('idle');
   };
 
+  const onEnd = () => {
+    setPlaybackState('idle');
+    audioPlayerRef.current.audio?.removeEventListener('ended', onEnd);
+  };
+
   // Effect to handle playback ending: cleanup listeners for performance
   useEffect(() => {
     const currentAudioPlayer = audioPlayerRef.current;
@@ -57,11 +62,6 @@ const usePlaybackManager = () => {
         const blobURL = URL.createObjectURL(source);
         await audioPlayerRef.current.loadAudioPlayer(blobURL);
       }
-      const onEnd = () => {
-        setPlaybackState('idle');
-        audioPlayerRef.current.audio?.removeEventListener('ended', onEnd);
-      };
-
       audioPlayerRef.current.audio?.addEventListener('ended', onEnd);
       await audioPlayerRef.current.startAudioPlayer();
       setPlaybackState('playing');
