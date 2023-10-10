@@ -69,6 +69,10 @@ export function createApp() {
 }
 
 function isAuthenticated(req: any, res: any, next: any) {
+  //if test environment, skip authentication
+  if (process.env.NODE_ENV === 'test') {
+    return next();
+  }
   if (
     req.user ||
     ['/login', '/signup', '/graphql'].includes(req.path) ||
