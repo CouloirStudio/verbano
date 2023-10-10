@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { getAudioFromS3 } from '../services/AWSService';
-import { useErrorModalContext } from '../contexts/ErrorModalContext';
-import { AudioPlayer } from '@/app/api/playback';
+import { useEffect, useRef, useState } from "react";
+import { getAudio } from "../api/audio";
+import { useErrorModalContext } from "../contexts/ErrorModalContext";
+import { AudioPlayer } from "@/app/api/playback";
 
 // Define possible states of the playback
 type PlaybackStateType = 'idle' | 'playing' | 'processing' | 'paused';
@@ -38,13 +38,6 @@ const usePlaybackManager = () => {
   useEffect(() => {
     const currentAudioPlayer = audioPlayerRef.current;
 
-    const onEnd = () => {
-      setPlaybackState('idle');
-      currentAudioPlayer.audio?.removeEventListener('ended', onEnd);
-    };
-
-    currentAudioPlayer.audio?.addEventListener('ended', onEnd);
-
     // Cleanup the listener when the component is unmounted
     return () => {
       currentAudioPlayer.audio?.removeEventListener('ended', onEnd);
@@ -59,11 +52,17 @@ const usePlaybackManager = () => {
     try {
       if (!audioPlayerRef.current.isLoaded) {
         setPlaybackState('processing');
-        const source = await getAudioFromS3(url);
+        const source = await getAudio(url);
+        console.log('audio gotten');
         const blobURL = URL.createObjectURL(source);
         await audioPlayerRef.current.loadAudioPlayer(blobURL);
       }
+      const onEnd = () => {
+        setPlaybackState('idle');
+        audioPlayerRef.current.audio?.removeEventListener('ended', onEnd);
+      };
 
+      audioPlayerRef.current.audio?.addEventListener('ended', onEnd);
       await audioPlayerRef.current.startAudioPlayer();
       setPlaybackState('playing');
     } catch (error) {
