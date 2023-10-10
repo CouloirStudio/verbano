@@ -60,7 +60,6 @@ describe('Playback Error Handling', () => {
   });
 
   it('Handles error on bad request', () => {
-    cy.get('#playbackButton').click();
     cy.intercept('POST', 'http://localhost:3000/audio/retrieve', {
       statusCode: 400, // 400 not okay
       body: {
@@ -68,6 +67,8 @@ describe('Playback Error Handling', () => {
         StatusText: 'test',
       },
     }).as('getAudioRequest');
+    cy.get('#playbackButton').click();
+
     cy.wait('@getAudioRequest');
     cy.get('#errorTitle').should('exist');
   });
