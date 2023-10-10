@@ -1,7 +1,11 @@
 import React from 'react';
 import styles from './playback.module.scss';
 
-export type PlaybackState = 'playing' | 'paused' | 'idle';
+enum PlaybackState {
+  PLAYING = 'playing',
+  PAUSED = 'paused',
+  IDLE = 'idle',
+}
 
 export interface PlaybackButtonProps {
   playbackState: PlaybackState;
@@ -21,7 +25,7 @@ const PlaybackButton: React.FC<PlaybackButtonProps> = ({
       id="playbackButton"
       onClick={togglePlayback}
       className={`${playbackButton} ${
-        playbackState === 'playing' ? playing : ''
+        playbackState === PlaybackState.PLAYING ? playing : ''
       } ${theme === 'light' ? light : dark}`}
     >
       {getButtonLabel(playbackState)}
@@ -31,11 +35,11 @@ const PlaybackButton: React.FC<PlaybackButtonProps> = ({
 
 function getButtonLabel(playbackState: PlaybackState): string {
   switch (playbackState) {
-    case 'playing':
+    case PlaybackState.PLAYING:
       return 'Pause';
-    case 'paused':
+    case PlaybackState.PAUSED:
       return 'Resume';
-    case 'idle':
+    case PlaybackState.IDLE:
       return 'Play';
     default:
       return '';
