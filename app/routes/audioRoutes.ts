@@ -68,7 +68,6 @@ router.post('/retrieve', async (req, res) => {
 
     // Call your function to get audio using the URL
     const audio = await getAudioFromS3(url);
-
     // Set the response content type to audio/wav
     res.setHeader('Content-Type', 'audio/wav');
 

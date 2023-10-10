@@ -59,9 +59,7 @@ const usePlaybackManager = () => {
         setPlaybackState('processing');
         const source = await getAudio(url, audioURL);
         const blobURL = URL.createObjectURL(source);
-        console.log('audio gotten');
         await audioPlayerRef.current.loadAudioPlayer(blobURL);
-        console.log('audio loaded');
       }
       audioPlayerRef.current.audio?.addEventListener('ended', onEnd);
       await audioPlayerRef.current.startAudioPlayer();
