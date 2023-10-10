@@ -53,14 +53,15 @@ const usePlaybackManager = () => {
    * Starts or resumes audio playback.
    * Handles loading of audio data if the player is not already loaded.
    */
-  const startPlayback = async (url: string) => {
+  const startPlayback = async (url: string, audioURL: string) => {
     try {
       if (!audioPlayerRef.current.isLoaded) {
         setPlaybackState('processing');
-        const source = await getAudio(url);
-        console.log('audio gotten');
+        const source = await getAudio(url, audioURL);
         const blobURL = URL.createObjectURL(source);
+        console.log('audio gotten');
         await audioPlayerRef.current.loadAudioPlayer(blobURL);
+        console.log('audio loaded');
       }
       audioPlayerRef.current.audio?.addEventListener('ended', onEnd);
       await audioPlayerRef.current.startAudioPlayer();

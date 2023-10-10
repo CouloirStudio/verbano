@@ -5,7 +5,7 @@ import PlaybackButton from './PlaybackButton';
 import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const AUDIO_URL = 's3://verbano-dev-audio/audio-files/1696394886454.wav';
-
+const BASE_URL = 'http://localhost:3000';
 const Playback: React.FC = () => {
   const { startPlayback, pausePlayback, playbackState } = usePlaybackManager();
   const { setIsError, setErrorMessage } = useErrorModalContext();
@@ -15,7 +15,7 @@ const Playback: React.FC = () => {
       switch (playbackState) {
         case 'idle':
         case 'paused':
-          await startPlayback(AUDIO_URL);
+          await startPlayback(BASE_URL, AUDIO_URL);
           break;
         case 'playing':
           console.log('pausing');

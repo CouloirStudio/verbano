@@ -1,10 +1,10 @@
-export const uploadAudio = async (blob: Blob) => {
+export const uploadAudio = async (blob: Blob, baseURL: string) => {
   console.log(blob, blob instanceof Blob); // Logging blob info
 
   const formData = new FormData();
   formData.append('audio', blob, 'myAudioBlob.wav');
 
-  const response = await fetch('http://localhost:3000/audio/upload', {
+  const response = await fetch(`${baseURL}/audio/upload`, {
     method: 'POST',
     body: formData,
   });
@@ -17,11 +17,11 @@ export const uploadAudio = async (blob: Blob) => {
   return data;
 };
 
-export const getAudio = async (url: string) => {
+export const getAudio = async (baseURL: string, audioURL: string) => {
   // Create a data object to send as JSON
-  const data = { url: url };
+  const data = { url: audioURL };
 
-  const response = await fetch('http://localhost:3000/audio/retrieve', {
+  const response = await fetch(`${baseURL}/audio/retrieve`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json', // Specify that you're sending JSON data
@@ -30,6 +30,7 @@ export const getAudio = async (url: string) => {
   });
 
   if (response.ok) {
+    console.log(response);
     return response.blob(); // Return the response as a Blob
   } else {
     throw new Error('Response not OK');

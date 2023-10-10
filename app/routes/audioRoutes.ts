@@ -67,13 +67,13 @@ router.post('/retrieve', async (req, res) => {
     }
 
     // Call your function to get audio using the URL
-    const audioBlob = await getAudioFromS3(url);
+    const audio = await getAudioFromS3(url);
 
     // Set the response content type to audio/wav
     res.setHeader('Content-Type', 'audio/wav');
 
     // Send the audio blob as the response
-    res.send(audioBlob);
+    res.send(audio);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
