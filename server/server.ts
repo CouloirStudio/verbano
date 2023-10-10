@@ -40,11 +40,6 @@ export function createApp() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-
-  // app.get('/', function (req, res, next) {
-  //   isAuthenticated(req, res, next);
-  // });
-
   app.get(
     '/auth/google',
     passport.authenticate('google', {
