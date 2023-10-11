@@ -1,16 +1,23 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IProject extends Document {
-  name: string;
-  description?: string;
+  projectName: string;
+  projectDescription?: string;
+  notes: (typeof Schema.Types.ObjectId)[]; // Array of note IDs
 }
 
 const ProjectSchema = new Schema<IProject>({
-  name: {
+  projectName: {
     type: String,
     required: true,
   },
-  description: String,
+  projectDescription: String,
+  notes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Note',
+    },
+  ],
 });
 
 export const Project: Model<IProject> = mongoose.model(

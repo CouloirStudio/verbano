@@ -3,8 +3,9 @@ import { gql } from 'apollo-server-express';
 const ProjectSchema = gql`
   type Project {
     id: ID!
-    name: String!
-    notes: [Note!]!
+    projectName: String!
+    projectDescription: String
+    notes: [ID!]!
   }
 
   extend type Query {

@@ -1,35 +1,40 @@
-import {INote, Note} from '../models/Note';
-import {IProject, Project} from '../models/Project';
+import { INote, Note } from '../models/Note';
+import { IProject, Project } from '../models/Project';
 
 export const ProjectQueries = {
   async listProjects(): Promise<IProject[]> {
     const projects = await Project.find();
-    if (!projects) {
+    if (!projects || projects.length === 0) {
       console.error('No projects found.');
       return [];
     }
 
-    // Log projects and filter out projects without a name
-    const validProjects = projects.filter((project) => {
-      if (!project.name) {
-        console.error(`Project with ID ${project.id} is missing a name.`);
-        return false;
-      }
-      return true;
+    const finalProjects = projects.map((project) => {
+      const objProject = project.toObject();
+      objProject.id = objProject._id.toString();
+      delete objProject._id;
+      return objProject;
     });
-
-    console.log(validProjects); // log valid projects
-    return validProjects;
+    console.log('Returning projects:', finalProjects); // Added log
+    return finalProjects;
   },
 };
 
 export const ProjectType = {
-  async notes(project: { id: string }): Promise<INote[]> {
-    const notes = await Note.find({projectId: project.id});
-    if (!notes) {
+  async notes(project: { id: string; notes: string[] }): Promise<INote[]> {
+    const notes = await Note.find({ _id: { $in: project.notes } });
+    if (!notes || notes.length === 0) {
       console.error(`No notes found for project with ID ${project.id}.`);
       return [];
     }
-    return notes;
+
+    const finalNotesForProject = notes.map((note) => {
+      const objNote = note.toObject();
+      objNote.id = objNote._id.toString();
+      delete objNote._id;
+      return objNote;
+    });
+    console.log('Returning notes for project:', finalNotesForProject); // Added log
+    return finalNotesForProject;
   },
 };

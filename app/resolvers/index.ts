@@ -1,17 +1,17 @@
-import {UserMutations, UserQueries} from './UserResolvers';
-import {ProjectQueries} from "./ProjectResolvers";
-import {NoteMutations, NoteQueries} from "./NoteResolvers";
+import { UserMutations, UserQueries } from './UserResolvers';
+import { ProjectQueries } from './ProjectResolvers';
+import { NoteMutations, NoteQueries } from './NoteResolvers';
 
 const resolvers = {
   Query: {
     ...UserQueries,
     ...NoteQueries,
-    ...ProjectQueries
+    ...ProjectQueries,
   },
   Mutation: {
     ...UserMutations,
     ...NoteMutations,
-  }
+  },
 };
 
 export default resolvers;

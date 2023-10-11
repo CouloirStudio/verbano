@@ -34,7 +34,7 @@ function Sidebar() {
           role="button"
           tabIndex={0}
         >
-          <Project name={project.name} notes={project.notes} />
+          <Project projectName={project.projectName} notes={project.notes} />
         </div>
       ))}
     </div>

@@ -4,11 +4,8 @@ export const GET_PROJECTS_AND_NOTES = gql`
   query {
     listProjects {
       id
-      name
-      notes {
-        id
-        noteName
-      }
+      projectName
+      notes
     }
   }
 `;
