@@ -8,7 +8,14 @@ describe('<Playback />', () => {
     cy.mount(
       <ErrorModalContextProvider>
         <ErrorModal />
-        <Playback />
+        <Playback
+          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
+          baseUrl="http://localhost:3000"
+        />
+        <Playback
+          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
+          baseUrl="http://localhost:3000"
+        />
       </ErrorModalContextProvider>,
     );
     // stubbing network request
@@ -23,29 +30,31 @@ describe('<Playback />', () => {
   });
   it('Has initial state of idle', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.get('#playbackButton').contains('Play');
+    cy.get('button').first().contains('Play');
+    cy.get('button').eq(1).contains('Play');
   });
 
   it('Updates state to Playing when clicked once', () => {
     cy.wait(1000);
-
-    cy.get('#playbackButton').click();
+    cy.get('button').first().click();
     cy.wait('@getAudio');
-    cy.get('#playbackButton').contains('Pause');
+    cy.get('button').first().contains('Pause');
+    cy.get('button').eq(1).contains('Play');
   });
 
   it('Updates state to Paused when clicked once', () => {
-    cy.get('#playbackButton').click();
+    cy.get('button').first().click();
     cy.wait('@getAudio');
-    cy.get('#playbackButton').click();
     cy.wait(1000);
-    cy.get('#playbackButton').contains('Resume');
+    cy.get('button').first().click();
+    cy.get('button').first().contains('Resume');
+    cy.get('button').eq(1).contains('Play');
   });
 
   it('Updates state to idle when recording is finished.', () => {
-    cy.get('#playbackButton').click();
+    cy.get('button').first().click();
     cy.wait(2000);
-    cy.get('#playbackButton').contains('Play');
+    cy.get('button').first().contains('Play');
   });
 });
 
@@ -54,7 +63,14 @@ describe('Playback Error Handling', () => {
     cy.mount(
       <ErrorModalContextProvider>
         <ErrorModal />
-        <Playback />
+        <Playback
+          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
+          baseUrl="http://localhost:3000"
+        />
+        <Playback
+          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
+          baseUrl="http://localhost:3000"
+        />
       </ErrorModalContextProvider>,
     );
   });
@@ -67,7 +83,7 @@ describe('Playback Error Handling', () => {
         StatusText: 'test',
       },
     }).as('getAudioRequest');
-    cy.get('#playbackButton').click();
+    cy.get('button').first().click();
 
     cy.wait('@getAudioRequest');
     cy.get('#errorTitle').should('exist');

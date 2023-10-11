@@ -22,7 +22,6 @@ const PlaybackButton: React.FC<PlaybackButtonProps> = ({
 
   return (
     <button
-      id="playbackButton"
       onClick={togglePlayback}
       className={`${playbackButton} ${
         playbackState === PlaybackState.PLAYING ? playing : ''
