@@ -1,66 +1,33 @@
+@import '../_shared/_variables.scss';
+
 .recorder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
+  @include centerItems();
 }
 
 .recorderButton {
-  width: 4rem; /* Set the width and height to create a circle */
-  height: 4rem;
-  border: none;
-  border-radius: 50%; /* Make the button a circle */
-  background-color: #007BFF; // default background for light theme
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
+  @include circleButton(4rem, $Button-light, $Button-light-hover);
 
   &.light {
-    background-color: #007BFF;
-    color: white;
-
-    &:hover {
-      background-color: #0056b3;
-    }
+    @include lightMode($Button-light, $Button-light-hover, $Button-text);
   }
 
   &.dark {
-    background-color: #242424; // dark theme button color
-    color: #f5f5f5; // dark theme text color
-
-    &:hover {
-      background-color: #4a3737;
-    }
+    @include darkMode($Button-dark, $Button-dark-hover, $Button-text);
   }
 }
 
 .recording {
-  background-color: #FF4500;
 
-  &:hover {
-    background-color: #c03500;
-  }
+  background-color: $Button-active-light;
+  color: $Button-text;
+
+  @include hoverEffect($Button-active-light-hover);
 
   &.light {
-    background-color: #FF4500;
-    color: white;
-
-    &:hover {
-      background-color: #c03500;
-    }
+    @include lightMode($Button-active-light, $Button-active-light-hover, $Button-text);
   }
 
   &.dark {
-    background-color: #9d2d04; // dark theme button color
-    color: #f5f5f5; // dark theme text color
-
-    &:hover {
-      background-color: #601c02;
-    }
+    @include darkMode($Button-active-dark, $Button-active-dark-hover, $Button-text);
   }
 }
