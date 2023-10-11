@@ -1,10 +1,10 @@
 @import '../_shared/_variables.scss';
 
-.recorder {
+.playback {
   @include centerItems();
 }
 
-.recorderButton {
+.playbackButton {
   @include circleButton(4rem, $Button-light, $Button-light-hover);
 
   &.light {
@@ -16,7 +16,7 @@
   }
 }
 
-.recording {
+.playing {
 
   background-color: $Button-active-light;
   color: $Button-text;
@@ -31,3 +31,4 @@
     @include darkMode($Button-active-dark, $Button-active-dark-hover, $Button-text);
   }
 }
+

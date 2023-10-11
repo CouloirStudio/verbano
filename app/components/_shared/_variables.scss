@@ -1,2 +1,63 @@
 // Header
 $header-height: 100px;
+
+//Hover
+@mixin hoverEffect($color) {
+  &:hover {
+    background-color: $color;
+  }
+}
+
+//Light mode
+@mixin lightMode($color1, $color2, $textColor) {
+  background-color: $color1;
+  color: $textColor;
+  @include hoverEffect($color2)
+}
+
+//Dark Mode
+@mixin darkMode($color1, $color2, $textColor) {
+  background-color: $color1;
+  color: $textColor;
+  @include hoverEffect($color2)
+}
+
+//Center
+@mixin centerItems() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+//Circle Button
+@mixin circleButton($size, $color1, $color2) {
+  width: $size; /* Set the width and height to create a circle */
+  height: $size;
+  border: none;
+  border-radius: 50%; /* Make the button a circle */
+  background-color: $color1; // default background for light theme
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  // set default hover effect
+  @include hoverEffect($color2);
+}
+
+
+//Shared Colors
+$Button-text: #f5f5f5;
+
+// Idle button colors
+$Button-light: #54a88d;
+$Button-light-hover: #346958;
+$Button-dark: #1f3d34;
+$Button-dark-hover: #326052;
+
+//Active button colors
+$Button-active-light: #e35656;
+$Button-active-light-hover: #863434;
+$Button-active-dark: #7e2e2e;
+$Button-active-dark-hover: #b24141;
