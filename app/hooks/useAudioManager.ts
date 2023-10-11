@@ -7,6 +7,7 @@ import { AudioRecorder } from '../api/recorder';
 const useAudioManager = () => {
   // getting recorder instance
   const mediaRecorder = AudioRecorder.getRecorder();
+  const BASE_URL = 'http://localhost:3000';
   const { setAudioBlob } = useRecorderContext();
 
   const { setErrorMessage, setIsError } = useErrorModalContext();
@@ -38,7 +39,7 @@ const useAudioManager = () => {
     setRecordingState('processing');
     try {
       const blob = await mediaRecorder.stopRecording();
-      const data = await uploadAudio(blob);
+      const data = await uploadAudio(blob, BASE_URL);
       console.log('Uploaded successfully. URL:', data.url);
       setAudioBlob(blob);
       mediaRecorder.cleanup();
