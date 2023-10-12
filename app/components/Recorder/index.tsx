@@ -1,36 +1,128 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './recorder.module.scss';
-import RecordButton from './RecordButton';
-import useAudioManager from '../../hooks/useAudioManager';
+import {
+  RecorderProvider,
+  useRecorderContext,
+} from '../../contexts/RecorderContext';
+
+import RecordRTC from 'recordrtc';
+import { useErrorModalContext } from '../../contexts/ErrorModalContext';
 
 const Recorder: React.FC = () => {
-  const { startNewRecording, stopAndUploadRecording, recordingState } =
-    useAudioManager();
+  // Retrieve recording state and control functions from the context
+  const {
+    currentRecorder,
+    isRecording,
+    mediaStream,
+    startRecording,
+    stopRecording,
+    setCurrentRecorder,
+    setAudioBlob,
+    setMediaStream,
+  } = useRecorderContext();
 
+  const { setIsError, setErrorMessage } = useErrorModalContext();
   const toggleRecording = async () => {
-    try {
-      if (recordingState === 'idle') {
-        await startNewRecording();
-      } else if (recordingState === 'recording') {
-        await stopAndUploadRecording();
+    let recorder: RecordRTC;
+
+    if (!isRecording) {
+      // If not already recording, then start.
+      try {
+        // Getting media stream
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        setMediaStream(stream);
+        // Instantiating Recorder Object
+        recorder = new RecordRTC(stream, {
+          type: 'audio',
+        });
+        // updating recorder context and starting the recorder.
+        startRecording();
+        recorder.startRecording();
+        setCurrentRecorder(recorder);
+      } catch (error) {
+        // Update the error context so that the modal is displayed
+        setErrorMessage(
+          'We encountered an error while accessing the microphone: please ensure your microphone is connected and allowed in the browser. See our troubleshooting guide for details: INSERT LINK HERE',
+        );
+        // this is what will make the error modal appear.
+        setIsError(true);
+        console.error('Error accessing the microphone:' + error);
       }
-    } catch (error) {
-      console.error(error);
+    } else {
+      if (currentRecorder) {
+        currentRecorder.stopRecording(async function () {
+          stopRecording();
+          clearStreams();
+
+          // Verify that currentRecorder.getBlob() returns a valid Blob
+          const blob = currentRecorder.getBlob();
+
+          // Use FormData for sending the audio blob
+          const formData = new FormData();
+          if (blob instanceof Blob) {
+            formData.append('audio', blob, 'myAudioBlob.wav'); // Add blob to form data
+          } else {
+            console.error('Invalid audio blob:', blob);
+          }
+
+          try {
+            const response = await fetch('http://localhost:3000/audio/upload', {
+              method: 'POST',
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              console.log('Uploaded successfully. URL:', data.url);
+            } else {
+              throw new Error(data.message || 'Failed to upload.');
+            }
+          } catch (error) {
+            console.error('Error uploading audio:', error);
+          }
+
+          setAudioBlob(blob);
+          currentRecorder.destroy();
+          setCurrentRecorder(null);
+        });
+      }
     }
   };
 
+  // Clear the Media streams
+  const clearStreams = () => {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((track) => track.stop());
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      clearStreams();
+    };
+  }, []);
+
   return (
     <div className={styles.recorder}>
-      {recordingState === 'processing' ? (
-        <span>Processing...</span>
-      ) : (
-        <RecordButton
-          isRecording={recordingState === 'recording'}
-          toggleRecording={toggleRecording}
-        />
-      )}
+      <button
+        onClick={toggleRecording}
+        className={`${styles.recorderButton} ${
+          isRecording ? styles.recording : ''
+        }`}
+      >
+        {isRecording ? 'Stop Recording' : 'Start Recording'}
+      </button>
     </div>
   );
 };
 
-export default Recorder;
+const WrappedRecorder: React.FC = () => (
+  <RecorderProvider>
+    <Recorder />
+  </RecorderProvider>
+);
+
+export default WrappedRecorder;
