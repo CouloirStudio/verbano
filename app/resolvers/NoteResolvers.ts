@@ -7,7 +7,17 @@ import {
   UpdateNoteArgs,
 } from './types';
 
+/**
+ * Resolvers for querying notes from the database.
+ */
 export const NoteQueries = {
+  /**
+   * Retrieve a specific note based on the provided ID.
+   * @param _ - Root object (unused in this query).
+   * @param args - Arguments for the query, including the ID of the note to retrieve.
+   * @param _context - Resolver context (unused in this query).
+   * @returns The retrieved note object, or null if no note is found with the provided ID.
+   */
   async getNote(_: unknown, args: GetNoteArgs, _context: ResolverContext) {
     const note = await Note.findById(args.id);
     if (!note) {
@@ -16,6 +26,11 @@ export const NoteQueries = {
     }
     return note;
   },
+
+  /**
+   * Retrieve a list of all notes from the database.
+   * @returns An array of notes, or an empty array if no notes are found.
+   */
   async listNotes() {
     const notes = await Note.find();
     if (!notes) {
@@ -29,16 +44,33 @@ export const NoteQueries = {
       delete objNote._id;
       return objNote;
     });
-    console.log('Returning notes:', finalNotes); // Added log
     return finalNotes;
   },
 };
 
+/**
+ * Resolvers for mutating (creating, updating, deleting) notes in the database.
+ */
 export const NoteMutations = {
+  /**
+   * Create a new note in the database.
+   * @param _ - Root object (unused in this mutation).
+   * @param args - Arguments for the mutation, including the details of the note to create.
+   * @param _context - Resolver context (unused in this mutation).
+   * @returns The created note object.
+   */
   async addNote(_: unknown, args: AddNoteArgs, _context: ResolverContext) {
     const note = new Note(args.input);
     return await note.save();
   },
+
+  /**
+   * Update the details of an existing note in the database.
+   * @param _ - Root object (unused in this mutation).
+   * @param args - Arguments for the mutation, including the ID of the note to update and the new details.
+   * @param _context - Resolver context (unused in this mutation).
+   * @returns The updated note object.
+   */
   async updateNote(
     _: unknown,
     args: UpdateNoteArgs,
@@ -46,6 +78,14 @@ export const NoteMutations = {
   ) {
     return await Note.findByIdAndUpdate(args.id, args.input, { new: true });
   },
+
+  /**
+   * Delete a specific note from the database.
+   * @param _ - Root object (unused in this mutation).
+   * @param args - Arguments for the mutation, including the ID of the note to delete.
+   * @param _context - Resolver context (unused in this mutation).
+   * @returns True if the note was successfully deleted, false otherwise.
+   */
   async deleteNote(
     _: unknown,
     args: DeleteNoteArgs,

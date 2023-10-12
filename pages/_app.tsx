@@ -29,7 +29,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     </ApolloProvider>
   );
 
-  return <ProjectProvider>{PageContent}</ProjectProvider>;
+  return (
+    <ApolloProvider client={client}>
+      <ProjectProvider>{PageContent}</ProjectProvider>
+    </ApolloProvider>
+  );
 }
 
 export default MyApp;

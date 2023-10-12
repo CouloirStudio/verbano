@@ -1,14 +1,23 @@
 import AWS from 'aws-sdk';
 
+// Configuring AWS SDK with necessary credentials and region.
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.AWS_REGION,
 });
 
+// Default S3 bucket name.
 const S3_BUCKET = process.env.S3_BUCKET || 'verbano-dev-audio';
 const s3 = new AWS.S3();
 
+/**
+ * Uploads an audio buffer to S3 and returns the audio URL.
+ *
+ * @param audioBuffer - The buffer containing audio data to be uploaded.
+ * @returns The URL location of the uploaded audio.
+ * @throws Will throw an error if the upload fails.
+ */
 const uploadAudioToS3 = async (audioBuffer: Buffer): Promise<string> => {
   const uploadParams = {
     Bucket: S3_BUCKET,
@@ -30,8 +39,14 @@ const uploadAudioToS3 = async (audioBuffer: Buffer): Promise<string> => {
   }
 };
 
+/**
+ * Deletes an audio file from S3 using its URL.
+ *
+ * @param url - The URL of the audio file to delete.
+ * @throws Will throw an error if the deletion fails.
+ */
 const deleteAudioFromS3 = async (url: string) => {
-  const fileKey = url.split('/').pop(); // Assuming the URL is a direct link to the file
+  const fileKey = url.split('/').pop();
 
   const deleteParams = {
     Bucket: S3_BUCKET,
@@ -42,19 +57,22 @@ const deleteAudioFromS3 = async (url: string) => {
   await s3.deleteObject(deleteParams).promise();
 };
 
+/**
+ * Fetches an audio file from S3 using its URL.
+ *
+ * @param url - The URL of the audio file to fetch.
+ * @returns The audio data fetched from S3.
+ * @throws Will throw an error if fetching fails.
+ */
 const getAudioFromS3 = async (url: string) => {
-  console.log('getting audio');
   const fileKey = url.split('/').pop();
   const getParams = {
     Bucket: S3_BUCKET,
     Key: `audio-files/${fileKey}`,
   };
   try {
-    // Getting audio file
     const response = await s3.getObject(getParams).promise();
     if (response.Body) {
-      // returns data fetched from AWS
-      console.log(response.Body);
       return response.Body;
     } else {
       throw new Error('Failed to get object from S3');

@@ -9,6 +9,9 @@ const router = express.Router();
 const storage = multer.memoryStorage(); // Store the file in memory
 const upload = multer({ storage: storage });
 
+/**
+ * Endpoint to upload audio files.
+ */
 router.post('/upload', upload.single('audio'), async (req, res) => {
   if (!req.file || !req.file.buffer) {
     return res
@@ -36,6 +39,10 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
 
     await note.save();
 
+    // Add note ID to the notes array of the project
+    testProject.notes.push(note._id);
+    await testProject.save();
+
     res.json({ success: true, noteId: note._id, url });
   } catch (error) {
     if (error instanceof Error) {
@@ -56,6 +63,9 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
   }
 });
 
+/**
+ * Endpoint to retrieve audio files using a provided URL.
+ */
 router.post('/retrieve', async (req, res) => {
   try {
     // Parse the incoming JSON data from the request body

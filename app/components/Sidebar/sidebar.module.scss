@@ -3,17 +3,17 @@
 .sidebar {
   width: 250px;
   flex-shrink: 0;
-  background-color: #444;
-  color: #fff;
+  background-color: $card-bg;
+  color: $card-color;
   display: flex;
-  flex-direction: column; // change from default row direction to column
-  justify-content: flex-start; // align items to the top
+  flex-direction: column;
+  justify-content: flex-start;
   height: calc(100vh - $header-height);
   overflow-y: auto;
-  padding: 1rem; // optional, for some space
+  padding: $spacing-base;
   
   h1 {
-    margin-bottom: 1rem; // space between the header and the list
+    @include verticalSpacing($spacing-base);
   }
   
   ul {
@@ -21,7 +21,7 @@
     padding: 0;
     
     li {
-      margin-bottom: 0.5rem; // space between list items
+      @include verticalSpacing(0.5rem);
     }
   }
 }
