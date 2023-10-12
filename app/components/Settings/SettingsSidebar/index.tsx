@@ -1,42 +1,24 @@
 import Link from 'next/link';
-import { useQuery } from '@apollo/client';
-import { NextRouter, useRouter } from 'next/router';
-import React, { ReactNode, useEffect, useState } from 'react';
-import {
-  AiOutlineUser,
-  AiOutlineHome,
-  AiOutlineProfile,
-  AiOutlineLogout,
-} from 'react-icons/ai';
+import {NextRouter, useRouter} from 'next/router';
+import React, {ReactNode} from 'react';
+import {AiOutlineHome, AiOutlineLogout, AiOutlineProfile, AiOutlineUser} from 'react-icons/ai';
 import styles from './settingsSidebar.module.scss';
-import { CURRENT_USER_QUERY } from '../../../graphql/queries/getUsers';
-import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
+import {useErrorModalContext} from '../../../contexts/ErrorModalContext';
+import {useUser} from "../../UserProvider";
 
 export const SettingsSidebar: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-
   const route: NextRouter = useRouter();
+  const {setErrorMessage, setIsError} = useErrorModalContext();
+  const currentUser = useUser();
 
-  const { loading, error, data } = useQuery(CURRENT_USER_QUERY);
-
-  const { setErrorMessage, setIsError } = useErrorModalContext();
-
-  useEffect(() => {
-    if (!loading && !error && data && data.currentUser) {
-      const currentUser = data.currentUser;
-      setFirstName(currentUser.firstName);
-      setLastName(currentUser.lastName);
-      setEmail(currentUser.email);
-    } else if (error) {
-      setErrorMessage('An error occurred while fetching user data.');
-      setIsError(true);
-    }
-  }, [loading, error, data]);
+  if (!currentUser) {
+    setErrorMessage('An error occurred while fetching user data.');
+    setIsError(true);
+    return null;  // You can return an error component or null
+  }
 
   const settingsOptions: string[] = [
-    `Welcome ${firstName} ${lastName} Email ${email}`,
+    `Welcome ${currentUser.firstName} ${currentUser.lastName} Email ${currentUser.email}`,
     'Back to Home',
     'Profile',
     'Logout',
@@ -45,13 +27,13 @@ export const SettingsSidebar: React.FC = () => {
   function getIconByIndex(index: number): ReactNode | null {
     switch (index) {
       case 0:
-        return <AiOutlineUser className={styles.icon} />;
+        return <AiOutlineUser className={styles.icon}/>;
       case 1:
-        return <AiOutlineHome className={styles.icon} />;
+        return <AiOutlineHome className={styles.icon}/>;
       case 2:
-        return <AiOutlineProfile className={styles.icon} />;
+        return <AiOutlineProfile className={styles.icon}/>;
       case 3:
-        return <AiOutlineLogout className={styles.icon} />;
+        return <AiOutlineLogout className={styles.icon}/>;
       default:
         return null;
     }
@@ -71,8 +53,8 @@ export const SettingsSidebar: React.FC = () => {
               <Link
                 href={
                   index === 1
-                    ? '/'
-                    : `/settings/${settingsOption.toLowerCase()}`
+                    ? '/' : index === 3 ? '/logout'
+                      : `/settings/${settingsOption.toLowerCase()}`
                 }
               >
                 <div className={styles.linkContainer}>
