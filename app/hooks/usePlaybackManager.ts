@@ -3,8 +3,12 @@ import { getAudio } from '../api/audio';
 import { useErrorModalContext } from '../contexts/ErrorModalContext';
 import { AudioPlayer } from '@/app/api/playback';
 
-// Define possible states of the playback
-type PlaybackStateType = 'idle' | 'playing' | 'processing' | 'paused';
+export enum PlaybackState {
+  PLAYING = 'playing',
+  PAUSED = 'paused',
+  IDLE = 'idle',
+  PROCESSING = 'processing',
+}
 
 /**
  * Custom hook to manage audio playback and related states.
@@ -13,8 +17,12 @@ const usePlaybackManager = () => {
   // Context to handle error messages in a modal
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
+  // create type for playbackState
+
   // Playback state management
-  const [playbackState, setPlaybackState] = useState<PlaybackStateType>('idle');
+  const [playbackState, setPlaybackState] = useState<PlaybackState>(
+    PlaybackState.IDLE,
+  );
 
   // A single AudioPlayer object is used throughout the hook and needs to have a persistent state throughout the lifetime of the component.
   const audioPlayerRef = useRef(new AudioPlayer());
@@ -31,11 +39,11 @@ const usePlaybackManager = () => {
       setErrorMessage('An unexpected error occurred.');
     }
     setIsError(true);
-    setPlaybackState('idle');
+    setPlaybackState(PlaybackState.IDLE);
   };
 
   const onEnd = () => {
-    setPlaybackState('idle');
+    setPlaybackState(PlaybackState.IDLE);
     audioPlayerRef.current.audio?.removeEventListener('ended', onEnd);
   };
 
@@ -56,14 +64,14 @@ const usePlaybackManager = () => {
   const startPlayback = async (url: string, audioURL: string) => {
     try {
       if (!audioPlayerRef.current.isLoaded) {
-        setPlaybackState('processing');
+        setPlaybackState(PlaybackState.PROCESSING);
         const source = await getAudio(url, audioURL);
         const blobURL = URL.createObjectURL(source);
         await audioPlayerRef.current.loadAudioPlayer(blobURL);
       }
       audioPlayerRef.current.audio?.addEventListener('ended', onEnd);
       await audioPlayerRef.current.startAudioPlayer();
-      setPlaybackState('playing');
+      setPlaybackState(PlaybackState.PLAYING);
     } catch (error) {
       handleError(error);
     }
@@ -75,7 +83,7 @@ const usePlaybackManager = () => {
   const pausePlayback = async () => {
     try {
       audioPlayerRef.current.pauseAudioPlayer();
-      setPlaybackState('paused');
+      setPlaybackState(PlaybackState.PAUSED);
     } catch (error) {
       handleError(error);
     }

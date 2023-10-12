@@ -4,6 +4,7 @@ import Recorder from '../../../app/components/Recorder';
 import ErrorModal from '../../../app/components/ErrorModal';
 import { RecorderProvider } from '@/app/contexts/RecorderContext';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
+import client from '../../../app/config/apolloClient';
 
 describe('<Recorder />', () => {
   beforeEach(() => {
@@ -18,7 +19,18 @@ describe('<Recorder />', () => {
     );
     const recorder = AudioRecorder.getRecorder();
     cy.stub(recorder, 'cleanup');
+
+    cy.intercept('POST', 'http://localhost:3000/audio/upload', {
+      statusCode: 200, // 200 OK
+      body: {
+        success: true,
+        message: 'Successfully uploaded.',
+      },
+    }).as('uploadRequest');
+
+    cy.stub(client, 'query');
   });
+
   it('starts recording', () => {
     cy.get('#recorderButton').should('have.text', 'Start');
     cy.get('#recorderButton').click();
@@ -31,15 +43,7 @@ describe('<Recorder />', () => {
     cy.wait(1000);
     cy.get('#recorderButton').should('have.text', 'Stop');
     cy.get('#recorderButton').click();
-    //intercepting audio upload and pretending it was successful
-    cy.intercept('POST', 'http://localhost:3000/audio/upload', {
-      statusCode: 200, // 200 OK
-      body: {
-        success: true,
-        message: 'Successfully uploaded.',
-      },
-    }).as('uploadRequest');
-    cy.wait(1000);
+    cy.wait('@uploadRequest');
     cy.get('#recorderButton').should('have.text', 'Start');
     cy.get('#errorTitle').should('not.exist');
   });

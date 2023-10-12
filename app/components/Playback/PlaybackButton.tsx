@@ -1,11 +1,6 @@
 import React from 'react';
 import styles from './playback.module.scss';
-
-enum PlaybackState {
-  PLAYING = 'playing',
-  PAUSED = 'paused',
-  IDLE = 'idle',
-}
+import { PlaybackState } from '@/app/hooks/usePlaybackManager';
 
 export interface PlaybackButtonProps {
   playbackState: PlaybackState;
