@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+
+  p {
+    margin: 0;
+  }
+}
+
+.registerContainer {
+  display: flex;
+  gap: 30px;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  justify-content: center;
+  flex-direction: column;
+  padding: 50px;
+  text-align: center;
+  margin-bottom: 50px;
+
+  a {
+    color: #1ea7fd !important;
+  }
+}
+
+.registerForm {
+  flex-direction: column;
+  margin: auto;
+  width: 100%;
+  gap: 30px;
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  label {
+    font-size: .8rem;
+    margin-bottom: 5px;
+    padding-left: 20px;
+  }
+}
