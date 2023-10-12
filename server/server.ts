@@ -13,6 +13,7 @@ import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
 import { buildContext } from 'graphql-passport';
 import { User } from '../app/models';
+import {UserMutations} from "../app/resolvers/UserResolvers";
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
