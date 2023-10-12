@@ -71,7 +71,7 @@ describe('Record Audio', () => {
     cy.get('#errorTitle').should('exist');
     cy.get('#errorMessage').should('have.text', 'Test');
   });
-
+});
   it('Renders Error Modal on failed upload', () => {
     cy.visit('localhost:3000', {
       timeout: 60000,
