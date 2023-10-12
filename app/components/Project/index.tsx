@@ -2,23 +2,35 @@ import styles from './Project.module.scss';
 import Note from '../Note';
 import { NoteType } from '../../resolvers/types';
 
+/**
+ * Props for the Project component.
+ */
 type ProjectProps = {
-  name: string;
+  /** Name of the project. */
+  projectName: string;
+  /** Array of notes associated with the project. */
   notes: NoteType[];
 };
 
-function Project({ name, notes }: ProjectProps) {
+/**
+ * A functional component representing a project and its associated notes.
+ *
+ * @param projectName - The name of the project to be displayed.
+ * @param notes - An array of notes associated with the project.
+ */
+function Project({ projectName, notes }: ProjectProps) {
+  // Log the notes here
+  console.log(notes);
+
   return (
     <div className={styles.project}>
-      <h2 className={styles.projectName}>{name}</h2>
+      <h2 className={styles.projectName}>{projectName}</h2>
       <div className={styles.notesContainer}>
-        {notes.map(
-          (
-            note, // Map over the notes and render each one
-          ) => (
-            <Note key={note.id} projectName={name} noteName={note.noteName} />
-          ),
-        )}
+        {notes.map((note) => {
+          // Explicitly destructure the properties from the note
+          const { id, noteName } = note;
+          return <Note key={id} noteName={noteName} />;
+        })}
       </div>
     </div>
   );

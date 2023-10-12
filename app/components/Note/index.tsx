@@ -1,17 +1,23 @@
 import styles from './note.module.scss';
 
+/**
+ * Props for the Note component.
+ */
 type NoteProps = {
-  projectName: string;
+  /** Name of the note. */
   noteName: string;
+  /** Optional children elements that can be nested inside the Note. */
   children?: React.ReactNode;
 };
 
-function Note({ projectName, noteName }: NoteProps) {
-  return (
-    <div className={styles.note}>
-      {projectName}: Note {noteName}
-    </div>
-  );
+/**
+ * A functional component representing a single note.
+ *
+ * @param noteName - The name of the note to be displayed.
+ */
+function Note({ noteName }: NoteProps) {
+  console.log('Note Name:', noteName);
+  return <div className={styles.note}>{noteName}</div>;
 }
 
 export default Note;

@@ -40,7 +40,11 @@ const typeDefs = gql`
     logout: Boolean
     updateFullName(email: String!, firstName: String!, lastName: String!): User
     updateEmail(email: String!, newEmail: String!): User
-    updatePassword(password: String!, newPassword: String!, email: String!): User
+    updatePassword(
+      password: String!
+      newPassword: String!
+      email: String!
+    ): User
   }
 `;
 

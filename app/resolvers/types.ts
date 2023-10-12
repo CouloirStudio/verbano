@@ -56,6 +56,6 @@ export type NoteType = {
 
 export type ProjectType = {
   id: string;
-  name: string;
+  projectName: string;
   notes: NoteType[];
 };
