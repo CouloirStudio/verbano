@@ -19,7 +19,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({dev});
 const handle = nextApp.getRequestHandler();
 
-export function createApp() {
+export function createApp(mockMiddleware?: any) {
   const app = express();
 
   app.use(
@@ -32,13 +32,23 @@ export function createApp() {
   );
 
   const corsOptions = {
-    origin: '*',
+    origin: ['http://localhost:3000/graphql', 'http://localhost:3000'],
     credentials: true,
-  };
+  }
   app.use(cors(corsOptions));
 
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(json());
+
+
+  // if test environment, use mock middleware
+  if (process.env.NODE_ENV === 'test') {
+    if (mockMiddleware) {
+      app.use(mockMiddleware);
+    }
+    app.use('/auth-check', authCheckTestMiddleware);
+  }
 
   app.get(
     '/auth/google',
@@ -57,8 +67,8 @@ export function createApp() {
     },
   );
 
-  app.use(json());
   app.use('/audio', audioRoutes);
+
 
   return app;
 }
@@ -70,13 +80,22 @@ function isAuthenticated(req: any, res: any, next: any) {
   }
   if (
     req.user ||
-    ['/login', '/signup', '/graphql'].includes(req.path) ||
+    ['/login', '/register', '/graphql'].includes(req.path) ||
     req.path.startsWith('/_next')
   ) {
     next();
   } else {
     console.log('Redirecting to /login');
     res.redirect('/login');
+  }
+}
+
+
+function authCheckTestMiddleware(req: any, res: any, next: any) {
+  if (req.user) {
+    res.status(200).send('Authenticated');
+  } else {
+    res.status(401).send('Unauthorized');
   }
 }
 
