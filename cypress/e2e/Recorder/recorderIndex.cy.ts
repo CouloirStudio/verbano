@@ -47,6 +47,7 @@ describe('Record Audio', () => {
     cy.wait(1000);
     cy.get('#recorderButton').should('have.text', 'Start');
     cy.get('#errorTitle').should('not.exist');
+  });
 
   it('Renders Error Modal on failed upload', () => {
     cy.visit('localhost:3000', {
