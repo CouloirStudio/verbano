@@ -1,5 +1,5 @@
 import React from 'react';
-import { AudioRecorder } from '../../../app/api/recorder';
+import { AudioRecorder } from '@/app/api/recorder';
 import Recorder from '../../../app/components/Recorder';
 import ErrorModal from '../../../app/components/ErrorModal';
 import { RecorderProvider } from '@/app/contexts/RecorderContext';
