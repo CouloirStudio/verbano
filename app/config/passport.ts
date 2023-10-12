@@ -76,7 +76,7 @@ const googleCallback = async (
   done: any,
 ) => {
   try {
-    const matchingUser = await User.findOne({googleId: profile.id});
+    let matchingUser = await User.findOne({googleId: profile.id});
     if (matchingUser) {
       done(null, matchingUser);
       return;
@@ -87,10 +87,10 @@ const googleCallback = async (
     let firstName = profile.name.givenName;
     let lastName = profile.name.familyName;
 
-    if (!lastName && firstName.contains(' ')) {
-      const splitName = firstName.split(' ');
-      firstName = splitName[0];
-      lastName = splitName[1];
+    matchingUser = await User.findOne({email: email});
+    if (matchingUser) {
+      done(new Error('This email is already in use. Please login with your email and password.'), null);
+      return;
     }
 
     // Create new user

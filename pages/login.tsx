@@ -1,33 +1,41 @@
 import styles from '../styles/login.module.scss';
-import { useState } from 'react';
-import { useMutation } from '@apollo/client';
+import {useEffect, useState} from 'react';
+import {useMutation} from '@apollo/client';
 import EmailField from '../app/components/Login/EmailField';
 
 import PasswordField from '@/app/components/Login/PasswordField';
-import {
-  ErrorModalContextProvider,
-  useErrorModalContext,
-} from '@/app/contexts/ErrorModalContext';
+import {ErrorModalContextProvider, useErrorModalContext,} from '@/app/contexts/ErrorModalContext';
 import ErrorModal from '@/app/components/ErrorModal';
-import { Button, Divider } from '@mui/material';
-import { FaGoogle } from 'react-icons/fa';
+import {Button, Divider} from '@mui/material';
+import {FaGoogle} from 'react-icons/fa';
 
-import { CURRENT_USER_QUERY } from '../app/graphql/queries/getUsers';
-import { LOGIN_MUTATION } from '../app/graphql/mutations/addUsers';
+import {CURRENT_USER_QUERY} from '../app/graphql/queries/getUsers';
+import {LOGIN_MUTATION} from '../app/graphql/mutations/addUsers';
+import {useRouter} from "next/router";
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const [login] = useMutation(LOGIN_MUTATION, {
-    update: (cache, { data: { login } }) =>
+    update: (cache, {data: {login}}) =>
       cache.writeQuery({
         query: CURRENT_USER_QUERY,
-        data: { currentUser: login.user },
+        data: {currentUser: login.user},
       }),
   });
 
-  const { setIsError, setErrorMessage } = useErrorModalContext();
+  const router = useRouter();
+  const {setIsError, setErrorMessage} = useErrorModalContext();
+
+  useEffect(() => {
+    const errorMessage = router.query.error;
+    if (errorMessage) {
+      setIsError(true);
+      setErrorMessage(errorMessage as string);
+    }
+  }, [router.query]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +46,7 @@ const LoginPage = () => {
     };
 
     try {
-      const result = await login({ variables: user });
+      const result = await login({variables: user});
       console.log(result);
 
       // TODO: Redirect to home page, but safely, maybe with the router or something. Don't really know how to do it.
@@ -52,13 +60,14 @@ const LoginPage = () => {
 
   return (
     <ErrorModalContextProvider>
+      <ErrorModal/>
       <div className={styles.container}>
         <div className={styles.loginContainer}>
           <h1>Login</h1>
           <p>
             Don't have an account? <a href={'/register'}>Register here!</a>
           </p>
-          <Divider variant="middle" />
+          <Divider variant="middle"/>
           <Button
             sx={{
               backgroundColor: '#de5246',
@@ -66,7 +75,7 @@ const LoginPage = () => {
                 backgroundColor: '#de5246',
               },
             }}
-            startIcon={<FaGoogle />}
+            startIcon={<FaGoogle/>}
             variant="contained"
             color="primary"
             onClick={() => {
@@ -75,10 +84,10 @@ const LoginPage = () => {
           >
             Login with Google
           </Button>
-          <Divider variant="middle" />
+          <Divider variant="middle"/>
 
           <div className={styles.loginForm}>
-            <ErrorModal />
+
 
             <form onSubmit={handleSubmit}>
               <EmailField

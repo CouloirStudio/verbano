@@ -1,5 +1,5 @@
-import { User } from '../models/User';
-import { hashPassword } from '../config/passport';
+import {User} from '../models/User';
+import {hashPassword} from '../config/passport';
 import verifyPassword from './verifyPassword';
 
 export const UserQueries = {
@@ -10,8 +10,12 @@ export const UserQueries = {
 
 export const UserMutations = {
   async signup(parent: any, {firstName, lastName, email, password}: any, context: any) {
+
+    if (!password || !email || !firstName || !lastName) {
+      throw new Error('All fields are required.');
+    }
     // validate input data
-    if (password && password.length < 8) {
+    if (password.length < 8) {
       throw new Error('Password must be at least 8 characters long.');
     }
 
@@ -26,7 +30,7 @@ export const UserMutations = {
     }
 
     // See if user exists
-    const oldUser = await User.findOne({ email });
+    const oldUser = await User.findOne({email});
     if (oldUser) {
       throw new Error('An account with this email already exists.');
     }
@@ -52,8 +56,8 @@ export const UserMutations = {
     };
   },
 
-  async login(parent: any, { email, password }: any, context: any) {
-    const { user } = await context.authenticate('graphql-local', {
+  async login(parent: any, {email, password}: any, context: any) {
+    const {user} = await context.authenticate('graphql-local', {
       email,
       password,
     });
@@ -64,10 +68,10 @@ export const UserMutations = {
 
     await context.login(user);
 
-    return { user };
+    return {user};
   },
 
-  async logout(_: any, __: any, { req }: any) {
+  async logout(_: any, __: any, {req}: any) {
     return new Promise((resolve, reject) => {
       req.logout((err: any) => {
         if (err) {
@@ -88,7 +92,7 @@ export const UserMutations = {
   ) => {
     try {
       // Check if a user with the provided email exists
-      const user = await User.findOne({ email });
+      const user = await User.findOne({email});
 
       if (!user) {
         throw new Error('User not found');
@@ -113,11 +117,11 @@ export const UserMutations = {
   },
   updateEmail: async (
     _: any,
-    { email, newEmail }: { email: string; newEmail: string },
+    {email, newEmail}: { email: string; newEmail: string },
   ) => {
     try {
       // Find the user with the provided current email
-      const user = await User.findOne({ email });
+      const user = await User.findOne({email});
 
       // If the user does not exist, throw an error
       if (!user) {
@@ -156,7 +160,7 @@ export const UserMutations = {
   ) => {
     try {
       // Get the authenticated user
-      const user = await User.findOne({ email });
+      const user = await User.findOne({email});
       if (!user) {
         throw new Error('User not found');
       }
