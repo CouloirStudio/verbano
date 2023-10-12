@@ -29,11 +29,7 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({
   return (
     <div>
       <InputField label={text} icon={<AiOutlineLock />}>
-        <input
-          type="password"
-          value={value}
-          onChange={handleInputChange}
-        />
+        <input type="password" value={value} onChange={handleInputChange} />
       </InputField>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>

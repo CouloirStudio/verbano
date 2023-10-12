@@ -13,7 +13,7 @@ import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
 import {
   UPDATE_FULL_NAME_MUTATION,
   UPDATE_EMAIL_MUTATION,
-  UPDATE_PASSWORD_MUTATION
+  UPDATE_PASSWORD_MUTATION,
 } from '@/app/graphql/mutations/addSettings';
 import CurrentUserData from './interface/CurrentUserData';
 
@@ -27,7 +27,6 @@ const Profile = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
 
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
@@ -56,22 +55,21 @@ const Profile = () => {
         query: CURRENT_USER_QUERY,
       });
 
-      console.log('Current cache data: ', userData)
+      console.log('Current cache data: ', userData);
 
       if (userData && userData.currentUser) {
-
         const updatedUserData = {
           ...userData,
           currentUser: {
             ...userData.currentUser,
-            email: updateEmail.email
+            email: updateEmail.email,
           },
         };
 
         cache.writeQuery({
           query: CURRENT_USER_QUERY,
           data: updatedUserData,
-        })
+        });
         console.log('Updated cache data:', userData);
       }
     },
@@ -130,7 +128,11 @@ const Profile = () => {
     event.preventDefault();
     try {
       if (data && data.currentUser) {
-        const updates: { email?: string; firstName?: string; lastName?: string } = {};
+        const updates: {
+          email?: string;
+          firstName?: string;
+          lastName?: string;
+        } = {};
 
         // Always update the email field if it's different
         if (email !== data.currentUser.email) {
@@ -138,7 +140,10 @@ const Profile = () => {
         }
 
         // Update first name and last name if either is different
-        if (firstName !== data.currentUser.firstName || lastName !== data.currentUser.lastName) {
+        if (
+          firstName !== data.currentUser.firstName ||
+          lastName !== data.currentUser.lastName
+        ) {
           updates.firstName = firstName;
           updates.lastName = lastName;
         }
@@ -154,7 +159,11 @@ const Profile = () => {
                 newEmail: email,
               },
             });
-            if (resultEmail && resultEmail.data && resultEmail.data.updateEmail) {
+            if (
+              resultEmail &&
+              resultEmail.data &&
+              resultEmail.data.updateEmail
+            ) {
               updatedEmail = resultEmail.data.updateEmail.email;
             } else {
               setErrorMessage('Email update failed.');
@@ -172,7 +181,11 @@ const Profile = () => {
                 lastName: lastName,
               },
             });
-            if (resultFullName && resultFullName.data && resultFullName.data.updateFullName) {
+            if (
+              resultFullName &&
+              resultFullName.data &&
+              resultFullName.data.updateFullName
+            ) {
               // Update the state with the new data
               const updatedUserFullName = resultFullName.data.updateFullName;
               setFirstName(updatedUserFullName.firstName);
@@ -235,10 +248,8 @@ const Profile = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Typography
-                variant="subtitle1"
-                className={classes.subtitle1}>
-                Update your password
+            <Typography variant="subtitle1" className={classes.subtitle1}>
+              Update your password
             </Typography>
             <button type="submit" className={classes.updateButton}>
               Save Changes

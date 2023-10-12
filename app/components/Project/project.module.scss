@@ -1,17 +1,15 @@
+@import '../_shared/_variables.scss';
+
 .project {
+  @include cardStyles();
   display: inline-block;
-  width: 250px; // Adjust as needed
-  margin-right: 20px;
-  background-color: #555;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  width: 250px;
+  margin-right: $spacing-base;
 }
 
 .projectName {
   font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: #fff;
+  @include verticalSpacing($spacing-base);
 }
 
 .notesContainer {
