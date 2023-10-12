@@ -1,15 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {useMutation} from '@apollo/client';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import styles from '../styles/register.module.scss';
-import {SIGNUP_MUTATION} from '@/app/graphql/mutations/addUsers';
+import { SIGNUP_MUTATION } from '@/app/graphql/mutations/addUsers';
 import EmailField from '../app/components/Settings/UpdateEmailField';
 import PasswordField from '../app/components/Login/PasswordField';
 import NameField from '../app/components/Settings/UpdateFullNameField';
 import {Button, Divider} from '@mui/material';
 import {FaGoogle} from "react-icons/fa";
-import {ErrorModalContextProvider, useErrorModalContext} from "../app/contexts/ErrorModalContext";
-import ErrorModal from "@/app/components/ErrorModal";
-import {useRouter} from "next/router";
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -18,17 +15,6 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
 
   const [signup] = useMutation(SIGNUP_MUTATION);
-
-  const router = useRouter();
-  const {setIsError, setErrorMessage} = useErrorModalContext();
-
-  useEffect(() => {
-    const errorMessage = router.query.error;
-    if (errorMessage) {
-      setIsError(true);
-      setErrorMessage(errorMessage as string);
-    }
-  }, [router.query]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,92 +26,75 @@ const RegisterPage = () => {
     };
 
     try {
-      const result = await signup({variables: user});
-      await router.push('/login');
+      const result = await signup({ variables: user });
       console.log(result);
-    } catch (error: any) {
-      setErrorMessage(error.message || 'An unknown error occurred');
-      setIsError(true);
+    } catch (error) {
       console.error('Error signing up:', error);
     }
   };
 
   return (
-    <ErrorModalContextProvider>
-      <ErrorModal/>
-      <div className={styles.container}>
-        <div className={styles.registerContainer}>
-          <h1>Register</h1>
-          <p>Already have an account?{' '}
-            <a href={'/login'}>
-              Login here!
-            </a>
-          </p>
-          <Divider variant={'middle'}/>
-          <Button
-            sx={{
+    <div className={styles.container}>
+      <div className={styles.registerContainer}>
+        <h1>Register</h1>
+        <p>Already have an account?{' '}
+          <a href={'/login'}>
+            Login here!
+          </a>
+        </p>
+        <Divider variant={'middle'}/>
+        <Button
+          sx={{
+            backgroundColor: '#de5246',
+            '&:hover': {
               backgroundColor: '#de5246',
-              '&:hover': {
-                backgroundColor: '#de5246',
-              },
+            },
+          }}
+          startIcon={<FaGoogle />}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            window.location.href = 'http://localhost:3000/auth/google';
+          }}
+        >
+          Register with Google
+        </Button>
+        <Divider variant={'middle'} />
+        <form onSubmit={handleSubmit}>
+          <div>
+            <NameField
+              firstName={firstName}
+              lastName={lastName}
+              onFirstNameChange={e => {setFirstName(e.target.value)}}
+              onLastNameChange={e => {setLastName(e.target.value)}}
+            />
+          </div>
+          <div>
+            <EmailField
+              value={email}
+              onChange={e => {setEmail(e.target.value)}}
+            />
+          </div>
+          <div>
+            <PasswordField
+              value={password}
+              onChange={e => {setPassword(e.target.value)}}
+            />
+          </div>
+          <Button
+            id={'registerButton'}
+            sx={{
+              width: '100%',
             }}
-            startIcon={<FaGoogle/>}
             variant="contained"
             color="primary"
-            onClick={() => {
-              window.location.href = 'http://localhost:3000/auth/google';
-            }}
+            type="submit"
           >
-            Register with Google
+            Register
           </Button>
-          <Divider variant={'middle'}/>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <NameField
-                firstName={firstName}
-                lastName={lastName}
-                firstLabel={'First Name'}
-                secondLabel={'Last Name'}
-                onFirstNameChange={e => {
-                  setFirstName(e.target.value)
-                }}
-                onLastNameChange={e => {
-                  setLastName(e.target.value)
-                }}
-              />
-            </div>
-            <div>
-              <EmailField
-                value={email}
-                label={'Email'}
-                onChange={e => {
-                  setEmail(e.target.value)
-                }}
-              />
-            </div>
-            <div>
-              <PasswordField
-                value={password}
-                onChange={e => {
-                  setPassword(e.target.value)
-                }}
-              />
-            </div>
-            <Button
-              id={'registerButton'}
-              sx={{
-                width: '100%',
-              }}
-              variant="contained"
-              color="primary"
-              type="submit"
-            >
-              Register
-            </Button>
-          </form>
-        </div>
+        </form>
       </div>
-    </ErrorModalContextProvider>
+    </div>
   );
 };
 
