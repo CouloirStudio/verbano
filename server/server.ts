@@ -13,6 +13,7 @@ import resolvers from '../app/resolvers/index';
 import {buildContext} from 'graphql-passport';
 import {User} from '../app/models';
 import audioRoutes from "../app/routes/audioRoutes";
+import {UserMutations} from "../app/resolvers/UserResolvers";
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -66,6 +67,7 @@ export function createApp(mockMiddleware?: any) {
       res.redirect('/');
     },
   );
+  app.get('/logout', handleLogout);
 
   app.use('/audio', audioRoutes);
 
@@ -74,19 +76,44 @@ export function createApp(mockMiddleware?: any) {
 }
 
 function isAuthenticated(req: any, res: any, next: any) {
-  //if test environment, skip authentication
+  // If test environment, skip authentication
   if (process.env.NODE_ENV === 'test') {
     return next();
   }
-  if (
-    req.user ||
-    ['/login', '/register', '/graphql'].includes(req.path) ||
-    req.path.startsWith('/_next')
-  ) {
-    next();
-  } else {
-    console.log('Redirecting to /login');
+
+  // If user is authenticated
+  if (req.user) {
+    // Prevent authenticated users from accessing /login or /register
+    if (['/login', '/register'].includes(req.path)) {
+      return res.redirect('/'); // Redirect to home or another suitable page
+    }
+    return next();
+  }
+
+  // Allow certain paths without authentication
+  if (['/graphql'].includes(req.path) || req.path.startsWith('/_next')) {
+    return next();
+  }
+
+  // If not authenticated and not already on /login or /register, redirect to /login
+  if (!['/login', '/register'].includes(req.path)) {
     res.redirect('/login');
+  } else {
+    next();  // If already on /login or /register, continue without redirecting
+  }
+}
+
+async function handleLogout(req: any, res: any) {
+  try {
+    const result = await UserMutations.logout(null, null, {req});
+    if (result) {
+      res.redirect('/');
+    } else {
+      res.status(500).send('Failed to logout');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error during logout');
   }
 }
 
