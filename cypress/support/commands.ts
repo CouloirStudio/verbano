@@ -35,3 +35,33 @@
 //     }
 //   }
 // }
+
+
+Cypress.Commands.add('login', (email = 'test@gmail.com', password = 'password') => {
+  const LOGIN_MUTATION = `
+    mutation Login($email: String!, $password: String!) {
+      login(email: $email, password: $password) {
+        user {
+          id
+          email
+        }
+      }
+    }
+  `;
+
+  cy.request({
+    method: 'POST',
+    url: 'http://localhost:3000/graphql',
+    body: {
+      query: LOGIN_MUTATION,
+      variables: {
+        email: email,
+        password: password
+      }
+    }
+  }).then((resp) => {
+    expect(resp.status).to.eq(200);
+    // At this point, if login was successful, the session cookie should be set by your server
+    // Cypress will automatically include this cookie in subsequent requests ensuring the user remains logged in
+  });
+});
