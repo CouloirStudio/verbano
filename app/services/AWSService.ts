@@ -36,9 +36,33 @@ const deleteAudioFromS3 = async (url: string) => {
   const deleteParams = {
     Bucket: S3_BUCKET,
     Key: `audio-files/${fileKey}`,
+    ContentType: 'blob',
   };
 
   await s3.deleteObject(deleteParams).promise();
 };
 
-export { uploadAudioToS3, deleteAudioFromS3 };
+const getAudioFromS3 = async (url: string) => {
+  console.log('getting audio');
+  const fileKey = url.split('/').pop();
+  const getParams = {
+    Bucket: S3_BUCKET,
+    Key: `audio-files/${fileKey}`,
+  };
+  try {
+    // Getting audio file
+    const response = await s3.getObject(getParams).promise();
+    if (response.Body) {
+      // returns data fetched from AWS
+      console.log(response.Body);
+      return response.Body;
+    } else {
+      throw new Error('Failed to get object from S3');
+    }
+  } catch (error) {
+    console.error('Error getting object from S3:', error);
+    throw error;
+  }
+};
+
+export { uploadAudioToS3, deleteAudioFromS3, getAudioFromS3 };
