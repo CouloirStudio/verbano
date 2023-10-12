@@ -1,13 +1,19 @@
 import gql from 'graphql-tag';
 
+// graphql/queries/getNotes.ts
 export const GET_PROJECTS_AND_NOTES = gql`
   query {
     listProjects {
       id
-      name
+      projectName
       notes {
         id
         noteName
+        audioLocation
+        dateCreated
+        transcription
+        tags
+        projectId
       }
     }
   }

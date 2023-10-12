@@ -27,8 +27,8 @@ export const SettingsSidebar: React.FC = () => {
     if (!loading && !error && data && data.currentUser) {
       const currentUser = data.currentUser;
       setFirstName(currentUser.firstName);
-      setLastName(currentUser.lastName)
-      setEmail(currentUser.email)
+      setLastName(currentUser.lastName);
+      setEmail(currentUser.email);
     } else if (error) {
       setErrorMessage('An error occurred while fetching user data.');
       setIsError(true);

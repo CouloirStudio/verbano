@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { getAudio } from "../api/audio";
-import { useErrorModalContext } from "../contexts/ErrorModalContext";
-import { AudioPlayer } from "@/app/api/playback";
+import { useEffect, useRef, useState } from 'react';
+import { getAudio } from '../api/audio';
+import { useErrorModalContext } from '../contexts/ErrorModalContext';
+import { AudioPlayer } from '@/app/api/playback';
 
 // Define possible states of the playback
 type PlaybackStateType = 'idle' | 'playing' | 'processing' | 'paused';
