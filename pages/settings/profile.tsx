@@ -240,12 +240,15 @@ const Profile = () => {
             <UpdateFullName
               firstName={firstName}
               lastName={lastName}
+              firstLabel={'Update First Name'}
+              secondLabel={'Update Last Name'}
               onFirstNameChange={(e) => setFirstName(e.target.value)}
               onLastNameChange={(e) => setLastName(e.target.value)}
             />
 
             <UpdateEmailField
               value={email}
+              label={'Update Email'}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Typography variant="subtitle1" className={classes.subtitle1}>
