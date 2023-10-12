@@ -1,14 +1,15 @@
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import '../styles/globals.scss';
-import type { AppProps } from 'next/app';
+import type {AppProps} from 'next/app';
 import Layout from '../app/components/Layout/index';
-import { ProjectProvider } from '../app/contexts/ProjectContext';
-import { ApolloProvider } from '@apollo/client';
+import {ProjectProvider} from '../app/contexts/ProjectContext';
+import {ApolloProvider} from '@apollo/client';
 import client from '../app/config/apolloClient';
-import { ErrorModalContextProvider } from '../app/contexts/ErrorModalContext';
+import {ErrorModalContextProvider} from '../app/contexts/ErrorModalContext';
 import ErrorModal from '../app/components/ErrorModal';
+import {UserProvider} from "../app/components/UserProvider";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({Component, pageProps}: AppProps) {
   const router = useRouter();
   const isExcludedPage =
     ['/login', '/register'].includes(router.pathname) ||
@@ -16,16 +17,18 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const PageContent = (
     <ApolloProvider client={client}>
-      <ErrorModalContextProvider>
-        <ErrorModal />
-        {isExcludedPage ? (
-          <Component {...pageProps} />
-        ) : (
-          <Layout>
+      <UserProvider>
+        <ErrorModalContextProvider>
+          <ErrorModal/>
+          {isExcludedPage ? (
             <Component {...pageProps} />
-          </Layout>
-        )}
-      </ErrorModalContextProvider>
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+        </ErrorModalContextProvider>
+      </UserProvider>
     </ApolloProvider>
   );
 
