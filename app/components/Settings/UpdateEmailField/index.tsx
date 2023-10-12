@@ -4,12 +4,13 @@ import { AiOutlineMail } from 'react-icons/ai';
 
 interface EmailInputProps {
   value: string;
+  label: string
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const UpdateEmailField: React.FC<EmailInputProps> = ({ value, onChange }) => {
+const UpdateEmailField: React.FC<EmailInputProps> = ({ value, label, onChange }) => {
   return (
-    <InputField label="Update Email" icon={<AiOutlineMail />}>
+    <InputField label={label} icon={<AiOutlineMail />}>
       <input type="email" value={value} onChange={onChange} required />
     </InputField>
   );
