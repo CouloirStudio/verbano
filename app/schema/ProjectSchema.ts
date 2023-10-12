@@ -5,7 +5,7 @@ const ProjectSchema = gql`
     id: ID!
     projectName: String!
     projectDescription: String
-    notes: [ID!]!
+    notes: [Note!]!
   }
 
   extend type Query {

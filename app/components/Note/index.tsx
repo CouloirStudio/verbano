@@ -1,17 +1,13 @@
 import styles from './note.module.scss';
 
 type NoteProps = {
-  projectName: string;
   noteName: string;
   children?: React.ReactNode;
 };
 
-function Note({ projectName, noteName }: NoteProps) {
-  return (
-    <div className={styles.note}>
-      {projectName}: Note {noteName}
-    </div>
-  );
+function Note({ noteName }: NoteProps) {
+  console.log('Note Name:', noteName);
+  return <div className={styles.note}>{noteName}</div>;
 }
 
 export default Note;

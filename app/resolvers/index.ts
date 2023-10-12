@@ -1,5 +1,5 @@
 import { UserMutations, UserQueries } from './UserResolvers';
-import { ProjectQueries } from './ProjectResolvers';
+import { ProjectQueries, ProjectType } from './ProjectResolvers';
 import { NoteMutations, NoteQueries } from './NoteResolvers';
 
 const resolvers = {
@@ -12,6 +12,7 @@ const resolvers = {
     ...UserMutations,
     ...NoteMutations,
   },
+  Project: ProjectType, // <-- Add this line
 };
 
 export default resolvers;

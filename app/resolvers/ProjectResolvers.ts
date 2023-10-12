@@ -1,12 +1,12 @@
 import { INote, Note } from '../models/Note';
 import { IProject, Project } from '../models/Project';
+import { ApolloError } from 'apollo-server-express';
 
 export const ProjectQueries = {
   async listProjects(): Promise<IProject[]> {
     const projects = await Project.find();
     if (!projects || projects.length === 0) {
-      console.error('No projects found.');
-      return [];
+      throw new ApolloError('No projects found.');
     }
 
     const finalProjects = projects.map((project) => {
@@ -15,7 +15,7 @@ export const ProjectQueries = {
       delete objProject._id;
       return objProject;
     });
-    console.log('Returning projects:', finalProjects); // Added log
+    console.log('Returning projects:', finalProjects);
     return finalProjects;
   },
 };
@@ -24,8 +24,9 @@ export const ProjectType = {
   async notes(project: { id: string; notes: string[] }): Promise<INote[]> {
     const notes = await Note.find({ _id: { $in: project.notes } });
     if (!notes || notes.length === 0) {
-      console.error(`No notes found for project with ID ${project.id}.`);
-      return [];
+      throw new ApolloError(
+        `No notes found for project with ID ${project.id}.`,
+      );
     }
 
     const finalNotesForProject = notes.map((note) => {
@@ -34,7 +35,7 @@ export const ProjectType = {
       delete objNote._id;
       return objNote;
     });
-    console.log('Returning notes for project:', finalNotesForProject); // Added log
+    console.log('Returning notes for project:', finalNotesForProject);
     return finalNotesForProject;
   },
 };
