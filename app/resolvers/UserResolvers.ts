@@ -10,10 +10,25 @@ export const UserQueries = {
 
 export const UserMutations = {
   async signup(parent: any, {firstName, lastName, email, password}: any, context: any) {
+    // validate input data
+    if (password && password.length < 8) {
+      throw new Error('Password must be at least 8 characters long.');
+    }
+
+    // validate email
+    if (!email.includes('@')) {
+      throw new Error('Email has an invalid format.');
+    }
+
+    // validate name
+    if (!firstName || !lastName) {
+      throw new Error('First name and last name are required.');
+    }
+
     // See if user exists
     const oldUser = await User.findOne({email});
     if (oldUser) {
-      throw new Error('User already exists');
+      throw new Error('An account with this email already exists.');
     }
 
     // Entered password
@@ -64,12 +79,12 @@ export const UserMutations = {
     });
   },
   updateFullName: async (
-      _: any,
-      {
-        email,
-        firstName,
-        lastName,
-      }: { email: string; firstName: string; lastName: string },
+    _: any,
+    {
+      email,
+      firstName,
+      lastName,
+    }: { email: string; firstName: string; lastName: string },
   ) => {
     try {
       // Check if a user with the provided email exists
