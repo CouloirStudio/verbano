@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
 import styles from '../../styles/globalSettings.module.scss';
@@ -17,7 +17,25 @@ import {
 } from '@/app/graphql/mutations/addSettings';
 import CurrentUserData from './interface/CurrentUserData';
 
+/**
+ * `Profile` is a React functional component that represents a user's profile settings page.
+ *
+ * @remarks
+ * This component provides the user with the ability to update their full name, email, and password.
+ * It also displays user information and allows for saving changes and deleting the account.
+ *
+ * @see {@link https://mui.com/components/typography/ | Material-UI Typography} for typography components.
+ * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
+ * @see {@link https://www.apollographql.com/docs/react/ | Apollo Client} for GraphQL queries and mutations.
+ *
+ * @example
+ * ```tsx
+ * <Profile />
+ * ```
+ */
 const Profile = () => {
+
+  // State for user information
   const [email, setEmail] = useState('');
   const [lastName, setLastName] = useState('');
   const [fullName, setFullName] = useState('');
@@ -28,9 +46,10 @@ const Profile = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
-
+// Access the error modal context for displaying error messages
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
+  // Use Apollo Client to fetch user data
   const { loading, error, data, refetch } = useQuery<CurrentUserData>(
     CURRENT_USER_QUERY,
     {
@@ -43,6 +62,7 @@ const Profile = () => {
     },
   );
 
+  // Define a mutation to update the user's email with Apollo Client
   const [updateEmail] = useMutation(UPDATE_EMAIL_MUTATION, {
     onError: (error) => {
       console.error('Error updating email', error.message);
@@ -50,13 +70,11 @@ const Profile = () => {
       setIsError(true);
     },
     update: (cache, { data: { updateEmail } }) => {
-      console.log('Received updated email data: ', updateEmail);
 
+      // Update the cache with the new email data
       const userData = cache.readQuery<CurrentUserData>({
         query: CURRENT_USER_QUERY,
       });
-
-      console.log('Current cache data: ', userData)
 
       if (userData && userData.currentUser) {
 
@@ -77,6 +95,7 @@ const Profile = () => {
     },
   });
 
+  // Define a mutation to update the user's full name with Apollo Client
   const [updateFullName] = useMutation(UPDATE_FULL_NAME_MUTATION, {
     onError: (error) => {
       // Handle errors from the mutation
@@ -88,6 +107,7 @@ const Profile = () => {
     update: (cache, { data: { updateFullName } }) => {
       console.log('Received updateFullName data:', updateFullName);
 
+      // Update the cache with the new full name data
       const userData = cache.readQuery<CurrentUserData>({
         query: CURRENT_USER_QUERY,
       });
@@ -117,6 +137,7 @@ const Profile = () => {
   // Use useEffect to initialize state once when the component mounts
   useEffect(() => {
     if (!loading && !error && data && data.currentUser) {
+      // Populate user data
       const currentUser = data.currentUser;
       setFirstName(currentUser.firstName);
       setLastName(currentUser.lastName);
@@ -126,6 +147,7 @@ const Profile = () => {
     }
   }, [loading, error, data]);
 
+  // Handle form submission
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
