@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export type ReactFormEvent<T> = React.FormEvent<T>;
 export type setErrorMessageType = (message: string) => void;
