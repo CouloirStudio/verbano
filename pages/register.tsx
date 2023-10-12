@@ -7,6 +7,7 @@ import EmailField from '../app/components/Settings/UpdateEmailField';
 import PasswordField from '../app/components/Login/PasswordField';
 import NameField from '../app/components/Settings/UpdateFullNameField';
 import {Button, Divider} from '@mui/material';
+import {FaGoogle} from "react-icons/fa";
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -43,6 +44,23 @@ const RegisterPage = () => {
           </a>
         </p>
         <Divider variant={'middle'}/>
+        <Button
+          sx={{
+            backgroundColor: '#de5246',
+            '&:hover': {
+              backgroundColor: '#de5246',
+            },
+          }}
+          startIcon={<FaGoogle />}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            window.location.href = 'http://localhost:3000/auth/google';
+          }}
+        >
+          Register with Google
+        </Button>
+        <Divider variant={'middle'} />
         <form onSubmit={handleSubmit}>
           <div>
               <NameField
@@ -80,13 +98,6 @@ const RegisterPage = () => {
           </Button>
         </form>
       </div>
-      <GoogleButton
-        label="Register with Google"
-        onClick={() => {
-          // The URL may need adjustment based on the registration endpoint for Google Auth
-          window.open('http://localhost:3000/auth/google');
-        }}
-      />
     </div>
   );
 };
