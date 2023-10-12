@@ -7,14 +7,36 @@ interface PasswordInputProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   text: string;
 }
-
+/**
+ * `UpdatePasswordField` is a React functional component that provides a password input field for updating a password.
+ *
+ * It includes basic password validation to ensure a minimum length of 8 characters.
+ *
+ * @remarks
+ * This component can be used in forms where the user is required to enter or update their password.
+ *
+ * @param props - The component's props.
+ * @param props.value - The current value of the password input field.
+ * @param props.onChange - A function to handle changes to the password input field.
+ * @param props.text - The text to display as the input field's label.
+ *
+ * @example
+ * ```tsx
+ * <UpdatePasswordField value={passwordValue} onChange={handlePasswordChange} text="New Password" />
+ * ```
+ *
+ * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
+ *
+ */
 const UpdatePasswordField: React.FC<PasswordInputProps> = ({
   value,
   onChange,
   text,
 }) => {
+  // State for error message
   const [error, setError] = useState<string | null>(null);
 
+  // Function to handle input changes
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Basic password validation example
     if (e.target.value.length < 8) {
