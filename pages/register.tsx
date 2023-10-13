@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
+import React, {useEffect, useState} from 'react';
+import {useMutation} from '@apollo/client';
 import styles from '../styles/register.module.scss';
-import { SIGNUP_MUTATION } from '@/app/graphql/mutations/addUsers';
+import {SIGNUP_MUTATION} from '@/app/graphql/mutations/addUsers';
 import EmailField from '../app/components/Settings/UpdateEmailField';
 import PasswordField from '../app/components/Login/PasswordField';
 import NameField from '../app/components/Settings/UpdateFullNameField';
 import {Button, Divider} from '@mui/material';
 import {FaGoogle} from "react-icons/fa";
+import ErrorModal from "@/app/components/ErrorModal";
+import {useRouter} from "next/router";
+import {useErrorModalContext} from "@/app/contexts/ErrorModalContext";
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -15,6 +18,17 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
 
   const [signup] = useMutation(SIGNUP_MUTATION);
+
+  const router = useRouter();
+  const {setIsError, setErrorMessage} = useErrorModalContext();
+
+  useEffect(() => {
+    const errorMessage = router.query.error;
+    if (errorMessage) {
+      setIsError(true);
+      setErrorMessage(errorMessage as string);
+    }
+  }, [router.query]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +40,19 @@ const RegisterPage = () => {
     };
 
     try {
-      const result = await signup({ variables: user });
+      const result = await signup({variables: user});
+      await router.push('/login');
       console.log(result);
     } catch (error) {
+      setErrorMessage(error.message || 'An unknown error occurred');
+      setIsError(true);
       console.error('Error signing up:', error);
     }
   };
 
   return (
     <div className={styles.container}>
+      <ErrorModal/>
       <div className={styles.registerContainer}>
         <h1>Register</h1>
         <p>Already have an account?{' '}
@@ -50,7 +68,7 @@ const RegisterPage = () => {
               backgroundColor: '#de5246',
             },
           }}
-          startIcon={<FaGoogle />}
+          startIcon={<FaGoogle/>}
           variant="contained"
           color="primary"
           onClick={() => {
@@ -59,26 +77,34 @@ const RegisterPage = () => {
         >
           Register with Google
         </Button>
-        <Divider variant={'middle'} />
+        <Divider variant={'middle'}/>
         <form onSubmit={handleSubmit}>
           <div>
             <NameField
               firstName={firstName}
               lastName={lastName}
-              onFirstNameChange={e => {setFirstName(e.target.value)}}
-              onLastNameChange={e => {setLastName(e.target.value)}}
+              onFirstNameChange={e => {
+                setFirstName(e.target.value)
+              }}
+              onLastNameChange={e => {
+                setLastName(e.target.value)
+              }}
             />
           </div>
           <div>
             <EmailField
               value={email}
-              onChange={e => {setEmail(e.target.value)}}
+              onChange={e => {
+                setEmail(e.target.value)
+              }}
             />
           </div>
           <div>
             <PasswordField
               value={password}
-              onChange={e => {setPassword(e.target.value)}}
+              onChange={e => {
+                setPassword(e.target.value)
+              }}
             />
           </div>
           <Button
