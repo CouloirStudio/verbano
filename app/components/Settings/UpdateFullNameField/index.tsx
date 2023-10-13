@@ -1,12 +1,12 @@
-import React, {ChangeEvent} from 'react';
+import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Login/InputField';
-import {AiOutlineUser} from 'react-icons/ai';
+import { AiOutlineUser } from 'react-icons/ai';
 
 interface FullNameInputProps {
-	firstName: string;
-	lastName: string;
-	onFirstNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
-	onLastNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  firstName: string;
+  lastName: string;
+  onFirstNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onLastNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -34,31 +34,31 @@ interface FullNameInputProps {
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  */
 const UpdateFullName: React.FC<FullNameInputProps> = ({
-                                                        firstName,
-																												lastName,
-																												onFirstNameChange,
-																												onLastNameChange,
-																											}) => {
-	return (
-		<>
-			<InputField label="Update First Name" icon={<AiOutlineUser/>}>
-				<input
-					type="text"
-					value={firstName}
-					onChange={onFirstNameChange}
-					required
-				/>
-			</InputField>
-			<InputField label="Update Last Name" icon={<AiOutlineUser/>}>
-				<input
-					type="text"
-					value={lastName}
-					onChange={onLastNameChange}
-					required
-				/>
-			</InputField>
-		</>
-	);
+  firstName,
+  lastName,
+  onFirstNameChange,
+  onLastNameChange,
+}) => {
+  return (
+    <>
+      <InputField label="Update First Name" icon={<AiOutlineUser />}>
+        <input
+          type="text"
+          value={firstName}
+          onChange={onFirstNameChange}
+          required
+        />
+      </InputField>
+      <InputField label="Update Last Name" icon={<AiOutlineUser />}>
+        <input
+          type="text"
+          value={lastName}
+          onChange={onLastNameChange}
+          required
+        />
+      </InputField>
+    </>
+  );
 };
 
 export default UpdateFullName;

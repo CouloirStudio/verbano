@@ -1,9 +1,9 @@
-import {Express} from 'express-serve-static-core';
-import {createApp} from '../../../server/server';
-import request from "supertest";
+import { Express } from 'express-serve-static-core';
+import { createApp } from '../../../server/server';
+import request from 'supertest';
 
 const mockAuthenticationMiddleware = (req, res, next) => {
-  req.user = {id: 1, email: "test@gmail.com"};
+  req.user = { id: 1, email: 'test@gmail.com' };
   next();
 };
 describe('/auth-check Endpoint', () => {
@@ -20,7 +20,7 @@ describe('/auth-check Endpoint', () => {
   });
 
   it('returns 401 for unauthorized users', async () => {
-    app = createApp();  // Recreate app without mock middleware
+    app = createApp(); // Recreate app without mock middleware
     const response = await request(app).get('/auth-check');
     expect(response.status).toBe(401);
     expect(response.text).toBe('Unauthorized');

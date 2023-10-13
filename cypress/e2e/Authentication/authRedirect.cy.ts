@@ -2,7 +2,7 @@ describe('Authentication Redirection', () => {
   it('redirects to login page when not logged in', () => {
     cy.visit('localhost:3000/', {
       timeout: 10000,
-      failOnStatusCode: true
+      failOnStatusCode: true,
     });
 
     cy.location('pathname').should('eq', '/login');
@@ -12,7 +12,7 @@ describe('Authentication Redirection', () => {
     cy.login();
     cy.visit('localhost:3000/login', {
       timeout: 10000,
-      failOnStatusCode: true
+      failOnStatusCode: true,
     });
 
     cy.location('pathname').should('eq', '/');
@@ -22,7 +22,7 @@ describe('Authentication Redirection', () => {
     cy.login();
     cy.visit('localhost:3000/register', {
       timeout: 10000,
-      failOnStatusCode: true
+      failOnStatusCode: true,
     });
 
     cy.location('pathname').should('eq', '/');
@@ -32,7 +32,7 @@ describe('Authentication Redirection', () => {
     cy.login();
     cy.visit('localhost:3000/logout', {
       timeout: 10000,
-      failOnStatusCode: true
+      failOnStatusCode: true,
     });
 
     cy.location('pathname').should('eq', '/login');
@@ -42,12 +42,12 @@ describe('Authentication Redirection', () => {
     cy.login();
     cy.visit('localhost:3000/logout', {
       timeout: 10000,
-      failOnStatusCode: true
+      failOnStatusCode: true,
     });
 
     cy.visit('localhost:3000/', {
       timeout: 10000,
-      failOnStatusCode: true
+      failOnStatusCode: true,
     });
 
     cy.location('pathname').should('eq', '/login');

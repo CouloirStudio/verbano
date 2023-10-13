@@ -5,8 +5,8 @@ import { SIGNUP_MUTATION } from '@/app/graphql/mutations/addUsers';
 import EmailField from '../app/components/Settings/UpdateEmailField';
 import PasswordField from '../app/components/Login/PasswordField';
 import NameField from '../app/components/Settings/UpdateFullNameField';
-import {Button, Divider} from '@mui/material';
-import {FaGoogle} from "react-icons/fa";
+import { Button, Divider } from '@mui/material';
+import { FaGoogle } from 'react-icons/fa';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -37,12 +37,10 @@ const RegisterPage = () => {
     <div className={styles.container}>
       <div className={styles.registerContainer}>
         <h1>Register</h1>
-        <p>Already have an account?{' '}
-          <a href={'/login'}>
-            Login here!
-          </a>
+        <p>
+          Already have an account? <a href={'/login'}>Login here!</a>
         </p>
-        <Divider variant={'middle'}/>
+        <Divider variant={'middle'} />
         <Button
           sx={{
             backgroundColor: '#de5246',
@@ -65,20 +63,28 @@ const RegisterPage = () => {
             <NameField
               firstName={firstName}
               lastName={lastName}
-              onFirstNameChange={e => {setFirstName(e.target.value)}}
-              onLastNameChange={e => {setLastName(e.target.value)}}
+              onFirstNameChange={(e) => {
+                setFirstName(e.target.value);
+              }}
+              onLastNameChange={(e) => {
+                setLastName(e.target.value);
+              }}
             />
           </div>
           <div>
             <EmailField
               value={email}
-              onChange={e => {setEmail(e.target.value)}}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
             />
           </div>
           <div>
             <PasswordField
               value={password}
-              onChange={e => {setPassword(e.target.value)}}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
           </div>
           <Button

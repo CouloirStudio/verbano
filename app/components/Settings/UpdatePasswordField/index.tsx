@@ -30,10 +30,10 @@ interface PasswordInputProps {
  *
  */
 const UpdatePasswordField: React.FC<PasswordInputProps> = ({
-                                                             value,
-                                                             onChange,
-                                                             text,
-                                                           }) => {
+  value,
+  onChange,
+  text,
+}) => {
   const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

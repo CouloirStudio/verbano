@@ -1,23 +1,23 @@
 import 'dotenv/config';
-import express, {json} from 'express';
+import express, { json } from 'express';
 import next from 'next';
 import cors from 'cors';
 import http from 'http';
-import {connectDB} from '../app/models/Database';
+import { connectDB } from '../app/models/Database';
 import passport from '../app/config/passport';
-import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
+import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
 import session from 'express-session';
-import {randomUUID} from 'crypto';
+import { randomUUID } from 'crypto';
 import audioRoutes from '../app/routes/audioRoutes';
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
-import {buildContext} from 'graphql-passport';
-import {User} from '../app/models';
-import {UserMutations} from "../app/resolvers/UserResolvers";
+import { buildContext } from 'graphql-passport';
+import { User } from '../app/models';
+import { UserMutations } from '../app/resolvers/UserResolvers';
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({dev});
+const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
 export function createApp(mockMiddleware?: any) {
@@ -35,13 +35,12 @@ export function createApp(mockMiddleware?: any) {
   const corsOptions = {
     origin: ['http://localhost:3000/graphql', 'http://localhost:3000'],
     credentials: true,
-  }
+  };
   app.use(cors(corsOptions));
 
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(json());
-
 
   // if test environment, use mock middleware
   if (process.env.NODE_ENV === 'test') {
@@ -71,7 +70,6 @@ export function createApp(mockMiddleware?: any) {
 
   app.use('/audio', audioRoutes);
 
-
   return app;
 }
 
@@ -99,13 +97,13 @@ function isAuthenticated(req: any, res: any, next: any) {
   if (!['/login', '/register'].includes(req.path)) {
     res.redirect('/login');
   } else {
-    next();  // If already on /login or /register, continue without redirecting
+    next(); // If already on /login or /register, continue without redirecting
   }
 }
 
 async function handleLogout(req: any, res: any) {
   try {
-    const result = await UserMutations.logout(null, null, {req});
+    const result = await UserMutations.logout(null, null, { req });
     if (result) {
       res.redirect('/');
     } else {
@@ -117,7 +115,6 @@ async function handleLogout(req: any, res: any) {
   }
 }
 
-
 function authCheckTestMiddleware(req: any, res: any, next: any) {
   if (req.user) {
     res.status(200).send('Authenticated');
@@ -125,7 +122,6 @@ function authCheckTestMiddleware(req: any, res: any, next: any) {
     res.status(401).send('Unauthorized');
   }
 }
-
 
 export async function startApolloServer(
   app: express.Express,
@@ -148,16 +144,16 @@ export async function startApolloServer(
     introspection: dev,
     playground: dev
       ? {
-        settings: {
-          'request.credentials': 'same-origin',
-        },
-      }
+          settings: {
+            'request.credentials': 'same-origin',
+          },
+        }
       : false,
-    context: ({req, res}) => buildContext({req, res, User}),
+    context: ({ req, res }) => buildContext({ req, res, User }),
   } as Config<ExpressContext>);
 
   await server.start();
-  server.applyMiddleware({app, cors: false});
+  server.applyMiddleware({ app, cors: false });
 
   app.use(isAuthenticated);
 
@@ -165,11 +161,10 @@ export async function startApolloServer(
     return handle(req, res);
   });
 
-
   const actualPort = testPort !== undefined ? testPort : port;
 
   await new Promise<void>((resolve) =>
-    httpServer.listen({port: actualPort}, resolve),
+    httpServer.listen({ port: actualPort }, resolve),
   );
 
   if (!testPort) {
