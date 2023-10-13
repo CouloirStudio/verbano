@@ -1,10 +1,15 @@
 import Link from 'next/link';
-import {NextRouter, useRouter} from 'next/router';
-import React, {ReactNode} from 'react';
-import {AiOutlineHome, AiOutlineLogout, AiOutlineProfile, AiOutlineUser} from 'react-icons/ai';
+import { NextRouter, useRouter } from 'next/router';
+import React, { ReactNode } from 'react';
+import {
+  AiOutlineHome,
+  AiOutlineLogout,
+  AiOutlineProfile,
+  AiOutlineUser,
+} from 'react-icons/ai';
 import styles from './settingsSidebar.module.scss';
-import {useErrorModalContext} from '../../../contexts/ErrorModalContext';
-import {useUser} from "../../UserProvider";
+import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
+import { useUser } from '../../UserProvider';
 
 /**
  * `SettingsSidebar` is a React functional component that provides a sidebar for user settings.
@@ -24,13 +29,13 @@ import {useUser} from "../../UserProvider";
  */
 export const SettingsSidebar: React.FC = () => {
   const route: NextRouter = useRouter();
-  const {setErrorMessage, setIsError} = useErrorModalContext();
+  const { setErrorMessage, setIsError } = useErrorModalContext();
   const currentUser = useUser();
 
   if (!currentUser) {
     setErrorMessage('An error occurred while fetching user data.');
     setIsError(true);
-    return null;  // You can return an error component or null
+    return null; // You can return an error component or null
   }
 
   // Define the available settings options
@@ -50,13 +55,13 @@ export const SettingsSidebar: React.FC = () => {
   function getIconByIndex(index: number): ReactNode | null {
     switch (index) {
       case 0:
-        return <AiOutlineUser className={styles.icon}/>;
+        return <AiOutlineUser className={styles.icon} />;
       case 1:
-        return <AiOutlineHome className={styles.icon}/>;
+        return <AiOutlineHome className={styles.icon} />;
       case 2:
-        return <AiOutlineProfile className={styles.icon}/>;
+        return <AiOutlineProfile className={styles.icon} />;
       case 3:
-        return <AiOutlineLogout className={styles.icon}/>;
+        return <AiOutlineLogout className={styles.icon} />;
       default:
         return null;
     }
@@ -76,8 +81,10 @@ export const SettingsSidebar: React.FC = () => {
               <Link
                 href={
                   index === 1
-                    ? '/' : index === 3 ? '/logout'
-                      : `/settings/${settingsOption.toLowerCase()}`
+                    ? '/'
+                    : index === 3
+                    ? '/logout'
+                    : `/settings/${settingsOption.toLowerCase()}`
                 }
               >
                 <div className={styles.linkContainer}>
