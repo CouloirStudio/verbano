@@ -6,6 +6,22 @@ import styles from './settingsSidebar.module.scss';
 import {useErrorModalContext} from '../../../contexts/ErrorModalContext';
 import {useUser} from "../../UserProvider";
 
+/**
+ * `SettingsSidebar` is a React functional component that provides a sidebar for user settings.
+ *
+ * It displays user information and navigation links to various settings options.
+ *
+ * @remarks
+ * This component uses data from the `CURRENT_USER_QUERY` to display the user's first name, last name, and email.
+ *
+ * @see {@link https://nextjs.org/ | Next.js} for routing capabilities.
+ * @see {@link https://www.apollographql.com/docs/react/ | Apollo Client} for GraphQL queries.
+ *
+ * @example
+ * ```tsx
+ * <SettingsSidebar />
+ * ```
+ */
 export const SettingsSidebar: React.FC = () => {
   const route: NextRouter = useRouter();
   const {setErrorMessage, setIsError} = useErrorModalContext();
@@ -17,6 +33,7 @@ export const SettingsSidebar: React.FC = () => {
     return null;  // You can return an error component or null
   }
 
+  // Define the available settings options
   const settingsOptions: string[] = [
     `Welcome ${currentUser.firstName} ${currentUser.lastName} Email ${currentUser.email}`,
     'Back to Home',
@@ -24,6 +41,12 @@ export const SettingsSidebar: React.FC = () => {
     'Logout',
   ];
 
+  /**
+   * Returns the icon associated with a specific settings option.
+   *
+   * @param {number} index - The index of the settings option.
+   * @returns {ReactNode|null} The icon element or null if no icon is available.
+   */
   function getIconByIndex(index: number): ReactNode | null {
     switch (index) {
       case 0:
