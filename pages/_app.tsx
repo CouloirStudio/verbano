@@ -7,6 +7,7 @@ import { ApolloProvider } from '@apollo/client';
 import client from '../app/config/apolloClient';
 import { ErrorModalContextProvider } from '../app/contexts/ErrorModalContext';
 import ErrorModal from '../app/components/ErrorModal';
+import { UserProvider } from '../app/components/UserProvider';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -16,16 +17,18 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const PageContent = (
     <ApolloProvider client={client}>
-      <ErrorModalContextProvider>
-        <ErrorModal />
-        {isExcludedPage ? (
-          <Component {...pageProps} />
-        ) : (
-          <Layout>
+      <UserProvider>
+        <ErrorModalContextProvider>
+          <ErrorModal />
+          {isExcludedPage ? (
             <Component {...pageProps} />
-          </Layout>
-        )}
-      </ErrorModalContextProvider>
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+        </ErrorModalContextProvider>
+      </UserProvider>
     </ApolloProvider>
   );
 

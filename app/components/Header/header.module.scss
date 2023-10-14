@@ -3,7 +3,7 @@
 .header {
   width: 100%;
   height: $header-height;
-  background-color: #333;
+  background-color: #68BCCA;
   color: #fff;
   display: flex;
   align-items: center;
@@ -12,6 +12,8 @@
 
 .linkContainer {
   margin-left: 100px; // Will have to adjust css
+  position: absolute;
+  right: 100px;
 }
 
 .link {

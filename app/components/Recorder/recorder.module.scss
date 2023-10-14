@@ -5,7 +5,7 @@
 }
 
 .recorderButton {
-  @include circleButton(4rem, $Button-light, $Button-light-hover);
+  @include circleButton(3rem, $Button-light, $Button-light-hover);
 
   &.light {
     @include lightMode($Button-light, $Button-light-hover, $Button-text);

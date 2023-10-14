@@ -1,16 +1,15 @@
 import Link from 'next/link';
-import { useQuery } from '@apollo/client';
 import { NextRouter, useRouter } from 'next/router';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
 import {
-  AiOutlineUser,
   AiOutlineHome,
-  AiOutlineProfile,
   AiOutlineLogout,
+  AiOutlineProfile,
+  AiOutlineUser,
 } from 'react-icons/ai';
 import styles from './settingsSidebar.module.scss';
-import { CURRENT_USER_QUERY } from '../../../graphql/queries/getUsers';
 import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
+import { useUser } from '../../UserProvider';
 
 /**
  * `SettingsSidebar` is a React functional component that provides a sidebar for user settings.
@@ -29,36 +28,19 @@ import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
  * ```
  */
 export const SettingsSidebar: React.FC = () => {
-  // State for user information
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-
-  // Access the Next.js router
   const route: NextRouter = useRouter();
-
-  // Use Apollo Client to fetch user data
-  const { loading, error, data } = useQuery(CURRENT_USER_QUERY);
-
-  // Access the error modal context for displaying error messages
   const { setErrorMessage, setIsError } = useErrorModalContext();
+  const currentUser = useUser();
 
-  // Use an effect to populate user data when the component mounts
-  useEffect(() => {
-    if (!loading && !error && data && data.currentUser) {
-      const currentUser = data.currentUser;
-      setFirstName(currentUser.firstName);
-      setLastName(currentUser.lastName);
-      setEmail(currentUser.email);
-    } else if (error) {
-      setErrorMessage('An error occurred while fetching user data.');
-      setIsError(true);
-    }
-  }, [loading, error, data]);
+  if (!currentUser) {
+    setErrorMessage('An error occurred while fetching user data.');
+    setIsError(true);
+    return null; // You can return an error component or null
+  }
 
   // Define the available settings options
   const settingsOptions: string[] = [
-    `Welcome ${firstName} ${lastName} Email ${email}`,
+    `Welcome ${currentUser.firstName} ${currentUser.lastName} Email ${currentUser.email}`,
     'Back to Home',
     'Profile',
     'Logout',
@@ -100,6 +82,8 @@ export const SettingsSidebar: React.FC = () => {
                 href={
                   index === 1
                     ? '/'
+                    : index === 3
+                    ? '/logout'
                     : `/settings/${settingsOption.toLowerCase()}`
                 }
               >
