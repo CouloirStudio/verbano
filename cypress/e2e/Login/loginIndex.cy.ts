@@ -50,6 +50,54 @@ describe('Email/Pass Login', () => {
     cy.get('#loginButton').click();
     cy.contains('Woopsies!');
   });
+
+  it('errors on empty email', () => {
+    cy.visit('localhost:3000/login', {
+      timeout: 10000,
+      failOnStatusCode: true,
+    });
+
+    cy.get('#password').type('password').should('have.value', 'password');
+
+    cy.get('#loginButton').click();
+    cy.get('#email').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
+  });
+
+  it('errors on empty password', () => {
+    cy.visit('localhost:3000/login', {
+      timeout: 10000,
+      failOnStatusCode: true,
+    });
+
+    cy.get('#email')
+      .type('test@gmail.com')
+
+    cy.get('#loginButton').click();
+
+    cy.get('#password').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
+  });
+});
+
+it('Register button works', () => {
+  cy.visit('localhost:3000/login', {
+    timeout: 10000,
+    failOnStatusCode: true,
+  });
+  //get hyperlink element by finding the text
+  cy.contains('Register').click();
+  cy.location('pathname').should('eq', '/register');
+});
+
+
+describe('Error Handling', () => {
+  it('should show an error when ?error= is present', () => {
+    cy.visit('localhost:3000/login?error=1', {
+      timeout: 10000,
+      failOnStatusCode: true,
+    });
+
+    cy.contains('Woopsies!');
+  });
 });
 
 describe('Google Login', () => {

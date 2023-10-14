@@ -1,10 +1,10 @@
 import 'dotenv/config';
-import { User } from '../models/User';
+import {User} from '../models/User';
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongoose';
-import { GraphQLLocalStrategy } from 'graphql-passport';
+import {ObjectId} from 'mongoose';
+import {GraphQLLocalStrategy} from 'graphql-passport';
 import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 
 /**
  * Configure how Passport authenticates users.
@@ -13,9 +13,9 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 passport.use(
   new GraphQLLocalStrategy(async (email, password, done) => {
     try {
-      const user = await User.findOne({ email: email });
+      const user = await User.findOne({email: email});
       if (!user) {
-        throw new Error('Invalid email');
+        throw new Error('Invalid credentials.');
       }
       if (!user.password) {
         throw new Error(
@@ -25,7 +25,7 @@ passport.use(
       if (typeof password === 'string') {
         const isMatch = await comparePasswords(password, user.password);
         if (!isMatch) {
-          throw new Error('Invalid password');
+          throw new Error('Invalid credentials.');
         }
       }
       return done(null, user);
@@ -76,7 +76,7 @@ const googleCallback = async (
   done: any,
 ) => {
   try {
-    const matchingUser = await User.findOne({ googleId: profile.id });
+    let matchingUser = await User.findOne({googleId: profile.id});
     if (matchingUser) {
       done(null, matchingUser);
       return;
@@ -84,8 +84,14 @@ const googleCallback = async (
 
     const id = profile.id;
     const email = profile.emails[0].value;
-    const firstName = profile.name.givenName;
-    const lastName = profile.name.familyName;
+    let firstName = profile.name.givenName;
+    let lastName = profile.name.familyName;
+
+    matchingUser = await User.findOne({email: email});
+    if (matchingUser) {
+      done(new Error('This email is already in use. Please login with your email and password.'), null);
+      return;
+    }
 
     // Create new user
     const newUser = await new User({

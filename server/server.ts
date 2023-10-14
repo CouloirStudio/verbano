@@ -58,13 +58,22 @@ export function createApp(mockMiddleware?: any) {
   );
   app.get(
     '/auth/google/callback',
-    passport.authenticate('google', {
-      failureRedirect: '/login',
-      failureMessage: true,
-    }),
-    function (req, res) {
-      res.redirect('/');
-    },
+    function (req, res, next) {
+      passport.authenticate('google', function (err: any, user: any, info: any) {
+        if (err) {
+          return res.redirect('/login?error=' + encodeURIComponent(err.message));
+        }
+        if (!user) {
+          return res.redirect('/login?error=' + encodeURIComponent(info.message));
+        }
+        req.logIn(user, function (err) {
+          if (err) {
+            return res.redirect('/login?error=' + encodeURIComponent(err.message));
+          }
+          return res.redirect('/');
+        });
+      })(req, res, next);
+    }
   );
   app.get('/logout', handleLogout);
 
