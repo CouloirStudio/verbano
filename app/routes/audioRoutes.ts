@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { getAudioFromS3, uploadAudioToS3 } from '../services/AWSService';
+import { generatePresignedUrl, uploadAudioToS3 } from '../services/AWSService';
 import { Note } from '../models/Note';
 import { Project } from '../models/Project';
 
@@ -64,25 +64,22 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
 });
 
 /**
- * Endpoint to retrieve audio files using a provided URL.
+ * Endpoint to retrieve audio files using a provided S3 object key.
  */
 router.post('/retrieve', async (req, res) => {
   try {
     // Parse the incoming JSON data from the request body
-    const { url } = req.body;
-    if (!url) {
+    const { key } = req.body;
+    if (!key) {
       return res
         .status(400)
-        .json({ error: 'URL is required in the request body' });
+        .json({ error: 'S3 object key is required in the request body' });
     }
 
-    // Call your function to get audio using the URL
-    const audio = await getAudioFromS3(url);
-    // Set the response content type to audio/wav
-    res.setHeader('Content-Type', 'audio/wav');
+    // Generate a pre-signed URL for the audio file
+    const url = await generatePresignedUrl(key);
 
-    // Send the audio blob as the response
-    res.send(audio);
+    res.json({ success: true, url });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
