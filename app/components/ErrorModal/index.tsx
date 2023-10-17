@@ -41,7 +41,7 @@ const ErrorModal = () => {
     <DefaultModal
       isOpen={isError}
       onClose={dismissModal}
-      title="WOOPS!"
+      title="Woopsies!"
       className={`${styles.ErrorModal}`} // You can append or override the default class here
     >
       {modalBody}
