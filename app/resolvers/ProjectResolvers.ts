@@ -31,6 +31,16 @@ export const ProjectQueries = {
 
 export const ProjectMutations = {
   async addProject(_: unknown, args: { input: { projectName: string, projectDescription?: string } }, context: any) {
+
+    if (!context.getUser()) {
+      throw new Error("User not authenticated.");
+    }
+
+    const user = await User.findById(context.getUser()._id);
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
     try {
       const project = new Project({
         projectName: args.input.projectName,
@@ -55,10 +65,6 @@ export const ProjectMutations = {
       project.notes.push(savedDefaultNote._id);
       await project.save();
 
-      const user = await User.findById(context.getUser()._id);
-      if (!user) {
-        throw new Error("User not found.");
-      }
 
       console.log("User found:", user);
 
