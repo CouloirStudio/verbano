@@ -69,7 +69,9 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
 router.post('/retrieve', async (req, res) => {
   try {
     // Parse the incoming JSON data from the request body
-    const { key } = req.body;
+    const data = req.body;
+    const key = data.key;
+
     if (!key) {
       return res
         .status(400)
@@ -79,11 +81,10 @@ router.post('/retrieve', async (req, res) => {
     // Generate a pre-signed URL for the audio file
     const url = await generatePresignedUrl(key);
 
-    res.json({ success: true, url });
+    res.json({ success: true, signedURL: url });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 export default router;

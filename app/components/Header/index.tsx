@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Avatar } from '@mui/material';
 import { useUser } from '@/app/components/UserProvider';
 import { deepPurple } from '@mui/material/colors';
+import Playback from '@/app/components/Playback/Playback';
 
 const Recorder = dynamic(() => import('../../components/Recorder'), {
   ssr: false,
@@ -20,7 +21,10 @@ function Header() {
       <RecorderProvider>
         <Recorder />
       </RecorderProvider>
-
+      <Playback
+        audioUrl={'audio-files/1697487143891.wav'}
+        baseUrl={'http://localhost:3000'}
+      />
       <div className={styles.linkContainer}>
         <Link href="/settings/profile">
           <Avatar sx={{ bgcolor: deepPurple[500] }}>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useErrorModalContext } from '../contexts/ErrorModalContext';
 import { AudioPlayer } from '@/app/api/playback';
+import { getAudio } from '@/app/api/audio';
 
 export enum PlaybackState {
   PLAYING = 'playing',
@@ -60,19 +61,12 @@ const usePlaybackManager = () => {
    * Starts or resumes audio playback.
    * Handles loading of audio data if the player is not already loaded.
    */
-  const startPlayback = async (audioKey: string) => {
+  const startPlayback = async (audioKey: string, baseURL: string) => {
     try {
       if (!audioPlayerRef.current.isLoaded) {
         setPlaybackState(PlaybackState.PROCESSING);
 
-        // Generate the pre-signed URL for the audio file using the S3 object key
-        const response = await fetch(`/api/getPresignedUrl/${audioKey}`);
-        if (!response.ok) {
-          throw new Error('Failed to retrieve pre-signed URL.');
-        }
-        const data = await response.json();
-        const blobURL = data.url;
-
+        const blobURL = await getAudio(audioKey, baseURL);
         await audioPlayerRef.current.loadAudioPlayer(blobURL);
       }
 

@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import AWS from "aws-sdk";
 
 // Configuring AWS SDK with necessary credentials and region.
 AWS.config.update({
@@ -82,8 +82,7 @@ const generatePresignedUrl = async (key: string): Promise<string> => {
   };
 
   try {
-    const url = await s3.getSignedUrlPromise('getObject', params);
-    return url;
+    return await s3.getSignedUrlPromise('getObject', params);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('Error generating pre-signed URL:', error);
