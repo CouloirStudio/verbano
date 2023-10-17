@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, {Document, Model, Schema} from 'mongoose';
 
 export interface INote extends Document {
-  audioLocation: string;
+  audioLocation?: string;
   dateCreated?: Date;
   transcription?: string;
   tags?: string[];
@@ -13,7 +13,7 @@ export interface INote extends Document {
 const NoteSchema = new Schema<INote>({
   audioLocation: {
     type: String,
-    required: true,
+    required: false,
   },
   dateCreated: {
     type: Date,
