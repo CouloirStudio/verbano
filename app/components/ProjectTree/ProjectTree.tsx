@@ -1,32 +1,45 @@
 import React from 'react';
-import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import Typography from '@mui/material/Typography';
+import {TreeView} from '@mui/x-tree-view/TreeView';
+import {TreeItem} from '@mui/x-tree-view/TreeItem';
 import Box from '@mui/material/Box';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ProjectTreeHeader from "@/app/components/ProjectTree/ProjectTreeHeader";
+import styles from './projectTree.module.scss';
 
-function ProjectTree({ projects }) {
-  const renderProjectTree = (projects) => {
-    return projects.map((project) => (
+function ProjectTree({projects}: any) {
+
+  const renderProjectTree = (projects: any) => {
+    return projects.map((project: any) => (
       <TreeItem
         key={project.id}
         nodeId={project.id}
-        label={project.projectName}
+        label={
+          <Box className={styles.project}>
+            {project.projectName}
+            <label className={styles.projectNoteCount}>
+              {project.notes.length}
+            </label>
+          </Box>
+        }
       >
-        {project.notes.map((note) => (
-          <TreeItem key={note.id} nodeId={note.id} label={note.noteName} />
+
+        {project.notes.map((note: any) => (
+          <TreeItem key={note.id} nodeId={note.id} label={note.noteName}/>
         ))}
       </TreeItem>
+
+
     ));
   };
 
   return (
-    <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
+    <Box sx={{minHeight: 180, flexGrow: 1, maxWidth: 300}}>
+      <ProjectTreeHeader/>
       <TreeView
         aria-label="icon expansion"
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
+        defaultCollapseIcon={<ExpandMoreIcon/>}
+        defaultExpandIcon={<ChevronRightIcon/>}
       >
         {renderProjectTree(projects)}
       </TreeView>
