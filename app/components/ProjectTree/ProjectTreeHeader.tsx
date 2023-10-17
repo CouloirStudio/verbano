@@ -1,5 +1,6 @@
 import CreateProjectButton from "@/app/components/ProjectTree/CreateProjectButon";
 import React from "react";
+import Typography from "@mui/material/Typography";
 
 
 const styles = {
@@ -12,7 +13,7 @@ const styles = {
 function ProjectTreeHeader() {
   return (
     <div style={styles}>
-      <h2>Projects</h2>
+      <Typography variant="h5">Projects</Typography>
       <CreateProjectButton/>
     </div>
 
