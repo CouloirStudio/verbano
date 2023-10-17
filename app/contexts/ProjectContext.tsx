@@ -1,8 +1,8 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
-import {useQuery} from '@apollo/client';
-import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
-import {NoteType, ProjectType} from '../resolvers/types';
-import {uploadAudio} from '../api/audio';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
+import { NoteType, ProjectType } from '../resolvers/types';
+import { uploadAudio } from '../api/audio';
 import client from '../config/apolloClient';
 
 /**
@@ -40,14 +40,14 @@ export const useProjectContext = () => {
  * Provides the ProjectContext to child components.
  */
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
-                                                                  children,
-                                                                }) => {
+  children,
+}) => {
   const [selectedNotes, setSelectedNotes] = useState<NoteType[]>([]);
   const [projects, setProjects] = useState<ProjectType[]>([]);
 
-  const {data, error} = useQuery<{ listProjects: ProjectType[] }>(GET_PROJECTS_AND_NOTES);
-
-  if (error) console.error(error);
+  const { data } = useQuery<{ listProjects: ProjectType[] }>(
+    GET_PROJECTS_AND_NOTES,
+  );
 
   useEffect(() => {
     if (data && data.listProjects) {
@@ -58,7 +58,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   async function handleAudioUpload(audioFile: Blob) {
     try {
       await uploadAudio(audioFile, 'http://localhost:3000');
-      const {data: updatedData} = await client.readQuery({
+      const { data: updatedData } = await client.readQuery({
         query: GET_PROJECTS_AND_NOTES,
       });
       if (updatedData && updatedData.listProjects) {
