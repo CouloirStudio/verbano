@@ -1,8 +1,7 @@
-import {IconButton} from "@mui/material";
+import {CircularProgress, IconButton} from "@mui/material";
 import React from "react";
 import {useMutation} from "@apollo/client";
 import {ADD_PROJECT} from "../../graphql/mutations/addProjects";
-import {useUser} from "../UserProvider";
 import {AiOutlinePlus} from "react-icons/ai"; // adjust the path accordingly
 
 const style = {
@@ -13,8 +12,6 @@ const style = {
 function CreateProjectButton() {
   // Define the mutation hook
   const [addProject, {data, loading, error}] = useMutation(ADD_PROJECT);
-
-  const currentUser = useUser();
 
   // Handle the button click
   const handleButtonClick = async () => {
@@ -34,7 +31,7 @@ function CreateProjectButton() {
 
   return (
     <IconButton onClick={handleButtonClick} disabled={loading} style={style}>
-      <AiOutlinePlus/>
+      {loading ? <CircularProgress size={24}/> : <AiOutlinePlus/>}
     </IconButton>
   );
 }
