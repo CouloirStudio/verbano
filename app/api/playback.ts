@@ -15,7 +15,6 @@ export class AudioPlayer {
    */
   public loadAudioPlayer(signedURL: string): Promise<void> {
     return new Promise<void>((resolve) => {
-      console.log(signedURL);
       this.audio = new Audio();
       // OnReady event that makes the caller of LoadAudioPlayer wait until the audio element is ready for playback.
       // The 'canplay' event is fired when an acceptable amount of the audio is loaded for playback.
