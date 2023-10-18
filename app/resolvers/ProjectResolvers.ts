@@ -1,7 +1,7 @@
-import { INote, Note } from '../models/Note';
-import { IProject, Project } from '../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../models/User';
+import {INote, Note} from '../models/Note';
+import {IProject, Project} from '../models/Project';
+import {ApolloError} from 'apollo-server-express';
+import {User} from '../models/User';
 
 /**
  * Resolvers for querying projects from the database.
@@ -99,9 +99,6 @@ export const ProjectType = {
     const notes = await Note.find({ _id: { $in: project.notes } });
     if (!notes || notes.length === 0) {
       return [];
-      // throw new ApolloError(
-      //   `No notes found for project with ID ${project.id}.`,
-      // );
     }
 
     return notes.map((note) => {

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Removed unused types
 type AudioBlobType = Blob | null;
 
 interface RecorderContextType {

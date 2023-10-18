@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
-import { NoteType, ProjectType } from '../resolvers/types';
-import { uploadAudio } from '../api/audio';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useQuery} from '@apollo/client';
+import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
+import {NoteType, ProjectType} from '../resolvers/types';
+import {uploadAudio} from '../api/audio';
 import client from '../config/apolloClient';
 
 /**
@@ -48,7 +48,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
 
   const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
     GET_PROJECTS_AND_NOTES,
-  ); // Add refetch here
+  );
 
   async function refetchProjects() {
     try {
@@ -91,7 +91,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         projects,
         setProjects,
         handleAudioUpload,
-        refetchProjects, // Add this line
+        refetchProjects,
       }}
     >
       {children}
