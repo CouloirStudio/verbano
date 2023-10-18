@@ -1,7 +1,7 @@
-import {INote, Note} from '../models/Note';
-import {IProject, Project} from '../models/Project';
-import {ApolloError} from 'apollo-server-express';
-import {User} from "../models/User";
+import { INote, Note } from '../models/Note';
+import { IProject, Project } from '../models/Project';
+import { ApolloError } from 'apollo-server-express';
+import { User } from '../models/User';
 
 /**
  * Resolvers for querying projects from the database.
@@ -18,8 +18,6 @@ export const ProjectQueries = {
       throw new ApolloError('No projects found.');
     }
 
-    console.log("listProjects invoked");
-
     return projects.map((project) => {
       const objProject = project.toObject();
       objProject.id = objProject._id.toString();
@@ -30,15 +28,18 @@ export const ProjectQueries = {
 };
 
 export const ProjectMutations = {
-  async addProject(_: unknown, args: { input: { projectName: string, projectDescription?: string } }, context: any) {
-
+  async addProject(
+    _: unknown,
+    args: { input: { projectName: string; projectDescription?: string } },
+    context: any,
+  ) {
     if (!context.getUser()) {
-      throw new Error("User not authenticated.");
+      throw new Error('User not authenticated.');
     }
 
     const user = await User.findById(context.getUser()._id);
     if (!user) {
-      throw new Error("User not found.");
+      throw new Error('User not found.');
     }
 
     try {
@@ -52,11 +53,11 @@ export const ProjectMutations = {
 
       const defaultNote = new Note({
         dateCreated: new Date().toISOString(),
-        audioLocation: "",
-        transcription: "",
+        audioLocation: '',
+        transcription: '',
         tags: [],
         projectId: project._id,
-        noteName: "Default Note"
+        noteName: 'Default Note',
       });
 
       const savedDefaultNote = await defaultNote.save();
@@ -65,13 +66,9 @@ export const ProjectMutations = {
       project.notes.push(savedDefaultNote._id);
       await project.save();
 
-
-      console.log("User found:", user);
-
       if (!user.projectIds) {
         user.projectIds = [];
       }
-
 
       const objProject = project.toObject();
       objProject.id = objProject._id.toString();
@@ -81,13 +78,12 @@ export const ProjectMutations = {
 
       delete objProject._id;
       return objProject;
-
     } catch (error) {
-      console.error("Error saving project:", error);
+      console.error('Error saving project:', error);
       throw error;
     }
-  }
-}
+  },
+};
 
 /**
  * Type resolvers related to the Project type.
@@ -100,7 +96,7 @@ export const ProjectType = {
    * @returns An array of notes associated with the project.
    */
   async notes(project: { id: string; notes: string[] }): Promise<INote[]> {
-    const notes = await Note.find({_id: {$in: project.notes}});
+    const notes = await Note.find({ _id: { $in: project.notes } });
     if (!notes || notes.length === 0) {
       return [];
       // throw new ApolloError(

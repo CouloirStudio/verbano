@@ -1,17 +1,20 @@
-import {CircularProgress, IconButton} from "@mui/material";
-import React from "react";
-import {useMutation} from "@apollo/client";
-import {ADD_PROJECT} from "../../graphql/mutations/addProjects";
-import {AiOutlinePlus} from "react-icons/ai"; // adjust the path accordingly
+import { CircularProgress, IconButton } from '@mui/material';
+import React from 'react';
+import { useMutation } from '@apollo/client';
+import { ADD_PROJECT } from '../../graphql/mutations/addProjects';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { useProjectContext } from '@/app/contexts/ProjectContext'; // adjust the path accordingly
 
 const style = {
   color: '#4d99a8',
   fontSize: '1.2rem',
-}
+};
 
 function CreateProjectButton() {
   // Define the mutation hook
-  const [addProject, {data, loading, error}] = useMutation(ADD_PROJECT);
+  const [addProject, { data, loading, error }] = useMutation(ADD_PROJECT);
+
+  const context = useProjectContext();
 
   // Handle the button click
   const handleButtonClick = async () => {
@@ -19,19 +22,20 @@ function CreateProjectButton() {
       const response = await addProject({
         variables: {
           input: {
-            projectName: "New Project"
-          }
+            projectName: 'New Project',
+          },
         },
       });
-      console.log("Project created:", response.data.addProject);
+
+      context.refetchProjects();
     } catch (e) {
-      console.error("Failed to create project:", e);
+      console.error('Failed to create project:', e);
     }
   };
 
   return (
     <IconButton onClick={handleButtonClick} disabled={loading} style={style}>
-      {loading ? <CircularProgress size={24}/> : <AiOutlinePlus/>}
+      {loading ? <CircularProgress size={24} /> : <AiOutlinePlus />}
     </IconButton>
   );
 }

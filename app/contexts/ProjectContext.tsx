@@ -1,8 +1,8 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
-import {useQuery} from '@apollo/client';
-import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
-import {NoteType, ProjectType} from '../resolvers/types';
-import {uploadAudio} from '../api/audio';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
+import { NoteType, ProjectType } from '../resolvers/types';
+import { uploadAudio } from '../api/audio';
 import client from '../config/apolloClient';
 
 /**
@@ -14,6 +14,7 @@ type ProjectContextType = {
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
   handleAudioUpload: (audioFile: Blob) => Promise<void>;
+  refetchProjects: () => void; // Add this line
 };
 
 /**
@@ -40,12 +41,25 @@ export const useProjectContext = () => {
  * Provides the ProjectContext to child components.
  */
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
-                                                                  children,
-                                                                }) => {
+  children,
+}) => {
   const [selectedNotes, setSelectedNotes] = useState<NoteType[]>([]);
   const [projects, setProjects] = useState<ProjectType[]>([]);
 
-  const {data, error} = useQuery<{ listProjects: ProjectType[] }>(GET_PROJECTS_AND_NOTES);
+  const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
+    GET_PROJECTS_AND_NOTES,
+  ); // Add refetch here
+
+  async function refetchProjects() {
+    try {
+      const { data: refetchedData } = await refetch();
+      if (refetchedData && refetchedData.listProjects) {
+        setProjects(refetchedData.listProjects);
+      }
+    } catch (error) {
+      console.error('Error during refetch:', error);
+    }
+  }
 
   if (error) console.error(error);
 
@@ -58,7 +72,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   async function handleAudioUpload(audioFile: Blob) {
     try {
       await uploadAudio(audioFile, 'http://localhost:3000');
-      const {data: updatedData} = await client.readQuery({
+      const { data: updatedData } = await client.readQuery({
         query: GET_PROJECTS_AND_NOTES,
       });
       if (updatedData && updatedData.listProjects) {
@@ -77,6 +91,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         projects,
         setProjects,
         handleAudioUpload,
+        refetchProjects, // Add this line
       }}
     >
       {children}
