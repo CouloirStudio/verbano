@@ -1,20 +1,102 @@
 import React from 'react';
-import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import clsx from 'clsx';
 import Box from '@mui/material/Box';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ProjectTreeHeader from '@/app/components/ProjectTree/ProjectTreeHeader';
-import styles from './projectTree.module.scss';
 import Typography from '@mui/material/Typography';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { NoteType, ProjectType } from '@/app/resolvers/types';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import {
+  TreeItem,
+  TreeItemContentProps,
+  TreeItemProps,
+  useTreeItem,
+} from '@mui/x-tree-view/TreeItem';
+import ProjectTreeHeader from '../ProjectTree/ProjectTreeHeader';
+import styles from './projectTree.module.scss';
+import { useProjectContext } from '../../contexts/ProjectContext';
+import { NoteType, ProjectType } from '../../resolvers/types';
+
+const CustomContent = React.forwardRef(function CustomContent(
+  props: TreeItemContentProps,
+  ref,
+) {
+  const {
+    classes,
+    className,
+    label,
+    nodeId,
+    icon: iconProp,
+    expansionIcon,
+    displayIcon,
+  } = props;
+
+  const {
+    disabled,
+    expanded,
+    selected,
+    focused,
+    handleExpansion,
+    handleSelection,
+    preventSelection,
+  } = useTreeItem(nodeId);
+
+  const icon = iconProp || expansionIcon || displayIcon;
+
+  const handleMouseDown = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
+    preventSelection(event);
+  };
+
+  const handleExpansionClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
+    handleExpansion(event);
+  };
+
+  const handleSelectionClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
+    handleSelection(event);
+  };
+
+  return (
+    <div
+      className={clsx(className, classes.root, {
+        [classes.expanded]: expanded,
+        [classes.selected]: selected,
+        [classes.focused]: focused,
+        [classes.disabled]: disabled,
+      })}
+      onMouseDown={handleMouseDown}
+      ref={ref as React.Ref<HTMLDivElement>}
+    >
+      <div onClick={handleExpansionClick} className={classes.iconContainer}>
+        {icon}
+      </div>
+      <Typography
+        onClick={handleSelectionClick}
+        component="div"
+        className={classes.label}
+      >
+        {label}
+      </Typography>
+    </div>
+  );
+});
+
+const CustomTreeItem = React.forwardRef(function CustomTreeItem(
+  props: TreeItemProps,
+  ref: React.Ref<HTMLLIElement>,
+) {
+  return <TreeItem ContentComponent={CustomContent} {...props} ref={ref} />;
+});
 
 const renderProjectTree = (projects: ProjectType[]) => {
   return projects.map((project: ProjectType) => (
-    <TreeItem
+    <CustomTreeItem
       key={project.id}
-      nodeId={project.id}
+      nodeId={project.id.toString()}
       label={
         <Box className={styles.project}>
           <Typography>{project.projectName}</Typography>
@@ -25,9 +107,13 @@ const renderProjectTree = (projects: ProjectType[]) => {
       }
     >
       {project.notes.map((note: NoteType) => (
-        <TreeItem key={note.id} nodeId={note.id} label={note.noteName} />
+        <CustomTreeItem
+          key={note.id}
+          nodeId={note.id.toString()}
+          label={note.noteName}
+        />
       ))}
-    </TreeItem>
+    </CustomTreeItem>
   ));
 };
 
