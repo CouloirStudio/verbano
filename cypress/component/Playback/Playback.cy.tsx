@@ -9,25 +9,29 @@ describe('<Playback />', () => {
       <ErrorModalContextProvider>
         <ErrorModal />
         <Playback
-          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
+          audioUrl="audio-files/1696394886454.wav"
           baseUrl="http://localhost:3000"
         />
         <Playback
-          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
+          audioUrl="audio-files/1697487143891.wav"
           baseUrl="http://localhost:3000"
         />
       </ErrorModalContextProvider>,
     );
+
     // stubbing network request
     cy.fixture('audiosample.wav', null).then((data) => {
       data = data.buffer;
+      const blob = new Blob([data]);
+      const url = URL.createObjectURL(blob);
+      const json = { success: true, signedURL: url };
       cy.intercept('POST', 'http://localhost:3000/audio/retrieve', {
         statusCode: 200, // 200 OK
-        headers: { 'Content-Type': 'audio/wav' },
-        body: data,
+        body: json,
       }).as('getAudio');
     });
   });
+
   it('Has initial state of idle', () => {
     // see: https://on.cypress.io/mounting-react
     cy.get('button').first().contains('Play');

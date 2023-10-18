@@ -17,14 +17,15 @@ const usePlaybackManager = () => {
   // Context to handle error messages in a modal
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
-  // create type for playbackState
-
   // Playback state management
   const [playbackState, setPlaybackState] = useState<PlaybackState>(
     PlaybackState.IDLE,
   );
 
-  // A single AudioPlayer object is used throughout the hook and needs to have a persistent state throughout the lifetime of the component.
+  /**
+   * A single AudioPlayer object is used throughout the hook and needs to have a persistent state throughout the lifetime of the component.
+   * This is done so that once the audio is loaded it does not have to be loaded again.
+   */
   const audioPlayerRef = useRef(new AudioPlayer());
 
   /**
@@ -42,12 +43,18 @@ const usePlaybackManager = () => {
     setPlaybackState(PlaybackState.IDLE);
   };
 
+  /**
+   * Event listener that will set the state to idle when the audio finishes playing.
+   * Triggered by the 'ended' event from the html audio element.
+   */
   const onEnd = () => {
     setPlaybackState(PlaybackState.IDLE);
     audioPlayerRef.current.audio?.removeEventListener('ended', onEnd);
   };
 
-  // Effect to handle playback ending: cleanup listeners for performance
+  /**
+   *   Effect to handle playback ending: cleanup listeners for performance
+   */
   useEffect(() => {
     const currentAudioPlayer = audioPlayerRef.current;
 
@@ -65,11 +72,11 @@ const usePlaybackManager = () => {
     try {
       if (!audioPlayerRef.current.isLoaded) {
         setPlaybackState(PlaybackState.PROCESSING);
-
-        const blobURL = await getAudio(audioKey, baseURL);
-        await audioPlayerRef.current.loadAudioPlayer(blobURL);
+        // Get signed URL from aws sdk
+        const signedURL = await getAudio(audioKey, baseURL);
+        // Load the audio player directly with the aws URL.
+        await audioPlayerRef.current.loadAudioPlayer(signedURL);
       }
-
       audioPlayerRef.current.audio?.addEventListener('ended', onEnd);
       await audioPlayerRef.current.startAudioPlayer();
       setPlaybackState(PlaybackState.PLAYING);
