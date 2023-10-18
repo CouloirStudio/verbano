@@ -1,10 +1,10 @@
 import 'dotenv/config';
-import {User} from '../models/User';
+import { User } from '../models/User';
 import bcrypt from 'bcrypt';
-import {ObjectId} from 'mongoose';
-import {GraphQLLocalStrategy} from 'graphql-passport';
+import { ObjectId } from 'mongoose';
+import { GraphQLLocalStrategy } from 'graphql-passport';
 import passport from 'passport';
-import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 /**
  * Configure how Passport authenticates users.
@@ -13,7 +13,7 @@ import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 passport.use(
   new GraphQLLocalStrategy(async (email, password, done) => {
     try {
-      const user = await User.findOne({email: email});
+      const user = await User.findOne({ email: email });
       if (!user) {
         throw new Error('Invalid credentials.');
       }
@@ -76,7 +76,7 @@ const googleCallback = async (
   done: any,
 ) => {
   try {
-    let matchingUser = await User.findOne({googleId: profile.id});
+    let matchingUser = await User.findOne({ googleId: profile.id });
     if (matchingUser) {
       done(null, matchingUser);
       return;
@@ -87,9 +87,14 @@ const googleCallback = async (
     let firstName = profile.name.givenName;
     let lastName = profile.name.familyName;
 
-    matchingUser = await User.findOne({email: email});
+    matchingUser = await User.findOne({ email: email });
     if (matchingUser) {
-      done(new Error('This email is already in use. Please login with your email and password.'), null);
+      done(
+        new Error(
+          'This email is already in use. Please login with your email and password.',
+        ),
+        null,
+      );
       return;
     }
 

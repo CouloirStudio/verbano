@@ -6,7 +6,7 @@ import { gql } from 'apollo-server-express';
 const NoteSchema = gql`
   type Note {
     id: ID!
-    audioLocation: String!
+    audioLocation: String
     dateCreated: String!
     transcription: String
     tags: [String!]
@@ -16,7 +16,7 @@ const NoteSchema = gql`
   }
 
   input NoteInput {
-    audioLocation: String!
+    audioLocation: String
     transcription: String
     tags: [String!]
     projectId: ID!

@@ -1,5 +1,4 @@
 describe('Register Page', () => {
-
   beforeEach(() => {
     cy.visit('localhost:3000/register', {
       timeout: 10000,
@@ -36,19 +35,27 @@ describe('Input Validation', () => {
   });
 
   it('should error on empty first name', () => {
-    cy.get('#firstName').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
+    cy.get('#firstName')
+      .invoke('prop', 'validationMessage')
+      .should('equal', 'Please fill out this field.');
   });
 
   it('should error on empty last name', () => {
-    cy.get('#lastName').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
+    cy.get('#lastName')
+      .invoke('prop', 'validationMessage')
+      .should('equal', 'Please fill out this field.');
   });
 
   it('should error on empty email', () => {
-    cy.get('#email').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
+    cy.get('#email')
+      .invoke('prop', 'validationMessage')
+      .should('equal', 'Please fill out this field.');
   });
 
   it('should error on empty password', () => {
-    cy.get('#password').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
+    cy.get('#password')
+      .invoke('prop', 'validationMessage')
+      .should('equal', 'Please fill out this field.');
   });
 
   it('should error on existing email', () => {
@@ -80,7 +87,6 @@ describe('Account Creation', () => {
 
   it('should succeed with valid input', () => {
     cy.intercept('POST', 'http://localhost:3000/graphql', (req) => {
-
       req.reply({
         statusCode: 200,
         body: {
@@ -89,10 +95,10 @@ describe('Account Creation', () => {
               user: {
                 id: 'fakeId123',
                 email: 'newaccount@gmail.com',
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       });
     });
 

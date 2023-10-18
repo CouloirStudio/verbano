@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
-import { NoteType, ProjectType } from '../resolvers/types';
-import { uploadAudio } from '../api/audio';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useQuery} from '@apollo/client';
+import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
+import {NoteType, ProjectType} from '../resolvers/types';
+import {uploadAudio} from '../api/audio';
 import client from '../config/apolloClient';
 
 /**
@@ -14,6 +14,7 @@ type ProjectContextType = {
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
   handleAudioUpload: (audioFile: Blob) => Promise<void>;
+  refetchProjects: () => void; // Add this line
 };
 
 /**
@@ -45,9 +46,22 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   const [selectedNotes, setSelectedNotes] = useState<NoteType[]>([]);
   const [projects, setProjects] = useState<ProjectType[]>([]);
 
-  const { data } = useQuery<{ listProjects: ProjectType[] }>(
+  const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
     GET_PROJECTS_AND_NOTES,
   );
+
+  async function refetchProjects() {
+    try {
+      const { data: refetchedData } = await refetch();
+      if (refetchedData && refetchedData.listProjects) {
+        setProjects(refetchedData.listProjects);
+      }
+    } catch (error) {
+      console.error('Error during refetch:', error);
+    }
+  }
+
+  if (error) console.error(error);
 
   useEffect(() => {
     if (data && data.listProjects) {
@@ -77,6 +91,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         projects,
         setProjects,
         handleAudioUpload,
+        refetchProjects,
       }}
     >
       {children}

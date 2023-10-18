@@ -11,8 +11,17 @@ const ProjectSchema = gql`
     notes: [Note!]!
   }
 
+  input ProjectInput {
+    projectName: String!
+    projectDescription: String
+  }
+
   extend type Query {
     listProjects: [Project!]!
+  }
+
+  extend type Mutation {
+    addProject(input: ProjectInput!): Project!
   }
 `;
 
