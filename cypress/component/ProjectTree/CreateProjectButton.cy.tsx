@@ -1,12 +1,15 @@
 import React from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import CreateProjectButton from '../../../app/components/ProjectTree/CreateProjectButon';
+import { ProjectProvider } from '../../../app/contexts/ProjectContext';
 
 describe('<CreateProjectButton />', () => {
   it('renders', () => {
     cy.mount(
       <MockedProvider>
-        <CreateProjectButton />
+        <ProjectProvider>
+          <CreateProjectButton />
+        </ProjectProvider>
       </MockedProvider>,
     );
 
