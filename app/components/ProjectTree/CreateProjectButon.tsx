@@ -27,7 +27,7 @@ function CreateProjectButton() {
         },
       });
 
-      context.refetchProjects();
+      context.refetchData();
     } catch (e) {
       console.error('Failed to create project:', e);
     }

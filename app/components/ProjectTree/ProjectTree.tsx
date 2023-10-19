@@ -16,8 +16,13 @@ import styles from './projectTree.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import { NoteType, ProjectType } from '../../resolvers/types';
 
+type CustomContentPropsExtended = TreeItemContentProps & {
+  notes?: NoteType[];
+  project?: ProjectType;
+};
+
 const CustomContent = React.forwardRef(function CustomContent(
-  props: TreeItemContentProps,
+  props: CustomContentPropsExtended,
   ref,
 ) {
   const {
@@ -42,22 +47,21 @@ const CustomContent = React.forwardRef(function CustomContent(
 
   const icon = iconProp || expansionIcon || displayIcon;
 
+  const { setSelectedNote, setSelectedProject } = useProjectContext();
+
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     preventSelection(event);
   };
 
-  const handleExpansionClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) => {
-    handleExpansion(event);
-  };
-
-  const handleSelectionClick = (
+  const handleLabelClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleSelection(event);
+    if (props.project) {
+      setSelectedProject(props.project);
+    }
   };
 
   return (
@@ -71,11 +75,11 @@ const CustomContent = React.forwardRef(function CustomContent(
       onMouseDown={handleMouseDown}
       ref={ref as React.Ref<HTMLDivElement>}
     >
-      <div onClick={handleExpansionClick} className={classes.iconContainer}>
+      <div onClick={handleExpansion} className={classes.iconContainer}>
         {icon}
       </div>
       <Typography
-        onClick={handleSelectionClick}
+        onClick={handleLabelClick}
         component="div"
         className={classes.label}
       >
@@ -86,10 +90,17 @@ const CustomContent = React.forwardRef(function CustomContent(
 });
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(
-  props: TreeItemProps,
+  props: TreeItemProps & { notes?: NoteType[]; project?: ProjectType },
   ref: React.Ref<HTMLLIElement>,
 ) {
-  return <TreeItem ContentComponent={CustomContent} {...props} ref={ref} />;
+  return (
+    <TreeItem
+      ContentComponent={CustomContent}
+      ContentProps={{ project: props.project }}
+      {...props}
+      ref={ref}
+    />
+  );
 });
 
 const renderProjectTree = (projects: ProjectType[]) => {
@@ -97,6 +108,7 @@ const renderProjectTree = (projects: ProjectType[]) => {
     <CustomTreeItem
       key={project.id}
       nodeId={project.id.toString()}
+      project={project}
       label={
         <Box className={styles.project}>
           <Typography>{project.projectName}</Typography>
@@ -121,7 +133,7 @@ function ProjectTree() {
   const { projects } = useProjectContext();
 
   return (
-    <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
+    <Box className={styles.projectList}>
       <ProjectTreeHeader />
       <TreeView
         aria-label="icon expansion"
