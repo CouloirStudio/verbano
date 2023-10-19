@@ -1,6 +1,6 @@
 import styles from './Project.module.scss';
 import Note from '../Note';
-import { NoteType } from '../../resolvers/types';
+import {NoteType} from '../../resolvers/types';
 
 /**
  * Props for the Project component.
@@ -20,7 +20,6 @@ type ProjectProps = {
  */
 function Project({ projectName, notes }: ProjectProps) {
   // Log the notes here
-  console.log(notes);
 
   return (
     <div className={styles.project}>

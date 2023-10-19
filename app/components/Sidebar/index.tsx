@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './sidebar.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import ProjectTree from '../ProjectTree';
+import NoteTree from '@/app/components/NoteTree';
 
 function Sidebar() {
   const { projects } = useProjectContext();
@@ -10,7 +11,8 @@ function Sidebar() {
 
   return (
     <div className={styles.sidebar}>
-      <ProjectTree projects={projects} />
+      <ProjectTree />
+      <NoteTree />
     </div>
   );
 }

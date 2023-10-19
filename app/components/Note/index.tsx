@@ -16,7 +16,6 @@ type NoteProps = {
  * @param noteName - The name of the note to be displayed.
  */
 function Note({ noteName }: NoteProps) {
-  console.log('Note Name:', noteName);
   return <div className={styles.note}>{noteName}</div>;
 }
 

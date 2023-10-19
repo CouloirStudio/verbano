@@ -9,12 +9,14 @@ import client from '../config/apolloClient';
  * Defines the shape of the ProjectContext.
  */
 type ProjectContextType = {
-  selectedNotes: NoteType[];
-  setSelectedNotes: (notes: NoteType[]) => void;
+  selectedNote: NoteType | null;
+  setSelectedNote: (note: NoteType) => void;
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
+  selectedProject: ProjectType | null;
+  setSelectedProject: (project: ProjectType | null) => void;
   handleAudioUpload: (audioFile: Blob) => Promise<void>;
-  refetchProjects: () => void; // Add this line
+  refetchData: () => void;
 };
 
 /**
@@ -43,14 +45,17 @@ export const useProjectContext = () => {
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
-  const [selectedNotes, setSelectedNotes] = useState<NoteType[]>([]);
+  const [selectedNote, setSelectedNote] = useState<NoteType | null>(null);
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [selectedProject, setSelectedProject] = useState<ProjectType | null>(
+    null,
+  );
 
   const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
     GET_PROJECTS_AND_NOTES,
   );
 
-  async function refetchProjects() {
+  async function refetchData() {
     try {
       const { data: refetchedData } = await refetch();
       if (refetchedData && refetchedData.listProjects) {
@@ -66,8 +71,23 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   useEffect(() => {
     if (data && data.listProjects) {
       setProjects(data.listProjects);
+
+      // Update the selectedProject if it's present in the updated data.
+      if (selectedProject) {
+        const updatedSelectedProject = data.listProjects.find(
+          (project) => project.id === selectedProject.id,
+        );
+
+        // Only update if there's a change in the selected project data
+        if (
+          JSON.stringify(updatedSelectedProject) !==
+          JSON.stringify(selectedProject)
+        ) {
+          setSelectedProject(updatedSelectedProject || null);
+        }
+      }
     }
-  }, [data]);
+  }, [data, selectedProject]);
 
   async function handleAudioUpload(audioFile: Blob) {
     try {
@@ -86,12 +106,14 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   return (
     <ProjectContext.Provider
       value={{
-        selectedNotes,
-        setSelectedNotes,
+        selectedNote,
+        setSelectedNote,
         projects,
         setProjects,
+        selectedProject,
+        setSelectedProject,
         handleAudioUpload,
-        refetchProjects,
+        refetchData: refetchData,
       }}
     >
       {children}

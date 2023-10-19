@@ -1,11 +1,6 @@
-import { Note } from '../models/Note';
-import {
-  AddNoteArgs,
-  DeleteNoteArgs,
-  GetNoteArgs,
-  ResolverContext,
-  UpdateNoteArgs,
-} from './types';
+import {Note} from '../models/Note';
+import {AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs,} from './types';
+import {Project} from '../models/Project';
 
 /**
  * Resolvers for querying notes from the database.
@@ -61,7 +56,16 @@ export const NoteMutations = {
    */
   async addNote(_: unknown, args: AddNoteArgs, _context: ResolverContext) {
     const note = new Note(args.input);
-    return await note.save();
+    const project = await Project.findById(args.input.projectId);
+    if (!project) {
+      console.error(`No project found with ID ${args.input.projectId}.`);
+      return null;
+    }
+
+    const savedNote = await note.save();
+    project.notes.push(savedNote._id);
+    await project.save();
+    return savedNote;
   },
 
   /**
