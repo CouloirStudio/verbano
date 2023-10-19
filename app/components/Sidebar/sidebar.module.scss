@@ -1,25 +1,24 @@
 @import '../_shared/_variables.scss';
 
 .sidebar {
-  width: 250px;
+  width: 600px;
   flex-shrink: 0;
   background-color: $card-bg;
   color: $card-color;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-start;
   height: calc(100vh - $header-height);
   overflow-y: auto;
-  padding: $spacing-base;
-  
+
   h1 {
     @include verticalSpacing($spacing-base);
   }
-  
+
   ul {
     list-style-type: none;
     padding: 0;
-    
+
     li {
       @include verticalSpacing(0.5rem);
     }

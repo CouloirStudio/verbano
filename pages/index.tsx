@@ -4,15 +4,13 @@ import ScrollView from '../app/components/ScrollView';
 import Note from '../app/components/Note';
 
 export default function Home() {
-  const { selectedNotes } = useProjectContext();
+  const { selectedNote } = useProjectContext();
 
   return (
     <div className={styles.container}>
       <ScrollView>
         <div className={styles.noteWrapper}>
-          {selectedNotes.map((note) => (
-            <Note key={note.id} noteName={note.noteName} />
-          ))}
+          {selectedNote && <Note noteName={selectedNote.noteName} />}
         </div>
       </ScrollView>
     </div>
