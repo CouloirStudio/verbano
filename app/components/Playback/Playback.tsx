@@ -21,7 +21,6 @@ const Playback: React.FC<PlaybackProps> = ({ audioUrl, baseUrl }) => {
           await startPlayback(baseUrl, audioUrl);
           break;
         case 'playing':
-          console.log('pausing');
           await pausePlayback();
           break;
         default:

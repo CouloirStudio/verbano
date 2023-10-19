@@ -1,5 +1,7 @@
-import client from '../config/apolloClient';
-import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
+// @ts-ignore
+
+import client from "../config/apolloClient";
+import { GET_PROJECTS_AND_NOTES } from "../graphql/queries/getNotes";
 
 /**
  * Type representing the structure of the response received
@@ -28,7 +30,7 @@ export const uploadAudio = async (
   blob: Blob,
   baseURL: string,
 ): Promise<UploadAudioResponse> => {
-  console.log(blob, blob instanceof Blob); // Logging blob info
+  // Logging blob info
 
   const formData = new FormData();
   formData.append('audio', blob, 'myAudioBlob.wav');
@@ -60,15 +62,14 @@ export const uploadAudio = async (
  *
  * @param baseURL - The base URL from which the audio should be retrieved.
  * @param audioURL - The specific URL of the audio file.
- * @returns A promise that resolves to the audio blob.
+ * @returns A signed audio URL
  * @throws Will throw an error if the retrieval is unsuccessful.
  */
 export const getAudio = async (
   baseURL: string,
   audioURL: string,
-): Promise<Blob> => {
-  const data = { url: audioURL };
-
+): Promise<string> => {
+  const data = { key: audioURL };
   const response = await fetch(`${baseURL}/audio/retrieve`, {
     method: 'POST',
     headers: {
@@ -77,9 +78,17 @@ export const getAudio = async (
     body: JSON.stringify(data),
   });
 
-  if (response.ok) {
-    return response.blob();
-  } else {
+  if (!response.ok) {
     throw new Error('Response not OK. ' + response.statusText);
   }
+
+  // Assuming the response is in JSON format
+  const responseBody = await response.json();
+
+  if (!responseBody.success || !responseBody.signedURL) {
+    throw new Error('Invalid response format');
+  }
+
+  const signedURL = responseBody.signedURL;
+  return signedURL;
 };
