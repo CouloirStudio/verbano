@@ -1,34 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import styles from '../styles/register.module.scss';
 import { SIGNUP_MUTATION } from '@/app/graphql/mutations/addUsers';
-import EmailField from '../app/components/Settings/UpdateEmailField';
-import PasswordField from '../app/components/Login/PasswordField';
-import NameField from '../app/components/Settings/UpdateFullNameField';
 import { Button, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
-import ErrorModal from '@/app/components/ErrorModal';
 import { useRouter } from 'next/router';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import InputField from '@/app/components/Login/InputField';
+import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const [isError, setIsError] = useState(false);
   const [signup] = useMutation(SIGNUP_MUTATION);
 
   const router = useRouter();
-  const { setIsError, setErrorMessage } = useErrorModalContext();
 
-  useEffect(() => {
-    const errorMessage = router.query.error;
-    if (errorMessage) {
-      setIsError(true);
-      setErrorMessage(errorMessage as string);
-    }
-  }, [router.query]);
+  const clearError = () => {
+    setIsError(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,10 +32,9 @@ const RegisterPage = () => {
     };
 
     try {
-      const result = await signup({ variables: user });
+      await signup({ variables: user });
       await router.push('/login');
     } catch (error) {
-      setErrorMessage(error.message || 'An unknown error occurred');
       setIsError(true);
       console.error('Error signing up:', error);
     }
@@ -51,7 +42,6 @@ const RegisterPage = () => {
 
   return (
     <div className={styles.container}>
-      <ErrorModal />
       <div className={styles.registerContainer}>
         <h1>Register</h1>
         <p>
@@ -76,34 +66,61 @@ const RegisterPage = () => {
         </Button>
         <Divider variant={'middle'} />
         <form onSubmit={handleSubmit}>
-          <div>
-            <NameField
-              firstName={firstName}
-              lastName={lastName}
-              onFirstNameChange={(e) => {
-                setFirstName(e.target.value);
-              }}
-              onLastNameChange={(e) => {
-                setLastName(e.target.value);
-              }}
+          {/* FirstNameField */}
+          <div data-cy="firstname-input-field">
+            <InputField
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              isRequired={true}
+              label={'First Name'}
+              type={'text'}
+              icon={<AiOutlineLock />}
+              error={isError}
+              clearError={clearError}
             />
           </div>
-          <div>
-            <EmailField
+          {/* LastNameField */}
+          <div data-cy="lastname-input-field">
+            <InputField
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              isRequired={true}
+              label={'Last Name'}
+              type={'text'}
+              icon={<AiOutlineLock />}
+              error={isError}
+              clearError={clearError}
+            />
+          </div>
+
+          {/* EmailField */}
+          <div data-cy="email-input-field">
+            <InputField
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
+              isRequired={true}
+              label={'Email'}
+              type={'email'}
+              icon={<AiOutlineLock />}
+              error={isError}
+              clearError={clearError}
             />
           </div>
-          <div>
-            <PasswordField
+
+          {/* Password Field */}
+          <div data-cy="password-input-field">
+            <InputField
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
+              isRequired={true}
+              label={'Password'}
+              type={'password'}
+              icon={<AiOutlineLock />}
+              error={isError}
+              clearError={clearError}
             />
           </div>
+          {isError ? <p>Invalid Credentials</p> : null}
           <Button
             id={'registerButton'}
             sx={{
