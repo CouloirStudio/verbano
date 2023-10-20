@@ -22,13 +22,18 @@ export const NoteQueries = {
     return note;
   },
 
+  /**
+   *
+   * @param _ - Root object (unused in this query).
+   * @param args Arguments for the query, including the ID of the note to retrieve.
+   * @param _context - Resolver context (unused in this query).
+   * @returns The transcription extracted from the note object
+   */
   async getTranscription(
     _: unknown,
     args: GetNoteArgs,
     _context: ResolverContext,
   ) {
-    console.log('Resolver ran');
-
     const note = await Note.findById(args.id);
     if (!note) {
       console.error(`No note found with ID ${args.id}.`);

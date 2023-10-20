@@ -15,9 +15,9 @@ function TranscriptionDisplay() {
   const selectedNote = context.selectedNote;
 
   if (!selectedNote) {
-    console.log('not note selected');
+    console.log('no note selected');
   }
-
+  // Use GraphQL to get the transcription
   const { data, error } = useQuery<{ getTranscription: string }>(
     GET_TRANSCRIPTION,
     {
@@ -33,14 +33,16 @@ function TranscriptionDisplay() {
 
   const getTranscription = (): string => {
     if (data && data.getTranscription && data.getTranscription) {
-      return data.getTranscription;
+      // Parse json so that we can get the text
+      const transcription = JSON.parse(data.getTranscription);
+      return transcription.text;
     }
     return 'No Transcription';
   };
 
   return (
     <Box className={styles.transcription}>
-      <Typography variant={'h4'}>{selectedNote?.noteName}</Typography>
+      <Typography variant={'h5'}>{selectedNote?.noteName}</Typography>
       <Typography variant={'body1'}> {getTranscription()}</Typography>
     </Box>
   );
