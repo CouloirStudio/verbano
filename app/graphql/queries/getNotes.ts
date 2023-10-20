@@ -19,6 +19,18 @@ export const GET_PROJECTS_AND_NOTES = gql`
   }
 `;
 
+export const GET_PROJECT = gql`
+  query GetProject($id: ID!) {
+    getProject(id: $id) {
+      id
+      projectName
+      notes {
+        id
+      }
+    }
+  }
+`;
+
 export const GET_NOTE = gql`
   query GetNote($id: ID!) {
     getNote(id: $id) {

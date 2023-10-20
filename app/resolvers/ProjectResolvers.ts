@@ -25,6 +25,18 @@ export const ProjectQueries = {
       return objProject;
     });
   },
+
+  async getProject(_: unknown, args: { id: string }): Promise<IProject> {
+    const project = await Project.findById(args.id);
+    if (!project) {
+      throw new ApolloError('No project found.');
+    }
+
+    const objProject = project.toObject();
+    objProject.id = objProject._id.toString();
+    delete objProject._id;
+    return objProject;
+  },
 };
 
 export const ProjectMutations = {

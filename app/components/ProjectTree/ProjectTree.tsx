@@ -15,6 +15,7 @@ import ProjectTreeHeader from '../ProjectTree/ProjectTreeHeader';
 import styles from './projectTree.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import { NoteType, ProjectType } from '../../resolvers/types';
+import { Droppable } from '@hello-pangea/dnd';
 
 type CustomContentPropsExtended = TreeItemContentProps & {
   notes?: NoteType[];
@@ -105,27 +106,37 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
 
 const renderProjectTree = (projects: ProjectType[]) => {
   return projects.map((project: ProjectType) => (
-    <CustomTreeItem
-      key={project.id}
-      nodeId={project.id.toString()}
-      project={project}
-      label={
-        <Box className={styles.project}>
-          <Typography>{project.projectName}</Typography>
-          <Typography variant="subtitle1" className={styles.projectNoteCount}>
-            {project.notes.length}
-          </Typography>
-        </Box>
-      }
-    >
-      {project.notes.map((note: NoteType) => (
-        <CustomTreeItem
-          key={note.id}
-          nodeId={note.id.toString()}
-          label={note.noteName}
-        />
-      ))}
-    </CustomTreeItem>
+    <Droppable droppableId={`project-${project.id}`} key={project.id}>
+      {(provided) => (
+        <div ref={provided.innerRef} {...provided.droppableProps}>
+          <CustomTreeItem
+            key={project.id}
+            nodeId={project.id.toString()}
+            project={project}
+            label={
+              <Box className={styles.project}>
+                <Typography>{project.projectName}</Typography>
+                <Typography
+                  variant="subtitle1"
+                  className={styles.projectNoteCount}
+                >
+                  {project.notes.length}
+                </Typography>
+              </Box>
+            }
+          >
+            {project.notes.map((note: NoteType) => (
+              <CustomTreeItem
+                key={note.id}
+                nodeId={note.id.toString()}
+                label={note.noteName}
+              />
+            ))}
+            {provided.placeholder}
+          </CustomTreeItem>
+        </div>
+      )}
+    </Droppable>
   ));
 };
 

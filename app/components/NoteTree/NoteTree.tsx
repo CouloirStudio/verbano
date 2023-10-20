@@ -5,12 +5,12 @@ import Tab from '@mui/material/Tab';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import { NoteType } from '../../resolvers/types';
 import NoteTreeHeader from '@/app/components/NoteTree/NoteTreeHeader';
-import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import styles from './noteTree.module.scss';
 
 import { makeStyles } from '@mui/styles';
-import ScrollView from '@/app/components/ScrollView';
+
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 
 const useStyles = makeStyles((theme) => ({
   tabsContainer: {
@@ -49,20 +49,38 @@ function NoteTree() {
   const [activeTab, setActiveTab] = useState(0);
 
   const renderNoteTree = (notes?: NoteType[]) => {
+    console.log(selectedProject);
+
     return (
-      <Box className={styles.noteList}>
-        {notes?.map((note: NoteType) => (
-          <Button
-            key={note.id}
-            className={`${styles.note} ${
-              selectedNote?.id === note.id ? styles.selected : ''
-            }`}
-            onClick={() => setSelectedNote(note)}
+      <Droppable droppableId="notes">
+        {(provided) => (
+          <Box
+            className={styles.noteList}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
           >
-            <Typography>{note.noteName}</Typography>
-          </Button>
-        ))}
-      </Box>
+            {notes?.map((note: NoteType, index: number) => (
+              <Draggable key={note.id} draggableId={note.id} index={index}>
+                {(provided) => (
+                  <Box
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    key={note.id}
+                    className={`${styles.note} ${
+                      selectedNote?.id === note.id ? styles.selected : ''
+                    }`}
+                    onClick={() => setSelectedNote(note)}
+                  >
+                    <Typography>{note.noteName}</Typography>
+                  </Box>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </Box>
+        )}
+      </Droppable>
     );
   };
 
@@ -81,7 +99,8 @@ function NoteTree() {
       {activeTab === 0 && (
         <>
           <NoteTreeHeader />
-          <ScrollView>{renderNoteTree(selectedProject?.notes)}</ScrollView>
+          {/*<ScrollView></ScrollView>*/}
+          {renderNoteTree(selectedProject?.notes)}
         </>
       )}
 

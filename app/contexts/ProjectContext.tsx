@@ -60,6 +60,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
       const { data: refetchedData } = await refetch();
       if (refetchedData && refetchedData.listProjects) {
         setProjects(refetchedData.listProjects);
+        console.log('Refetched projects:', refetchedData.listProjects);
       }
     } catch (error) {
       console.error('Error during refetch:', error);
