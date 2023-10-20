@@ -4,6 +4,7 @@ import { GET_TRANSCRIPTION } from "../../../app/graphql/queries/getNotes";
 import { useQuery } from "@apollo/react-hooks";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
 
 /**
  * A functional component to display a single transcription.
@@ -11,12 +12,8 @@ import Typography from "@mui/material/Typography";
  */
 function TranscriptionDisplay() {
   const context = useProjectContext();
-
+  const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNote = context.selectedNote;
-
-  if (!selectedNote) {
-    console.log('no note selected');
-  }
   // Use GraphQL to get the transcription
   const { data, error } = useQuery<{ getTranscription: string }>(
     GET_TRANSCRIPTION,
@@ -32,12 +29,22 @@ function TranscriptionDisplay() {
   }
 
   const getTranscription = (): string => {
-    if (data && data.getTranscription && data.getTranscription) {
-      // Parse json so that we can get the text
-      const transcription = JSON.parse(data.getTranscription);
-      return transcription.text;
+    try {
+      if (data && data.getTranscription && data.getTranscription) {
+        // Parse json so that we can get the text
+        const transcription = JSON.parse(data.getTranscription);
+        return transcription.text;
+      }
+    } catch (error) {
+      setIsError(true);
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        setErrorMessage(`${(error as Error).message}`);
+      } else {
+        setErrorMessage(`An unknown error occurred.`);
+      }
+      return 'Error retrieving transcription. ';
     }
-    return 'No Transcription';
+    return 'No Transcription.';
   };
 
   return (
