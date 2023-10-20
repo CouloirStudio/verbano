@@ -2,19 +2,12 @@ import styles from "./transcriptiondisplay.module.scss";
 import { useProjectContext } from "../../contexts/ProjectContext";
 import { GET_TRANSCRIPTION } from "../../../app/graphql/queries/getNotes";
 import { useQuery } from "@apollo/react-hooks";
-
-/**
- * Props for the TranscriptionDisplay component.
- */
-type displayProps = {
-  /** Name of the note. */
-  noteID: string;
-};
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 /**
  * A functional component to display a single transcription.
  *
- * @param noteID - The ID of the note to get the transcription for
  */
 function TranscriptionDisplay() {
   const context = useProjectContext();
@@ -45,7 +38,12 @@ function TranscriptionDisplay() {
     return 'No Transcription';
   };
 
-  return <div className={styles.transcription}>{getTranscription()}</div>;
+  return (
+    <Box className={styles.transcription}>
+      <Typography variant={'h4'}>{selectedNote?.noteName}</Typography>
+      <Typography variant={'body1'}> {getTranscription()}</Typography>
+    </Box>
+  );
 }
 
 export default TranscriptionDisplay;
