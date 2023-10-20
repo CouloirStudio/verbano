@@ -23,6 +23,13 @@
     padding: 0 10px;
     background-color: white;
     box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+    text-transform: none;
+    text-align: left;
+    justify-content: left;
+
+    p {
+      overflow: clip;
+    }
 
     &.selected {
       border: 1px solid #68BCCA;
@@ -30,7 +37,7 @@
     }
   }
 
-  .projectList {
+  .reportList {
     display: flex;
     width: 100%;
 

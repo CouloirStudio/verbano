@@ -75,7 +75,7 @@ function NoteTree() {
         TabIndicatorProps={{ style: { display: 'none' } }}
       >
         <Tab label="Notes" className={classes.tabItem} />
-        <Tab label="Projects" className={classes.tabItem} />
+        <Tab label="Reports" className={classes.tabItem} />
       </Tabs>
 
       {activeTab === 0 && (
@@ -87,7 +87,7 @@ function NoteTree() {
 
       {activeTab === 1 && (
         // Render your project view content here
-        <Box className={styles.projectList}></Box>
+        <Box className={styles.reportList}></Box>
       )}
     </Box>
   );
