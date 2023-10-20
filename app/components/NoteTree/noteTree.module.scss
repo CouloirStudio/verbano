@@ -1,22 +1,47 @@
-.noteList {
+
+.section {
   display: flex;
   flex-direction: column;
-  background-color: lightgray;
+  width: 300px;
+  background: #E0E0E0;
   gap: 5px;
   padding: 10px 10px;
+  box-sizing: border-box;
+}
+
+.noteList {
+  display: flex;
+  width: 100%;
+
+  flex-direction: column;
 
   .note {
     font-size: 14px;
+    width: 100%;
     height: 50px;
     border-radius: 15px;
     padding: 0 10px;
     background-color: white;
     box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+    text-transform: none;
+    text-align: left;
+    justify-content: left;
+
+    p {
+      overflow: clip;
+    }
 
     &.selected {
       border: 1px solid #68BCCA;
       border-right-width: 5px;
     }
+  }
+
+  .reportList {
+    display: flex;
+    width: 100%;
+
+    flex-direction: column;
   }
 }
 
@@ -54,3 +79,4 @@
     color: #4d99a8;
   }
 }
+
