@@ -1,22 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CreateNoteButton from '@/app/components/NoteTree/CreateNoteButton';
 import { PiNotePencil } from 'react-icons/pi';
-import { IoSearchOutline } from 'react-icons/io5';
-
-const styles = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  fontSize: '1.6rem',
-  color: '#4d99a8',
-};
+import SearchBar from './SearchBar';
+import styles from './noteTree.module.scss';
 
 function NoteTreeHeader() {
+  const [searchActive, setSearchActive] = useState(false);
+
   return (
-    <div style={styles}>
-      <CreateNoteButton />
-      <PiNotePencil />
-      <IoSearchOutline />
+    <div className={styles.noteTreeHeader}>
+      {!searchActive && <CreateNoteButton />}
+      {!searchActive && <PiNotePencil />}
+      <SearchBar
+        searchActive={searchActive}
+        setSearchActive={setSearchActive}
+      />
     </div>
   );
 }

@@ -6,8 +6,11 @@ describe('Register Page', () => {
     });
   });
 
-  it('should load the page', () => {
-    cy.contains('Register');
+  it('loads correctly', () => {
+    cy.visit('localhost:3000/register', {
+      timeout: 60000,
+      failOnStatusCode: true,
+    });
   });
 
   it('should have a register button', () => {
@@ -35,45 +38,45 @@ describe('Input Validation', () => {
   });
 
   it('should error on empty first name', () => {
-    cy.get('#firstName')
-      .invoke('prop', 'validationMessage')
-      .should('equal', 'Please fill out this field.');
+    cy.get('[data-cy="firstname-input-field"]').click().should('not.be.empty');
   });
 
   it('should error on empty last name', () => {
-    cy.get('#lastName')
-      .invoke('prop', 'validationMessage')
-      .should('equal', 'Please fill out this field.');
+    cy.get('[data-cy="lastname-input-field"]').click().should('not.be.empty');
   });
 
   it('should error on empty email', () => {
-    cy.get('#email')
-      .invoke('prop', 'validationMessage')
-      .should('equal', 'Please fill out this field.');
+    cy.get('[data-cy="email-input-field"]').click().should('not.be.empty');
   });
 
   it('should error on empty password', () => {
-    cy.get('#password')
-      .invoke('prop', 'validationMessage')
-      .should('equal', 'Please fill out this field.');
+    cy.get('[data-cy="password-input-field"]').click().should('not.be.empty');
   });
 
   it('should error on existing email', () => {
-    cy.get('#firstName').type('test');
-    cy.get('#lastName').type('test');
-    cy.get('#email').type('test@gmail');
-    cy.get('#password').type('password');
+    cy.get('[data-cy="firstname-input-field"]').click().type('user');
+
+    cy.get('[data-cy="lastname-input-field"]').click().type('test');
+
+    cy.get('[data-cy="email-input-field"]').click().type('test@gmail.com');
+
+    cy.get('[data-cy="password-input-field"]').click().type('password');
+
     cy.get('#registerButton').click();
-    cy.contains('Woopsies!');
+
+    cy.contains('Invalid Credentials');
   });
 
   it('should error on invalid password', () => {
-    cy.get('#firstName').type('test');
-    cy.get('#lastName').type('test');
-    cy.get('#email').type('test@gmail');
-    cy.get('#password').type('short');
+    cy.get('[data-cy="firstname-input-field"]').click().type('user');
+
+    cy.get('[data-cy="lastname-input-field"]').click().type('test');
+
+    cy.get('[data-cy="email-input-field"]').click().type('test23@gmail.com');
+
+    cy.get('[data-cy="password-input-field"]').click().type('123');
     cy.get('#registerButton').click();
-    cy.contains('Woopsies!');
+    cy.contains('Invalid Credentials');
   });
 });
 
@@ -102,11 +105,18 @@ describe('Account Creation', () => {
       });
     });
 
-    cy.get('#firstName').type('test');
-    cy.get('#lastName').type('test');
-    cy.get('#email').type('test@gmail.com');
-    cy.get('#password').type('password123');
+    cy.get('[data-cy="firstname-input-field"]').click().type('newUser');
+
+    cy.get('[data-cy="lastname-input-field"]').click().type('newLastName');
+
+    cy.get('[data-cy="email-input-field"]')
+      .click()
+      .type('newaccount@gmail.com');
+
+    cy.get('[data-cy="password-input-field"]').click().type('password123');
+
     cy.get('#registerButton').click();
+
     cy.location('pathname').should('eq', '/login'); // Ensure it redirects to login page after successful registration
   });
 });

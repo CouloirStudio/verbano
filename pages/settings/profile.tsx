@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography';
-import React, { useEffect, useState } from 'react';
-import { useMutation } from '@apollo/client';
+import React, { useState, useEffect } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
 
 import styles from '../../styles/globalSettings.module.scss';
 import classes from '../../styles/globalSettings.module.scss';
@@ -9,27 +9,59 @@ import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import UpdateEmailField from '@/app/components/Settings/UpdateEmailField/index';
 import UpdateFullName from '@/app/components/Settings/UpdateFullNameField';
 import { SettingsSidebar } from '@/app/components/Settings/SettingsSidebar';
+import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
 import {
-  UPDATE_EMAIL_MUTATION,
   UPDATE_FULL_NAME_MUTATION,
+  UPDATE_EMAIL_MUTATION,
+  UPDATE_PASSWORD_MUTATION,
 } from '@/app/graphql/mutations/addSettings';
-import { useUser } from '@/app/components/UserProvider';
+import CurrentUserData from './interface/CurrentUserData';
 
+/**
+ * `Profile` is a React functional component that represents a user's profile settings page.
+ *
+ * @remarks
+ * This component provides the user with the ability to update their full name, email, and password.
+ * It also displays user information and allows for saving changes and deleting the account.
+ *
+ * @see {@link https://mui.com/components/typography/ | Material-UI Typography} for typography components.
+ * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
+ * @see {@link https://www.apollographql.com/docs/react/ | Apollo Client} for GraphQL queries and mutations.
+ *
+ * @example
+ * ```tsx
+ * <Profile />
+ * ```
+ */
 const Profile = () => {
-  const currentUser = useUser();
-  const { setErrorMessage, setIsError } = useErrorModalContext();
-
-  const [firstName, setFirstName] = useState(currentUser?.firstName || '');
-  const [lastName, setLastName] = useState(currentUser?.lastName || '');
-  const [email, setEmail] = useState(currentUser?.email || '');
+  // State for user information
+  const [email, setEmail] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [hashedPassword, setHashedPassword] = useState(
-    currentUser?.password || '',
-  );
+  const [hashedPassword, setHashedPassword] = useState(''); // Store the hashed password
   const [currentPassword, setCurrentPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
+  // Access the error modal context for displaying error messages
+  const { setErrorMessage, setIsError } = useErrorModalContext();
+
+  // Use Apollo Client to fetch user data
+  const { loading, error, data, refetch } = useQuery<CurrentUserData>(
+    CURRENT_USER_QUERY,
+    {
+      onError: (error) => {
+        // Handle errors from the query
+        console.error('Error fetching user data:', error.message);
+        setErrorMessage(error.message); // Set the error message from the error context
+        setIsError(true);
+      },
+    },
+  );
+
+  // Define a mutation to update the user's email with Apollo Client
   const [updateEmail] = useMutation(UPDATE_EMAIL_MUTATION, {
     onError: (error) => {
       console.error('Error updating email', error.message);
@@ -37,102 +69,174 @@ const Profile = () => {
       setIsError(true);
     },
     update: (cache, { data: { updateEmail } }) => {
-      if (currentUser) {
+      // Update the cache with the new email data
+      const userData = cache.readQuery<CurrentUserData>({
+        query: CURRENT_USER_QUERY,
+      });
+
+      if (userData && userData.currentUser) {
         const updatedUserData = {
-          ...currentUser,
-          email: updateEmail.email,
+          ...userData,
+          currentUser: {
+            ...userData.currentUser,
+            email: updateEmail.email,
+          },
         };
+
         cache.writeQuery({
           query: CURRENT_USER_QUERY,
-          data: { currentUser: updatedUserData },
+          data: updatedUserData,
         });
+        console.log('Updated cache data:', userData);
       }
     },
   });
 
+  // Define a mutation to update the user's full name with Apollo Client
   const [updateFullName] = useMutation(UPDATE_FULL_NAME_MUTATION, {
     onError: (error) => {
+      // Handle errors from the mutation
       console.error('Error updating full name:', error.message);
       setErrorMessage(error.message);
       setIsError(true);
     },
+    // Define the update function to update the cache
     update: (cache, { data: { updateFullName } }) => {
-      if (currentUser) {
+      console.log('Received updateFullName data:', updateFullName);
+
+      // Update the cache with the new full name data
+      const userData = cache.readQuery<CurrentUserData>({
+        query: CURRENT_USER_QUERY,
+      });
+
+      console.log('Current cache data:', userData);
+
+      if (userData && userData.currentUser) {
+        // Create a deep copy of the user data
         const updatedUserData = {
-          ...currentUser,
-          firstName: updateFullName.firstName,
-          lastName: updateFullName.lastName,
+          ...userData,
+          currentUser: {
+            ...userData.currentUser,
+            firstName: updateFullName.firstName,
+            lastName: updateFullName.lastName,
+          },
         };
+
         cache.writeQuery({
           query: CURRENT_USER_QUERY,
-          data: { currentUser: updatedUserData },
+          data: updatedUserData,
         });
+        console.log('Updated cache data:', userData);
       }
     },
   });
 
+  // Use useEffect to initialize state once when the component mounts
   useEffect(() => {
-    if (currentUser) {
-      setFirstName(currentUser.firstName || '');
-      setLastName(currentUser.lastName || '');
-      setEmail(currentUser.email || '');
-      setHashedPassword(currentUser.password || '');
+    if (!loading && !error && data && data.currentUser) {
+      // Populate user data
+      const currentUser = data.currentUser;
+      setFirstName(currentUser.firstName);
+      setLastName(currentUser.lastName);
+      setEmail(currentUser.email);
+      setFullName(`${currentUser.firstName} ${currentUser.lastName}`);
+      setHashedPassword(currentUser.password); // Store the hashed password
     }
-  }, [currentUser]);
+  }, [loading, error, data]);
 
+  // Handle form submission
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!currentUser) {
-      setErrorMessage('User data is missing.');
-      setIsError(true);
-      return;
-    }
-
     try {
-      const updates: {
-        email?: string;
-        firstName?: string;
-        lastName?: string;
-      } = {};
+      if (data && data.currentUser) {
+        const updates: {
+          email?: string;
+          firstName?: string;
+          lastName?: string;
+        } = {};
 
-      if (email !== currentUser.email) {
-        updates.email = email;
-      }
-
-      if (
-        firstName !== currentUser.firstName ||
-        lastName !== currentUser.lastName
-      ) {
-        updates.firstName = firstName;
-        updates.lastName = lastName;
-      }
-
-      if (Object.keys(updates).length > 0) {
-        if (updates.email) {
-          await updateEmail({
-            variables: {
-              email: currentUser.email,
-              newEmail: email,
-            },
-          });
+        // Always update the email field if it's different
+        if (email !== data.currentUser.email) {
+          updates.email = email;
         }
 
-        if (updates.firstName || updates.lastName) {
-          await updateFullName({
-            variables: {
-              email: currentUser.email, // Use the original email value here
-              firstName: firstName,
-              lastName: lastName,
-            },
-          });
+        // Update first name and last name if either is different
+        if (
+          firstName !== data.currentUser.firstName ||
+          lastName !== data.currentUser.lastName
+        ) {
+          updates.firstName = firstName;
+          updates.lastName = lastName;
         }
 
-        setSuccessMessage('Changes saved successfully!');
-        setIsSuccess(true);
+        // Check if any updates are pending
+        if (Object.keys(updates).length > 0) {
+          // Perform the email update first
+          let updatedEmail = email;
+          if (updates.email) {
+            const resultEmail = await updateEmail({
+              variables: {
+                email: data.currentUser.email,
+                newEmail: email,
+              },
+            });
+            if (
+              resultEmail &&
+              resultEmail.data &&
+              resultEmail.data.updateEmail
+            ) {
+              updatedEmail = resultEmail.data.updateEmail.email;
+            } else {
+              setErrorMessage('Email update failed.');
+              setIsError(true);
+              //return;
+            }
+          }
+
+          // Perform the full name update if needed
+          if (updates.firstName || updates.lastName) {
+            const resultFullName = await updateFullName({
+              variables: {
+                email: updatedEmail, // Use the updated email value here
+                firstName: firstName,
+                lastName: lastName,
+              },
+            });
+            if (
+              resultFullName &&
+              resultFullName.data &&
+              resultFullName.data.updateFullName
+            ) {
+              // Update the state with the new data
+              const updatedUserFullName = resultFullName.data.updateFullName;
+              setFirstName(updatedUserFullName.firstName);
+              setLastName(updatedUserFullName.lastName);
+              setEmail(updatedEmail); // Use the updated email value here
+
+              // Set a success message
+              setSuccessMessage('Changes saved successfully!');
+              setIsSuccess(true);
+
+              // Fetch the updated user data to ensure it's up-to-date
+              await refetch(); // Add this line to refetch the user data
+            } else {
+              setErrorMessage('Full name update failed.');
+              setIsError(true);
+            }
+          } else {
+            // If only email was updated, set success message and refetch
+            setSuccessMessage('Changes saved successfully!');
+            setIsSuccess(true);
+            await refetch();
+          }
+        } else {
+          // No updates were made
+          setSuccessMessage('No changes were made.');
+          setIsSuccess(true);
+        }
       } else {
-        setSuccessMessage('No changes were made.');
-        setIsSuccess(true);
+        setErrorMessage('User data is missing.');
+        setIsError(true);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -152,6 +256,7 @@ const Profile = () => {
           Manage your profile settings for Verbano
         </Typography>
         <section>
+          {/*<form onSubmit={handlePasswordChange}>*/}
           <form onSubmit={handleFormSubmit}>
             <UpdateFullName
               firstName={firstName}
@@ -159,14 +264,20 @@ const Profile = () => {
               onFirstNameChange={(e) => setFirstName(e.target.value)}
               onLastNameChange={(e) => setLastName(e.target.value)}
             />
-            <UpdateEmailField
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <div data-cy="email">
+              <UpdateEmailField
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
             <Typography variant="subtitle1" className={classes.subtitle1}>
               Update your password
             </Typography>
-            <button type="submit" className={classes.updateButton}>
+            <button
+              type="submit"
+              className={classes.updateButton}
+              data-cy="save-changes"
+            >
               Save Changes
             </button>
           </form>

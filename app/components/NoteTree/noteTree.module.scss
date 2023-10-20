@@ -19,3 +19,38 @@
     }
   }
 }
+
+.noteTreeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.6rem;
+  color: #4d99a8;
+
+  .searchContainer {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 20px;
+    flex: 1;
+    padding: 5px 5px;
+  }
+
+  .searchIcon {
+    color: #4d99a8;
+  }
+
+  .inputRoot {
+    color: white;
+  }
+
+  .inputInput {
+    padding: 5px 5px 5px 0;
+    width: 100%;
+  }
+
+  .closeButton {
+    padding: 5px;
+    color: #4d99a8;
+  }
+}
