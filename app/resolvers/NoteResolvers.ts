@@ -1,6 +1,6 @@
-import {Note} from '../models/Note';
-import {AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs,} from './types';
-import {Project} from '../models/Project';
+import { Note } from "../models/Note";
+import { AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs } from "./types";
+import { Project } from "../models/Project";
 
 /**
  * Resolvers for querying notes from the database.
@@ -20,6 +20,26 @@ export const NoteQueries = {
       return null;
     }
     return note;
+  },
+
+  /**
+   *
+   * @param _ - Root object (unused in this query).
+   * @param args Arguments for the query, including the ID of the note to retrieve.
+   * @param _context - Resolver context (unused in this query).
+   * @returns The transcription extracted from the note object
+   */
+  async getTranscription(
+    _: unknown,
+    args: GetNoteArgs,
+    _context: ResolverContext,
+  ) {
+    const note = await Note.findById(args.id);
+    if (!note) {
+      console.error(`No note found with ID ${args.id}.`);
+      return null;
+    }
+    return note.transcription;
   },
 
   /**
