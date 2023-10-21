@@ -11,6 +11,12 @@ import {
   MOVE_NOTE_TO_PROJECT,
 } from '@/app/graphql/mutations/addNotes';
 
+function reorderPositions(notesArray: string | any[]) {
+  for (let i = 0; i < notesArray.length; i++) {
+    notesArray[i].position = i;
+  }
+}
+
 function Sidebar() {
   const context = useProjectContext();
 
@@ -39,6 +45,8 @@ function Sidebar() {
     // Ensure that the destination exists (i.e., the item wasn't just dragged outside any droppable)
     if (!destination) return;
 
+    if (!context || !context.selectedProject) return;
+
     // If it's the same list and the position hasn't changed, return early
     if (
       destination.droppableId === source.droppableId &&
@@ -47,32 +55,36 @@ function Sidebar() {
       return;
     }
 
+    let notes = [...context.selectedProject.notes];
+
     // If moved to a different list (like a project)
     if (destination.droppableId !== source.droppableId) {
       const destinationProjectId = destination.droppableId.split('-')[1];
-      console.log(
-        `Note with ID ${draggableId} is going into project with ID ${destinationProjectId}.`,
-      );
-
-      console.log('Note: ' + noteData?.getNote);
 
       if (!noteData?.getNote) return;
 
       const result = await moveNoteToProject({
         variables: {
-          noteId: noteData?.getNote.id,
+          noteId: draggableId,
           projectId: destinationProjectId,
         },
       });
-
-      console.log('Result: ' + result);
     } else if (destination.droppableId === source.droppableId) {
       // If reordering within the same list
-      console.log(
-        `Note with ID ${draggableId} moved from position ${source.index} to ${destination.index}.`,
-      );
 
-      console.log('Index: ' + destination.index);
+      if (!noteData?.getNote) return;
+
+      // Extract notes from context
+      const [movedNote] = notes.splice(source.index, 1);
+      movedNote.position = destination.index;
+      notes.splice(destination.index, 0, movedNote);
+
+      reorderPositions(notes);
+
+      context.setSelectedProject({
+        ...context.selectedProject,
+        notes,
+      });
 
       const result = await moveNotePosition({
         variables: {
@@ -80,8 +92,6 @@ function Sidebar() {
           order: destination.index,
         },
       });
-
-      console.log(result);
     }
 
     context.refetchData();

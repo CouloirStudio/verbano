@@ -8,7 +8,6 @@ export const ADD_NOTE = gql`
       dateCreated
       transcription
       tags
-      projectId
       noteName
       noteDescription
     }
@@ -23,7 +22,6 @@ export const UPDATE_NOTE = gql`
       dateCreated
       transcription
       tags
-      projectId
       noteName
       noteDescription
     }
@@ -38,7 +36,6 @@ export const MOVE_NOTE_TO_PROJECT = gql`
       dateCreated
       transcription
       tags
-      projectId
       noteName
       noteDescription
     }
@@ -53,7 +50,6 @@ export const MOVE_NOTE_ORDER = gql`
       dateCreated
       transcription
       tags
-      projectId
       noteName
       noteDescription
     }

@@ -10,17 +10,16 @@ const NoteSchema = gql`
     dateCreated: String!
     transcription: String
     tags: [String!]
-    projectId: ID!
     noteName: String!
     noteDescription: String
   }
 
   input NoteInput {
+    noteName: String!
     audioLocation: String
+    dateCreated: String
     transcription: String
     tags: [String!]
-    projectId: ID!
-    noteName: String!
     noteDescription: String
   }
 

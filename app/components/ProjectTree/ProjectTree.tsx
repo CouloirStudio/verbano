@@ -14,16 +14,18 @@ import {
 import ProjectTreeHeader from '../ProjectTree/ProjectTreeHeader';
 import styles from './projectTree.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
-import { NoteType, ProjectType } from '../../resolvers/types';
+import { ProjectNoteType, ProjectType } from '../../resolvers/types';
 import { Droppable } from '@hello-pangea/dnd';
 
-type CustomContentPropsExtended = TreeItemContentProps & {
-  notes?: NoteType[];
+interface CustomTreeContextType {
   project?: ProjectType;
-};
+  projectNotes?: ProjectNoteType[];
+}
+
+const CustomTreeContext = React.createContext<CustomTreeContextType>({});
 
 const CustomContent = React.forwardRef(function CustomContent(
-  props: CustomContentPropsExtended,
+  props: TreeItemContentProps,
   ref,
 ) {
   const {
@@ -35,6 +37,8 @@ const CustomContent = React.forwardRef(function CustomContent(
     expansionIcon,
     displayIcon,
   } = props;
+
+  const { project } = React.useContext(CustomTreeContext);
 
   const {
     disabled,
@@ -48,7 +52,7 @@ const CustomContent = React.forwardRef(function CustomContent(
 
   const icon = iconProp || expansionIcon || displayIcon;
 
-  const { setSelectedNote, setSelectedProject } = useProjectContext();
+  const { setSelectedProject } = useProjectContext();
 
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -60,8 +64,8 @@ const CustomContent = React.forwardRef(function CustomContent(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleSelection(event);
-    if (props.project) {
-      setSelectedProject(props.project);
+    if (project) {
+      setSelectedProject(project);
     }
   };
 
@@ -91,16 +95,18 @@ const CustomContent = React.forwardRef(function CustomContent(
 });
 
 const CustomTreeItem = React.forwardRef(function CustomTreeItem(
-  props: TreeItemProps & { notes?: NoteType[]; project?: ProjectType },
+  props: TreeItemProps & {
+    projectNotes?: ProjectNoteType[];
+    project?: ProjectType;
+  },
   ref: React.Ref<HTMLLIElement>,
 ) {
+  const { project, projectNotes, ...restProps } = props;
+
   return (
-    <TreeItem
-      ContentComponent={CustomContent}
-      ContentProps={{ project: props.project }}
-      {...props}
-      ref={ref}
-    />
+    <CustomTreeContext.Provider value={{ project, projectNotes }}>
+      <TreeItem ContentComponent={CustomContent} {...restProps} ref={ref} />
+    </CustomTreeContext.Provider>
   );
 });
 
@@ -125,11 +131,11 @@ const renderProjectTree = (projects: ProjectType[]) => {
               </Box>
             }
           >
-            {project.notes.map((note: NoteType) => (
+            {project.notes.map((projectNote: ProjectNoteType) => (
               <CustomTreeItem
-                key={note.id}
-                nodeId={note.id.toString()}
-                label={note.noteName}
+                key={projectNote.note.id}
+                nodeId={projectNote.note.id.toString()}
+                label={projectNote.note.noteName}
               />
             ))}
             {provided.placeholder}

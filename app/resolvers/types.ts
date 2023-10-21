@@ -54,8 +54,14 @@ export type NoteType = {
   noteDescription?: string;
 };
 
+export type ProjectNoteType = {
+  note: NoteType;
+  position: number;
+};
+
 export type ProjectType = {
   id: string;
   projectName: string;
-  notes: NoteType[];
+  projectDescription?: string;
+  notes: ProjectNoteType[];
 };

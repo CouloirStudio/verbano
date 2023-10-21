@@ -60,7 +60,6 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
       const { data: refetchedData } = await refetch();
       if (refetchedData && refetchedData.listProjects) {
         setProjects(refetchedData.listProjects);
-        console.log('Refetched projects:', refetchedData.listProjects);
       }
     } catch (error) {
       console.error('Error during refetch:', error);
@@ -73,13 +72,11 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     if (data && data.listProjects) {
       setProjects(data.listProjects);
 
-      // Update the selectedProject if it's present in the updated data.
       if (selectedProject) {
         const updatedSelectedProject = data.listProjects.find(
           (project) => project.id === selectedProject.id,
         );
 
-        // Only update if there's a change in the selected project data
         if (
           JSON.stringify(updatedSelectedProject) !==
           JSON.stringify(selectedProject)

@@ -63,7 +63,16 @@ export const NoteMutations = {
     }
 
     const savedNote = await note.save();
-    project.notes.push(savedNote._id);
+
+    // Determine the new note's position
+    const position = project.notes.length;
+
+    // Add the note to the project's notes array
+    project.notes.push({
+      note: savedNote._id,
+      position: position,
+    });
+
     await project.save();
     return savedNote;
   },
@@ -100,23 +109,39 @@ export const NoteMutations = {
       return null;
     }
 
-    const oldProject = await Project.findById(note.projectId);
-    if (!oldProject) {
-      console.error(`No project found with ID ${note.projectId}.`);
+    const projectId = await note.getProjectId();
+    if (!projectId) {
+      console.error(
+        `No associated project found for note with ID ${note._id}.`,
+      );
       return null;
     }
 
-    note.projectId = project.id;
-    await note.save();
-
-    const index = oldProject.notes.indexOf(note._id);
-    if (index > -1) {
-      oldProject.notes.splice(index, 1);
-      await oldProject.save();
+    const oldProject = await Project.findById(projectId);
+    if (!oldProject) {
+      console.error(`No project found with ID ${projectId}.`);
+      return null;
     }
 
-    project.notes.push(note._id);
+    const newPosition = project.notes.length; // Add it to the end of the list
+
+    // Add the note to the target project's notes array with the specified position
+    project.notes.push({
+      note: note._id.toString(),
+      position: newPosition,
+    });
+
+    // Remove the note from the old project's notes array
+    const indexInOldProject = oldProject.notes.findIndex(
+      (item) => item.note && item.note.toString() === note._id.toString(),
+    );
+    if (indexInOldProject > -1) {
+      oldProject.notes.splice(indexInOldProject, 1);
+    }
+
+    // Save the changes to both projects
     await project.save();
+    await oldProject.save();
 
     return note;
   },
@@ -126,52 +151,47 @@ export const NoteMutations = {
     args: { noteId: string; order: number },
     _context: ResolverContext,
   ) {
-    // Fetch the note
     const note = await Note.findById(args.noteId);
     if (!note) {
       console.error(`No note found with ID ${args.noteId}.`);
       return null;
     }
 
-    // Fetch the associated project
-    const project = await Project.findById(note.projectId);
+    const project = await Project.findOne({ 'notes.note': note._id });
     if (!project) {
-      console.error(`No project found with ID ${note.projectId}.`);
+      console.error(`No project found containing note ID ${args.noteId}.`);
       return null;
     }
 
-    // Find the current index of the note within the project
-    const index = project.notes.findIndex(
-      (noteId) => noteId.toString() === note._id.toString(),
+    const notePositionObject = project.notes.find(
+      (n) => n.note.toString() === note._id.toString(),
     );
 
-    if (index === -1) {
-      console.error(`Note not found within the project's notes array.`);
+    if (!notePositionObject) {
+      console.error(`Note not found in project's notes array.`);
       return null;
     }
 
-    console.log('Old order:', project.notes);
-
-    // Create a copy of the project's notes array for manipulation
-    const newNotesArray = [...project.notes];
+    const index = project.notes.indexOf(notePositionObject);
 
     // Remove the note from its current position
-    newNotesArray.splice(index, 1);
+    if (index > -1) {
+      project.notes.splice(index, 1);
+    }
 
-    // Calculate the new insert position ensuring it's within bounds
-    const insertAt = Math.min(newNotesArray.length, Math.max(0, args.order));
+    const newPosition = {
+      note: note._id,
+      position: args.order,
+    };
+    project.notes.splice(args.order, 0, newPosition);
 
-    // Insert the note at the new position
-    newNotesArray.splice(insertAt, 0, note._id);
+    // Adjust positions of other notes
+    for (let i = 0; i < project.notes.length; i++) {
+      project.notes[i].position = i;
+    }
 
-    // Assign the manipulated notes array back to the project
-    project.notes = newNotesArray;
-
-    // Mark the notes field as modified and save
     project.markModified('notes');
     await project.save();
-
-    console.log('New order:', project.notes);
 
     return note;
   },

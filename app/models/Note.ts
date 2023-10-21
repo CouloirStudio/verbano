@@ -5,9 +5,10 @@ export interface INote extends Document {
   dateCreated?: Date;
   transcription?: string;
   tags?: string[];
-  projectId: typeof Schema.Types.ObjectId;
   noteName: string;
   noteDescription?: string;
+
+  getProjectId(): Promise<String | null>;
 }
 
 const NoteSchema = new Schema<INote>({
@@ -21,16 +22,26 @@ const NoteSchema = new Schema<INote>({
   },
   transcription: String,
   tags: [String],
-  projectId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Project',
-    required: true,
-  },
   noteName: {
     type: String,
     required: true,
   },
   noteDescription: String,
 });
+
+NoteSchema.methods.getProjectId = async function (
+  this: INote,
+): Promise<string | null> {
+  const Project = mongoose.model('Project');
+
+  // Find a project where the 'notes.note' field matches this note's _id
+  const project = await Project.findOne({ 'notes.note': this._id });
+
+  if (project) {
+    return project._id;
+  }
+
+  return null;
+};
 
 export const Note: Model<INote> = mongoose.model('Note', NoteSchema);

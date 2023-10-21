@@ -8,11 +8,16 @@ const ProjectSchema = gql`
     id: ID!
     projectName: String!
     projectDescription: String
-    notes: [Note!]!
+    notes: [ProjectNote]!
+  }
+
+  type ProjectNote {
+    note: Note
+    position: Int
   }
 
   input ProjectInput {
-    projectName: String
+    projectName: String!
     notes: [NoteInput!]
     projectDescription: String
   }
