@@ -1,4 +1,5 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
+import { DocumentNode } from "graphql/language";
 
 // graphql/queries/getNotes.ts
 export const GET_PROJECTS_AND_NOTES = gql`
@@ -31,5 +32,11 @@ export const GET_NOTE = gql`
       noteName
       noteDescription
     }
+  }
+`;
+
+export const GET_TRANSCRIPTION: DocumentNode = gql`
+  query GetTranscription($id: ID!) {
+    getTranscription(id: $id)
   }
 `;
