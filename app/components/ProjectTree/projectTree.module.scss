@@ -1,0 +1,19 @@
+.projectList {
+  width: 300px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+
+  .project {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 10px;
+
+    .projectNoteCount {
+      font-size: 14px;
+      color: #999;
+    }
+  }
+}
+

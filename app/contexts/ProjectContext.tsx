@@ -1,19 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
-import { NoteType, ProjectType } from '../resolvers/types';
-import { uploadAudio } from '../api/audio';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useQuery} from '@apollo/client';
+import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
+import {NoteType, ProjectType} from '../resolvers/types';
+import {uploadAudio} from '../api/audio';
 import client from '../config/apolloClient';
 
 /**
  * Defines the shape of the ProjectContext.
  */
 type ProjectContextType = {
-  selectedNotes: NoteType[];
-  setSelectedNotes: (notes: NoteType[]) => void;
+  selectedNote: NoteType | null;
+  setSelectedNote: (note: NoteType) => void;
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
+  selectedProject: ProjectType | null;
+  setSelectedProject: (project: ProjectType | null) => void;
   handleAudioUpload: (audioFile: Blob) => Promise<void>;
+  refetchData: () => void;
 };
 
 /**
@@ -42,18 +45,49 @@ export const useProjectContext = () => {
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
-  const [selectedNotes, setSelectedNotes] = useState<NoteType[]>([]);
+  const [selectedNote, setSelectedNote] = useState<NoteType | null>(null);
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [selectedProject, setSelectedProject] = useState<ProjectType | null>(
+    null,
+  );
 
-  const { data } = useQuery<{ listProjects: ProjectType[] }>(
+  const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
     GET_PROJECTS_AND_NOTES,
   );
+
+  async function refetchData() {
+    try {
+      const { data: refetchedData } = await refetch();
+      if (refetchedData && refetchedData.listProjects) {
+        setProjects(refetchedData.listProjects);
+      }
+    } catch (error) {
+      console.error('Error during refetch:', error);
+    }
+  }
+
+  if (error) console.error(error);
 
   useEffect(() => {
     if (data && data.listProjects) {
       setProjects(data.listProjects);
+
+      // Update the selectedProject if it's present in the updated data.
+      if (selectedProject) {
+        const updatedSelectedProject = data.listProjects.find(
+          (project) => project.id === selectedProject.id,
+        );
+
+        // Only update if there's a change in the selected project data
+        if (
+          JSON.stringify(updatedSelectedProject) !==
+          JSON.stringify(selectedProject)
+        ) {
+          setSelectedProject(updatedSelectedProject || null);
+        }
+      }
     }
-  }, [data]);
+  }, [data, selectedProject]);
 
   async function handleAudioUpload(audioFile: Blob) {
     try {
@@ -72,11 +106,14 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   return (
     <ProjectContext.Provider
       value={{
-        selectedNotes,
-        setSelectedNotes,
+        selectedNote,
+        setSelectedNote,
         projects,
         setProjects,
+        selectedProject,
+        setSelectedProject,
         handleAudioUpload,
+        refetchData: refetchData,
       }}
     >
       {children}

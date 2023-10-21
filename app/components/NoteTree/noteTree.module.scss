@@ -1,0 +1,56 @@
+.noteList {
+  display: flex;
+  flex-direction: column;
+  background-color: lightgray;
+  gap: 5px;
+  padding: 10px 10px;
+
+  .note {
+    font-size: 14px;
+    height: 50px;
+    border-radius: 15px;
+    padding: 0 10px;
+    background-color: white;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+
+    &.selected {
+      border: 1px solid #68BCCA;
+      border-right-width: 5px;
+    }
+  }
+}
+
+.noteTreeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.6rem;
+  color: #4d99a8;
+
+  .searchContainer {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 20px;
+    flex: 1;
+    padding: 5px 5px;
+  }
+
+  .searchIcon {
+    color: #4d99a8;
+  }
+
+  .inputRoot {
+    color: white;
+  }
+
+  .inputInput {
+    padding: 5px 5px 5px 0;
+    width: 100%;
+  }
+
+  .closeButton {
+    padding: 5px;
+    color: #4d99a8;
+  }
+}

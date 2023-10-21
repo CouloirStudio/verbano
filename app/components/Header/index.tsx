@@ -20,7 +20,6 @@ function Header() {
       <RecorderProvider>
         <Recorder />
       </RecorderProvider>
-
       <div className={styles.linkContainer}>
         <Link href="/settings/profile">
           <Avatar sx={{ bgcolor: deepPurple[500] }}>

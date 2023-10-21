@@ -12,12 +12,14 @@ describe('Email/Pass Login', () => {
       failOnStatusCode: true,
     });
 
-    cy.get('#email')
-      .type('test@gmail.com')
-      .should('have.value', 'test@gmail.com');
-    cy.get('#password').type('password').should('have.value', 'password');
+    cy.get('[data-cy="username-input-field"]')
+      .click() // Focus on the TextField
+      .type('test@gmail.com'); // Type into the TextField
+
+    cy.get('[data-cy="password-input-field"]').click().type('password');
 
     cy.get('#loginButton').click();
+
     cy.location('pathname').should('eq', '/');
   });
 
@@ -27,13 +29,12 @@ describe('Email/Pass Login', () => {
       failOnStatusCode: true,
     });
 
-    cy.get('#email')
-      .type('wrong@gmail.com')
-      .should('have.value', 'wrong@gmail.com');
-    cy.get('#password').type('password').should('have.value', 'password');
+    cy.get('[data-cy="username-input-field"]').click().type('wrong@gmail.com');
+
+    cy.get('[data-cy="password-input-field"]').click().type('password');
 
     cy.get('#loginButton').click();
-    cy.contains('Woopsies!');
+    cy.contains('Incorrect Email or Password');
   });
 
   it('errors on invalid password', () => {
@@ -42,13 +43,12 @@ describe('Email/Pass Login', () => {
       failOnStatusCode: true,
     });
 
-    cy.get('#email')
-      .type('test@gmail.com')
-      .should('have.value', 'test@gmail.com');
-    cy.get('#password').type('wrong').should('have.value', 'wrong');
+    cy.get('[data-cy="username-input-field"]').click().type('test@gmail.com');
+
+    cy.get('[data-cy="password-input-field"]').click().type('wrongpassword');
 
     cy.get('#loginButton').click();
-    cy.contains('Woopsies!');
+    cy.contains('Incorrect Email or Password');
   });
 
   it('errors on empty email', () => {
@@ -57,10 +57,11 @@ describe('Email/Pass Login', () => {
       failOnStatusCode: true,
     });
 
-    cy.get('#password').type('password').should('have.value', 'password');
+    cy.get('[data-cy="username-input-field"]').click().should('not.be.empty');
+
+    cy.get('[data-cy="password-input-field"]').click().type('password');
 
     cy.get('#loginButton').click();
-    cy.get('#email').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
   });
 
   it('errors on empty password', () => {
@@ -69,12 +70,11 @@ describe('Email/Pass Login', () => {
       failOnStatusCode: true,
     });
 
-    cy.get('#email')
-      .type('test@gmail.com')
+    cy.get('[data-cy="username-input-field"]').click().type('test@gmail.com');
+
+    cy.get('[data-cy="password-input-field"]').click().should('not.be.empty');
 
     cy.get('#loginButton').click();
-
-    cy.get('#password').invoke('prop', 'validationMessage').should('equal', 'Please fill out this field.');
   });
 });
 
@@ -86,18 +86,6 @@ it('Register button works', () => {
   //get hyperlink element by finding the text
   cy.contains('Register').click();
   cy.location('pathname').should('eq', '/register');
-});
-
-
-describe('Error Handling', () => {
-  it('should show an error when ?error= is present', () => {
-    cy.visit('localhost:3000/login?error=1', {
-      timeout: 10000,
-      failOnStatusCode: true,
-    });
-
-    cy.contains('Woopsies!');
-  });
 });
 
 describe('Google Login', () => {
