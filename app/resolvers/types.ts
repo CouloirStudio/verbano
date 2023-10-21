@@ -39,6 +39,13 @@ export interface UpdateNoteArgs {
   };
 }
 
+export interface updateTranscriptionArgs {
+  id: string;
+  input: {
+    transcription: string;
+  };
+}
+
 export interface DeleteNoteArgs {
   id: string;
 }

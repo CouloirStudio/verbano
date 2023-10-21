@@ -9,6 +9,7 @@ import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
 import session from 'express-session';
 import { randomUUID } from 'crypto';
 import audioRoutes from '../app/routes/audioRoutes';
+import transcriptionRoutes from '../app/routes/transcriptionRoutes';
 import typeDefs from '../app/schema/index';
 import resolvers from '../app/resolvers/index';
 import { buildContext } from 'graphql-passport';
@@ -77,6 +78,8 @@ export function createApp(mockMiddleware?: any) {
   app.get('/logout', handleLogout);
 
   app.use('/audio', audioRoutes);
+
+  app.use('/transcription', transcriptionRoutes);
 
   return app;
 }
