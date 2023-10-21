@@ -63,13 +63,10 @@ function NoteTree() {
     useProjectContext();
   const [activeTab, setActiveTab] = useState(0);
 
-  if (!selectedProject) return <p>Loading...</p>;
-
-  const renderNoteTree = (project: ProjectType) => {
+  const renderNoteTree = (project?: ProjectType | null) => {
     // Sort notes based on their position
-    const sortedNotes = [...project.notes].sort(
-      (a, b) => a.position - b.position,
-    );
+    const sortedNotes =
+      project && [...project.notes].sort((a, b) => a.position - b.position);
 
     return (
       <>
@@ -80,7 +77,7 @@ function NoteTree() {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {sortedNotes.map((projectNote, index: number) => (
+              {sortedNotes?.map((projectNote, index: number) => (
                 <Draggable
                   key={projectNote.note.id}
                   draggableId={projectNote.note.id}
@@ -130,7 +127,6 @@ function NoteTree() {
       {activeTab === 0 && (
         <>
           <NoteTreeHeader />
-          {/*<ScrollView></ScrollView>*/}
           {renderNoteTree(selectedProject)}
         </>
       )}

@@ -12,7 +12,7 @@
 .noteList {
   display: flex;
   width: 100%;
-
+  gap: 12px;
   flex-direction: column;
 
   .note {

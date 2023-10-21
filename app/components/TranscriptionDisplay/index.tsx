@@ -1,10 +1,10 @@
-import styles from "./transcriptiondisplay.module.scss";
-import { useProjectContext } from "../../contexts/ProjectContext";
-import { GET_TRANSCRIPTION } from "../../../app/graphql/queries/getNotes";
-import { useQuery } from "@apollo/react-hooks";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
+import styles from './transcriptiondisplay.module.scss';
+import {useProjectContext} from '../../contexts/ProjectContext';
+import {GET_TRANSCRIPTION} from '../../../app/graphql/queries/getNotes';
+import {useQuery} from '@apollo/react-hooks';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
 
 /**
  * A functional component to display a single transcription.
@@ -15,14 +15,11 @@ function TranscriptionDisplay() {
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNote = context.selectedNote;
   // Use GraphQL to get the transcription
-  const { data, error } = useQuery<{ getTranscription: string }>(
-    GET_TRANSCRIPTION,
-    {
-      variables: {
-        id: selectedNote?.id,
-      },
+  const { data, error } = useQuery(GET_TRANSCRIPTION, {
+    variables: {
+      id: selectedNote?.id,
     },
-  );
+  });
 
   if (error) {
     console.log(error);
