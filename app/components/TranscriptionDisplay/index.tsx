@@ -14,10 +14,13 @@ function TranscriptionDisplay() {
   const context = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNote = context.selectedNote;
+
+  if (!selectedNote) return <Box className={styles.transcription}>)</Box>;
+
   // Use GraphQL to get the transcription
   const { data, error } = useQuery(GET_TRANSCRIPTION, {
     variables: {
-      id: selectedNote?.id,
+      id: selectedNote.id,
     },
   });
 
