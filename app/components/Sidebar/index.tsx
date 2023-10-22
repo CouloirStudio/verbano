@@ -3,7 +3,7 @@ import styles from './sidebar.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import ProjectTree from '../ProjectTree';
 import NoteTree from '@/app/components/NoteTree';
-import { DragDropContext } from '@hello-pangea/dnd';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { GET_NOTE } from '@/app/graphql/queries/getNotes';
 import {
@@ -29,11 +29,7 @@ function Sidebar() {
 
   if (!context.projects) return <p>Loading...</p>;
 
-  async function handleDragEnd(result: {
-    draggableId: any;
-    destination: any;
-    source: any;
-  }) {
+  async function handleDragEnd(result: DropResult) {
     const { draggableId, destination, source } = result;
 
     await getNote({
