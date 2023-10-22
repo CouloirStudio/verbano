@@ -89,6 +89,5 @@ export const getAudio = async (
     throw new Error('Invalid response format');
   }
 
-  const signedURL = responseBody.signedURL;
-  return signedURL;
+  return responseBody.signedURL;
 };

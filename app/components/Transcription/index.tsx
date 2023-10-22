@@ -1,20 +1,37 @@
 import React from 'react';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { transcribe } from '@/app/api/transcription';
 
-interface TranscriptionProps {
-  noteID: string;
-}
+function TranscriptionButton() {
+  const BASE_URL = 'http://localhost:3000';
 
-const TranscriptionButton: React.FC<TranscriptionProps> = ({ noteID }) => {
+  const context = useProjectContext();
+  const { setErrorMessage, setIsError } = useErrorModalContext();
+  const selectedNote = context.selectedNote;
+  // const { setSelectedNote } = useProjectContext();
   const transcribeAudio = () => {
-    getTranscription(noteID);
-    // put transcription somewhere?
+    try {
+      if (selectedNote) {
+        transcribe(selectedNote?.audioLocation, BASE_URL).then((note) => {
+          console.log(note);
+        });
+      } else {
+        setIsError(true);
+        setErrorMessage('No note selected.');
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(true);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      setErrorMessage(error.getMessage());
+    }
   };
 
   // DUMMY METHOD FOR EVENTUAL TRANSCRIPTION SERVICE
-  const getTranscription = (id: string) => {
-    return "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-  };
+
   return <button onClick={transcribeAudio}>Transcribe</button>;
-};
+}
 
 export default TranscriptionButton;

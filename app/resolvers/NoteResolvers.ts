@@ -112,10 +112,16 @@ export const NoteMutations = {
 
   /**
    *  Update the transcription of an existing note in the database
+   * @param _
    * @param args - Arguments for the mutation, including the ID of the note to update and the new details.
+   * @param _context
    * @returns The updated note object.
    */
-  async updateTranscription(args: updateTranscriptionArgs) {
+  async updateTranscription(
+    _: unknown,
+    args: updateTranscriptionArgs,
+    _context: ResolverContext,
+  ) {
     return Note.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 

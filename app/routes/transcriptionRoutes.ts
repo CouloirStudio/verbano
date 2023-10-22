@@ -1,6 +1,6 @@
 import express from 'express';
 import { generatePresignedUrl } from '../services/AWSService';
-import OpenAIService from '@/app/services/OpenAIService';
+import OpenAIService from '../services/OpenAIService';
 import { NoteMutations } from '../resolvers/NoteResolvers';
 import { updateTranscriptionArgs } from '../resolvers/types';
 
@@ -10,6 +10,7 @@ const router = express.Router();
  * Endpoint to transcribe audio
  */
 router.post('/transcribe', async (req, res) => {
+  console.log('inside transcription route');
   try {
     const data = req.body;
     const key = data.key;
@@ -35,23 +36,11 @@ router.post('/transcribe', async (req, res) => {
       },
     };
     // update note entry with transcription using graphQL
-    return await NoteMutations.updateTranscription(args);
+    const note = await NoteMutations.updateTranscription(args);
+    // return the note object
+    res.json({ success: true, note: note });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error in /upload route:', error.message);
-
-      if (error.message.includes('Failed to get audio to S3')) {
-        return res.status(500).json({
-          success: false,
-          message:
-            'Failed to get audio from S3. Please check AWS configurations.',
-        });
-      }
-    } else {
-      console.error('An unexpected error occurred:', error);
-    }
-
-    res.status(500).json({ success: false, message: 'Failed to upload.' });
+    console.error('An unexpected error occurred:', error);
   }
 });
 

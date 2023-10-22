@@ -33,6 +33,7 @@ const NoteSchema = gql`
   extend type Mutation {
     addNote(input: NoteInput!): Note!
     updateNote(id: ID!, input: NoteInput!): Note!
+    updateTranscription(id: ID!, NoteInput!): Note!
     deleteNote(id: ID!): Boolean!
   }
 `;
