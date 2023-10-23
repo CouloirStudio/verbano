@@ -17,7 +17,9 @@ const resolvers = {
     ...NoteMutations,
     ...ProjectMutations,
   },
-  Project: ProjectType, // <-- Add this line
+  Project: {
+    ...ProjectType,
+  }, // <-- Add this line
 };
 
 export default resolvers;

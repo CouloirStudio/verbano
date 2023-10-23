@@ -1,9 +1,9 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 export interface IProject extends Document {
   projectName: string;
   projectDescription?: string;
-  notes: (typeof Schema.Types.ObjectId)[]; // Array of note IDs
+  notes: { note: typeof Schema.Types.ObjectId; position: number }[]; // Array of note-position objects
 }
 
 const ProjectSchema = new Schema<IProject>({
@@ -14,8 +14,8 @@ const ProjectSchema = new Schema<IProject>({
   projectDescription: String,
   notes: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Note',
+      note: { type: Schema.Types.ObjectId, ref: 'Note' },
+      position: { type: Number },
     },
   ],
 });

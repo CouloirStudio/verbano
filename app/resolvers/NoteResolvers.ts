@@ -90,7 +90,16 @@ export const NoteMutations = {
     }
 
     const savedNote = await note.save();
-    project.notes.push(savedNote._id);
+
+    // Determine the new note's position
+    const position = project.notes.length;
+
+    // Add the note to the project's notes array
+    project.notes.push({
+      note: savedNote._id,
+      position: position,
+    });
+
     await project.save();
     return savedNote;
   },
@@ -123,6 +132,110 @@ export const NoteMutations = {
     _context: ResolverContext,
   ) {
     return Note.findByIdAndUpdate(args.id, args.input, { new: true });
+  },
+
+  async moveNoteToProject(
+    _: unknown,
+    args: { noteId: string; projectId: string },
+    _context: ResolverContext,
+  ) {
+    const note = await Note.findById(args.noteId);
+    if (!note) {
+      console.error(`No note found with ID ${args.noteId}.`);
+      return null;
+    }
+
+    const project = await Project.findById(args.projectId);
+    if (!project) {
+      console.error(`No project found with ID ${args.projectId}.`);
+      return null;
+    }
+
+    const projectId = await note.getProjectId();
+    if (!projectId) {
+      console.error(
+        `No associated project found for note with ID ${note._id}.`,
+      );
+      return null;
+    }
+
+    const oldProject = await Project.findById(projectId);
+    if (!oldProject) {
+      console.error(`No project found with ID ${projectId}.`);
+      return null;
+    }
+
+    const newPosition = project.notes.length; // Add it to the end of the list
+
+    // Add the note to the target project's notes array with the specified position
+    project.notes.push({
+      note: note._id.toString(),
+      position: newPosition,
+    });
+
+    // Remove the note from the old project's notes array
+    const indexInOldProject = oldProject.notes.findIndex(
+      (item) => item.note && item.note.toString() === note._id.toString(),
+    );
+    if (indexInOldProject > -1) {
+      oldProject.notes.splice(indexInOldProject, 1);
+    }
+
+    // Save the changes to both projects
+    await project.save();
+    await oldProject.save();
+
+    return note;
+  },
+
+  async moveNoteOrder(
+    _: unknown,
+    args: { noteId: string; order: number },
+    _context: ResolverContext,
+  ) {
+    const note = await Note.findById(args.noteId);
+    if (!note) {
+      console.error(`No note found with ID ${args.noteId}.`);
+      return null;
+    }
+
+    const project = await Project.findOne({ 'notes.note': note._id });
+    if (!project) {
+      console.error(`No project found containing note ID ${args.noteId}.`);
+      return null;
+    }
+
+    const notePositionObject = project.notes.find(
+      (n) => n.note.toString() === note._id.toString(),
+    );
+
+    if (!notePositionObject) {
+      console.error(`Note not found in project's notes array.`);
+      return null;
+    }
+
+    const index = project.notes.indexOf(notePositionObject);
+
+    // Remove the note from its current position
+    if (index > -1) {
+      project.notes.splice(index, 1);
+    }
+
+    const newPosition = {
+      note: note._id,
+      position: args.order,
+    };
+    project.notes.splice(args.order, 0, newPosition);
+
+    // Adjust positions of other notes
+    for (let i = 0; i < project.notes.length; i++) {
+      project.notes[i].position = i;
+    }
+
+    project.markModified('notes');
+    await project.save();
+
+    return note;
   },
 
   /**

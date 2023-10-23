@@ -8,13 +8,30 @@ export const GET_PROJECTS_AND_NOTES = gql`
       id
       projectName
       notes {
-        id
-        noteName
-        audioLocation
-        dateCreated
-        transcription
-        tags
-        projectId
+        note {
+          id
+          noteName
+          audioLocation
+          dateCreated
+          transcription
+          tags
+        }
+        position
+      }
+    }
+  }
+`;
+
+export const GET_PROJECT = gql`
+  query GetProject($id: ID!) {
+    getProject(id: $id) {
+      id
+      projectName
+      notes {
+        note {
+          id
+        }
+        position
       }
     }
   }
@@ -28,7 +45,6 @@ export const GET_NOTE = gql`
       dateCreated
       transcription
       tags
-      projectId
       noteName
       noteDescription
     }

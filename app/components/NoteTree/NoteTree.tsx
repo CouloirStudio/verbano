@@ -3,14 +3,19 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useProjectContext } from '../../contexts/ProjectContext';
-import { NoteType } from '../../resolvers/types';
+import { ProjectType } from '../../resolvers/types';
 import NoteTreeHeader from '@/app/components/NoteTree/NoteTreeHeader';
-import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import styles from './noteTree.module.scss';
 
 import { makeStyles } from '@mui/styles';
-import ScrollView from '@/app/components/ScrollView';
+
+import {
+  Draggable,
+  Droppable,
+  DroppableProvided,
+  DroppableStateSnapshot,
+} from '@hello-pangea/dnd';
 
 const useStyles = makeStyles((theme) => ({
   tabsContainer: {
@@ -42,27 +47,68 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const getItemStyle = (draggableStyle: any, isDragging: any) => ({
+  userSelect: 'none',
+
+  // change background colour if dragging
+  background: isDragging ? 'lightgreen' : '',
+
+  // styles we need to apply on draggables
+  ...draggableStyle,
+});
+
 function NoteTree() {
   const classes = useStyles(); // Get the styles
   const { selectedProject, setSelectedNote, selectedNote } =
     useProjectContext();
   const [activeTab, setActiveTab] = useState(0);
 
-  const renderNoteTree = (notes?: NoteType[]) => {
+  const renderNoteTree = (project?: ProjectType | null) => {
+    // Sort notes based on their position
+    const sortedNotes =
+      project && [...project.notes].sort((a, b) => a.position - b.position);
+
     return (
-      <Box className={styles.noteList}>
-        {notes?.map((note: NoteType) => (
-          <Button
-            key={note.id}
-            className={`${styles.note} ${
-              selectedNote?.id === note.id ? styles.selected : ''
-            }`}
-            onClick={() => setSelectedNote(note)}
-          >
-            <Typography>{note.noteName}</Typography>
-          </Button>
-        ))}
-      </Box>
+      <>
+        <Droppable droppableId="notes">
+          {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+            <Box
+              className={styles.noteList}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {sortedNotes?.map((projectNote, index: number) => (
+                <Draggable
+                  key={projectNote.note.id}
+                  draggableId={projectNote.note.id}
+                  index={index}
+                >
+                  {(provided) => (
+                    <Box
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={`${styles.note} ${
+                        selectedNote?.id === projectNote.note.id
+                          ? styles.selected
+                          : ''
+                      }`}
+                      style={getItemStyle(
+                        provided.draggableProps.style,
+                        snapshot.draggingOverWith === projectNote.note.id,
+                      )}
+                      onClick={() => setSelectedNote(projectNote.note)}
+                    >
+                      <Typography>{projectNote.note.noteName}</Typography>
+                    </Box>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
+      </>
     );
   };
 
@@ -81,7 +127,7 @@ function NoteTree() {
       {activeTab === 0 && (
         <>
           <NoteTreeHeader />
-          <ScrollView>{renderNoteTree(selectedProject?.notes)}</ScrollView>
+          {renderNoteTree(selectedProject)}
         </>
       )}
 
