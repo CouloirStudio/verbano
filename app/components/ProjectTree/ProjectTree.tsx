@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import Box from '@mui/material/Box';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -16,6 +16,9 @@ import styles from './projectTree.module.scss';
 import { useProjectContext } from '../../contexts/ProjectContext';
 import { ProjectNoteType, ProjectType } from '../../resolvers/types';
 import { Droppable } from '@hello-pangea/dnd';
+import { useMutation } from '@apollo/client';
+import { ContextMenuComponent } from '@/app/components/ContextMenu';
+import { DELETE_PROJECT } from '@/app/graphql/mutations/addProjects';
 
 interface CustomTreeContextType {
   project?: ProjectType;
@@ -110,7 +113,7 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   );
 });
 
-const renderProjectTree = (projects: ProjectType[]) => {
+const renderProjectTree = (projects: ProjectType[], handleContextMenu: any) => {
   return projects.map((project: ProjectType) => (
     <Droppable droppableId={`project-${project.id}`} key={project.id}>
       {(provided) => (
@@ -120,7 +123,10 @@ const renderProjectTree = (projects: ProjectType[]) => {
             nodeId={project.id.toString()}
             project={project}
             label={
-              <Box className={styles.project}>
+              <Box
+                onContextMenu={(e) => handleContextMenu(e, project.id)}
+                className={styles.project}
+              >
                 <Typography>{project.projectName}</Typography>
                 <Typography
                   variant="subtitle1"
@@ -147,7 +153,48 @@ const renderProjectTree = (projects: ProjectType[]) => {
 };
 
 function ProjectTree() {
-  const { projects } = useProjectContext();
+  const context = useProjectContext();
+
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
+  const [rightClickedProjectId, setRightClickedProjectId] = useState<
+    string | null
+  >(null);
+  const [deleteProject, { loading, error }] = useMutation(DELETE_PROJECT);
+
+  const handleContextMenu = (event: React.MouseEvent, projectId: string) => {
+    event.preventDefault();
+    setContextMenu({
+      mouseX: event.clientX + 2,
+      mouseY: event.clientY - 4,
+    });
+    setRightClickedProjectId(projectId);
+  };
+
+  const handleClose = () => {
+    setContextMenu(null);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await deleteProject({
+        variables: { id: rightClickedProjectId },
+      });
+
+      if (response.data.deleteProject) {
+        console.log('Project successfully deleted!');
+      } else {
+        console.error('Failed to delete the project.');
+      }
+
+      handleClose();
+      context.refetchData();
+    } catch (err: any) {
+      console.error('Error while deleting the project:', err.message);
+    }
+  };
 
   return (
     <Box className={styles.projectList}>
@@ -157,8 +204,23 @@ function ProjectTree() {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {renderProjectTree(projects)}
+        {renderProjectTree(context.projects, handleContextMenu)}
       </TreeView>
+
+      <ContextMenuComponent
+        contextMenu={contextMenu}
+        handleClose={handleClose}
+        options={[
+          {
+            label: 'Edit',
+            action: () => console.log('Edit clicked'),
+          },
+          {
+            label: 'Delete',
+            action: handleDelete,
+          },
+        ]}
+      />
     </Box>
   );
 }
