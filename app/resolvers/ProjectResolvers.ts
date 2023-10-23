@@ -95,6 +95,31 @@ export const ProjectMutations = {
       throw error;
     }
   },
+
+  async deleteProject(_: unknown, args: { id: string }, context: any) {
+    if (!context.getUser()) {
+      throw new Error('User not authenticated.');
+    }
+
+    //delete all notes in project
+    const project = await Project.findById(args.id);
+    if (!project) {
+      throw new Error('Project not found.');
+    }
+
+    const notes = project.notes;
+    for (let i = 0; i < notes.length; i++) {
+      await Note.findByIdAndDelete(notes[i].note);
+    }
+
+    try {
+      await Project.findByIdAndDelete(args.id);
+      return true;
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      return false;
+    }
+  },
 };
 
 /**

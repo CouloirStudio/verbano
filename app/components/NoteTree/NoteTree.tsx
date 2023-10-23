@@ -16,6 +16,9 @@ import {
   DroppableProvided,
   DroppableStateSnapshot,
 } from '@hello-pangea/dnd';
+import { ContextMenuComponent } from '@/app/components/ContextMenu';
+import { DELETE_NOTE } from '@/app/graphql/mutations/addNotes';
+import { useMutation } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
   tabsContainer: {
@@ -59,9 +62,49 @@ const getItemStyle = (draggableStyle: any, isDragging: any) => ({
 
 function NoteTree() {
   const classes = useStyles(); // Get the styles
-  const { selectedProject, setSelectedNote, selectedNote } =
-    useProjectContext();
+  const context = useProjectContext();
   const [activeTab, setActiveTab] = useState(0);
+
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
+
+  const handleContextMenu = (event: React.MouseEvent, noteId: string) => {
+    event.preventDefault();
+    setContextMenu({
+      mouseX: event.clientX + 2,
+      mouseY: event.clientY - 6,
+    });
+    setRightClickedNoteId(noteId);
+  };
+
+  const [rightClickedNoteId, setRightClickedNoteId] = useState<string | null>(
+    null,
+  );
+  const handleClose = () => {
+    setContextMenu(null);
+  };
+  const [deleteNote, { loading, error }] = useMutation(DELETE_NOTE);
+
+  const handleDelete = async () => {
+    try {
+      const response = await deleteNote({
+        variables: { id: rightClickedNoteId },
+      });
+
+      if (response.data.deleteNote) {
+        console.log('Note successfully deleted!');
+      } else {
+        console.error('Failed to delete the note.');
+      }
+
+      handleClose();
+      context.refetchData();
+    } catch (err: any) {
+      console.error('Error while deleting the note:', err.message);
+    }
+  };
 
   const renderNoteTree = (project?: ProjectType | null) => {
     // Sort notes based on their position
@@ -85,11 +128,14 @@ function NoteTree() {
                 >
                   {(provided) => (
                     <Box
+                      onContextMenu={(e) =>
+                        handleContextMenu(e, projectNote.note.id)
+                      }
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       className={`${styles.note} ${
-                        selectedNote?.id === projectNote.note.id
+                        context.selectedNote?.id === projectNote.note.id
                           ? styles.selected
                           : ''
                       }`}
@@ -97,7 +143,7 @@ function NoteTree() {
                         provided.draggableProps.style,
                         snapshot.draggingOverWith === projectNote.note.id,
                       )}
-                      onClick={() => setSelectedNote(projectNote.note)}
+                      onClick={() => context.setSelectedNote(projectNote.note)}
                     >
                       <Typography>{projectNote.note.noteName}</Typography>
                     </Box>
@@ -127,7 +173,7 @@ function NoteTree() {
       {activeTab === 0 && (
         <>
           <NoteTreeHeader />
-          {renderNoteTree(selectedProject)}
+          {renderNoteTree(context.selectedProject)}
         </>
       )}
 
@@ -135,6 +181,20 @@ function NoteTree() {
         // Render your project view content here
         <Box className={styles.reportList}></Box>
       )}
+      <ContextMenuComponent
+        contextMenu={contextMenu}
+        handleClose={handleClose}
+        options={[
+          {
+            label: 'Edit',
+            action: () => console.log('Edit clicked'),
+          },
+          {
+            label: 'Delete',
+            action: handleDelete,
+          },
+        ]}
+      />
     </Box>
   );
 }
