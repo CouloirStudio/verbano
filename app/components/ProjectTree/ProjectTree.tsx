@@ -184,7 +184,6 @@ function ProjectTree() {
       });
 
       if (response.data.deleteProject) {
-        // Ensure this is the correct field name based on the GraphQL response
         console.log('Project successfully deleted!');
       } else {
         console.error('Failed to delete the project.');
@@ -192,7 +191,7 @@ function ProjectTree() {
 
       handleClose();
       context.refetchData();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error while deleting the project:', err.message);
     }
   };

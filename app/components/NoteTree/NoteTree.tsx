@@ -95,14 +95,13 @@ function NoteTree() {
 
       if (response.data.deleteNote) {
         console.log('Note successfully deleted!');
-        // You can also refresh your notes list or handle UI updates here
       } else {
         console.error('Failed to delete the note.');
       }
 
-      handleClose(); // Close the context menu after action
-      context.refetchData(); // Refetch the data to update the UI
-    } catch (err) {
+      handleClose();
+      context.refetchData();
+    } catch (err: any) {
       console.error('Error while deleting the note:', err.message);
     }
   };
