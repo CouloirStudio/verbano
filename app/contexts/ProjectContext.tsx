@@ -72,13 +72,11 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     if (data && data.listProjects) {
       setProjects(data.listProjects);
 
-      // Update the selectedProject if it's present in the updated data.
       if (selectedProject) {
         const updatedSelectedProject = data.listProjects.find(
           (project) => project.id === selectedProject.id,
         );
 
-        // Only update if there's a change in the selected project data
         if (
           JSON.stringify(updatedSelectedProject) !==
           JSON.stringify(selectedProject)

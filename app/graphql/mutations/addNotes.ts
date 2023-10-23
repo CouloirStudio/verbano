@@ -8,7 +8,6 @@ export const ADD_NOTE = gql`
       dateCreated
       transcription
       tags
-      projectId
       noteName
       noteDescription
     }
@@ -23,7 +22,34 @@ export const UPDATE_NOTE = gql`
       dateCreated
       transcription
       tags
-      projectId
+      noteName
+      noteDescription
+    }
+  }
+`;
+
+export const MOVE_NOTE_TO_PROJECT = gql`
+  mutation MoveNoteToProject($noteId: ID!, $projectId: ID!) {
+    moveNoteToProject(noteId: $noteId, projectId: $projectId) {
+      id
+      audioLocation
+      dateCreated
+      transcription
+      tags
+      noteName
+      noteDescription
+    }
+  }
+`;
+
+export const MOVE_NOTE_ORDER = gql`
+  mutation MoveNoteOrder($noteId: ID!, $order: Int!) {
+    moveNoteOrder(noteId: $noteId, order: $order) {
+      id
+      audioLocation
+      dateCreated
+      transcription
+      tags
       noteName
       noteDescription
     }
