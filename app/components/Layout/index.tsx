@@ -18,7 +18,7 @@ function Layout({ children }: LayoutProps) {
         <Header />
         <div className={styles.contentArea}>
           <Sidebar />
-          <main>{children}</main>
+          <main className={styles.mainArea}>{children}</main>
         </div>
       </div>
     </ErrorModalContextProvider>

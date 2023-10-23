@@ -17,6 +17,10 @@
   overflow: hidden;
 }
 
+.mainArea {
+  width: 100%;
+}
+
 .noteWrapper {
   height: 100%; /* Ensure that it takes the full height of its parent */
   display: flex;
