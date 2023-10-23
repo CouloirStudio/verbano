@@ -29,6 +29,7 @@ const ProjectSchema = gql`
 
   extend type Mutation {
     addProject(input: ProjectInput!): Project!
+    deleteProject(id: ID!): Boolean!
   }
 `;
 
