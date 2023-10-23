@@ -17,13 +17,11 @@ function TranscriptionButton() {
           BASE_URL,
           selectedNote?.id,
         ).then((transcription) => {
-          console.log(transcription);
           if (!transcription) {
             return;
           }
           const updatedNote = { ...selectedNote, transcription };
           context.setSelectedNote(updatedNote);
-          context.refetchData(true);
         });
       } else {
         setIsError(true);
@@ -32,9 +30,7 @@ function TranscriptionButton() {
     } catch (error) {
       console.log(error);
       setIsError(true);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      setErrorMessage(error.getMessage());
+      if (error instanceof Error) setErrorMessage(error.message);
     }
   };
 
