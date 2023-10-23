@@ -2,6 +2,27 @@
 
 .container {
   height: calc(100vh - $header-height);
+  position: relative;
+  display: flex;
+  width: 100%;
+
+  .footer {
+    position: absolute;
+    display: inline-flex;
+    width: 100%;
+    height: 25px;
+    bottom: 0;
+    left: 0;
+    background-color: #E0E0E0;
+    justify-content: right;
+
+    .footerContent {
+      margin-right: 15px;
+      display: flex;
+      gap: 15px;
+    }
+  }
+
 }
 
 .noteWrapper {
@@ -16,3 +37,4 @@
     }
   }
 }
+
