@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import OpenAI from 'openai';
+import OpenAI, { toFile } from 'openai';
 import { Audio } from 'openai/resources';
 import Transcription = Audio.Transcription;
 
@@ -25,7 +25,11 @@ class OpenAIService {
   }
 
   public async transcribeAudio(audio: Blob): Promise<Transcription | string> {
-    const file = new File([audio], 'audio.wav');
+    console.log(audio);
+    const file = await toFile(audio, 'audio.wav');
+
+    console.log('File', file);
+
     try {
       return await this.openai.audio.transcriptions.create({
         file: file,

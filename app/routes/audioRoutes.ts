@@ -21,7 +21,7 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
 
   try {
     const audioBuffer = req.file.buffer;
-    const url = await uploadAudioToS3(audioBuffer);
+    const key = await uploadAudioToS3(audioBuffer);
 
     // Get the TestProject ID
     const testProject = await Project.findOne({ projectName: 'TestProject' });
@@ -32,7 +32,7 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
 
     // Create a new Note entry with the URL and associate with TestProject
     const note = new Note({
-      audioLocation: url,
+      audioLocation: key,
       projectId: testProject._id,
       noteName: new Date().toISOString(), // Using date as note name for now.
     });
@@ -43,7 +43,7 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
     testProject.notes.push(note._id);
     await testProject.save();
 
-    res.json({ success: true, noteId: note._id, url });
+    res.json({ success: true, noteId: note._id, key });
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error in /upload route:', error.message);

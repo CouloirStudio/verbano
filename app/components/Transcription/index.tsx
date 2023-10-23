@@ -9,12 +9,21 @@ function TranscriptionButton() {
   const context = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNote = context.selectedNote;
-  // const { setSelectedNote } = useProjectContext();
   const transcribeAudio = () => {
     try {
       if (selectedNote) {
-        transcribe(selectedNote?.audioLocation, BASE_URL).then((note) => {
-          console.log(note);
+        transcribe(
+          selectedNote?.audioLocation,
+          BASE_URL,
+          selectedNote?.id,
+        ).then((transcription) => {
+          console.log(transcription);
+          if (!transcription) {
+            return;
+          }
+          const updatedNote = { ...selectedNote, transcription };
+          context.setSelectedNote(updatedNote);
+          context.refetchData(true);
         });
       } else {
         setIsError(true);

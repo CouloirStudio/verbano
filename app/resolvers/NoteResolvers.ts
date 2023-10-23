@@ -1,12 +1,5 @@
 import { Note } from "../models/Note";
-import {
-  AddNoteArgs,
-  DeleteNoteArgs,
-  GetNoteArgs,
-  ResolverContext,
-  UpdateNoteArgs,
-  updateTranscriptionArgs
-} from "./types";
+import { AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs } from "./types";
 import { Project } from "../models/Project";
 
 /**
@@ -114,21 +107,6 @@ export const NoteMutations = {
   async updateNote(
     _: unknown,
     args: UpdateNoteArgs,
-    _context: ResolverContext,
-  ) {
-    return Note.findByIdAndUpdate(args.id, args.input, { new: true });
-  },
-
-  /**
-   *  Update the transcription of an existing note in the database
-   * @param _
-   * @param args - Arguments for the mutation, including the ID of the note to update and the new details.
-   * @param _context
-   * @returns The updated note object.
-   */
-  async updateTranscription(
-    _: unknown,
-    args: updateTranscriptionArgs,
     _context: ResolverContext,
   ) {
     return Note.findByIdAndUpdate(args.id, args.input, { new: true });
