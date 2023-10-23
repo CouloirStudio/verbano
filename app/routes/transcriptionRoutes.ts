@@ -1,8 +1,7 @@
 import express from 'express';
 import { generatePresignedUrl } from '../services/AWSService';
 import OpenAIService from '../services/OpenAIService';
-import { NoteMutations } from '../resolvers/NoteResolvers';
-import { updateTranscriptionArgs } from '../resolvers/types';
+import { Note } from '../models';
 
 const router = express.Router();
 
@@ -15,6 +14,7 @@ router.post('/transcribe', async (req, res) => {
     const data = req.body;
     const key = data.key;
     const noteID = data.id;
+    console.log(noteID);
 
     if (!key) {
       return res
@@ -24,21 +24,24 @@ router.post('/transcribe', async (req, res) => {
 
     // Generate a pre-signed URL for the audio file
     const url = await generatePresignedUrl(key);
+    await fetch(url).then((r) => console.log(r));
     const audioBlob = await fetch(url).then((r) => r.blob());
     const openAI = new OpenAIService();
-    const transcription = await openAI.transcribeAudio(audioBlob);
+    const note = await Note.findById(noteID);
 
-    // Create an object that adheres to the interface structure
-    const args: updateTranscriptionArgs = {
-      id: noteID,
-      input: {
-        transcription: JSON.stringify(transcription),
-      },
-    };
-    // update note entry with transcription using graphQL
-    const note = await NoteMutations.updateTranscription(args);
+    if (!note) {
+      // throw some error
+      throw new Error('Note doesnt exist');
+    }
+    const transcription = await openAI.transcribeAudio(audioBlob);
+    console.log('transcription', transcription);
+    // save that shit
+    note.transcription = JSON.stringify(transcription);
+    note.save();
+
     // return the note object
-    res.json({ success: true, note: note });
+    console.log('setting response in transcription routes');
+    res.json({ success: true, transcription: transcription });
   } catch (error) {
     console.error('An unexpected error occurred:', error);
   }
