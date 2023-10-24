@@ -18,7 +18,7 @@ export const transcribe = async (
 
   // get the note object from the response and return it.
   const responseBody = await response.json();
-  if (!responseBody.success || !responseBody.note) {
+  if (!responseBody.success || !responseBody.transcription) {
     throw new Error('Invalid response format');
   }
   return responseBody.transcription;

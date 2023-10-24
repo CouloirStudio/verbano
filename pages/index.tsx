@@ -6,7 +6,6 @@ import TranscriptionButton from '@/app/components/Transcription';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-
 export default function Home() {
   const { selectedNote } = useProjectContext();
 
@@ -23,12 +22,12 @@ export default function Home() {
           <Typography variant={'subtitle1'}>Source Mode</Typography>
           {selectedNote && selectedNote.transcription && (
             <Typography variant={'subtitle1'}>
-              Words: {selectedNote?.transcription?.split(' ').length}
+              Words: {selectedNote?.transcription?.toString().split(' ').length}
             </Typography>
           )}
           {selectedNote && selectedNote.transcription && (
             <Typography variant={'subtitle1'}>
-              Characters: {selectedNote?.transcription?.length}
+              Characters: {selectedNote?.transcription?.toString().length}
             </Typography>
           )}
         </Box>
