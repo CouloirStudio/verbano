@@ -7,8 +7,8 @@ class OpenAIService {
   private readonly apiKey: string;
   private readonly openai: OpenAI;
 
-  constructor() {
-    this.apiKey = process.env.OPENAI_API_KEY || '';
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey || process.env.OPENAI_API_KEY || '';
     if (!this.apiKey) {
       throw new Error('API key not provided for OpenAI.');
     }
