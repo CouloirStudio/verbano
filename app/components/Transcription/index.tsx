@@ -2,6 +2,8 @@ import React from 'react';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import { transcribe } from '@/app/api/transcription';
+import IconButton from '@mui/material/IconButton';
+import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 
 function TranscriptionButton() {
   const BASE_URL = 'http://localhost:3000';
@@ -34,9 +36,11 @@ function TranscriptionButton() {
     }
   };
 
-  // DUMMY METHOD FOR EVENTUAL TRANSCRIPTION SERVICE
-
-  return <button onClick={transcribeAudio}>Transcribe</button>;
+  return (
+    <IconButton onClick={transcribeAudio}>
+      <DriveFileRenameOutlineOutlinedIcon />
+    </IconButton>
+  );
 }
 
 export default TranscriptionButton;
