@@ -109,7 +109,7 @@ export const NoteMutations = {
     args: UpdateNoteArgs,
     _context: ResolverContext,
   ) {
-    return await Note.findByIdAndUpdate(args.id, args.input, { new: true });
+    return Note.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 
   async moveNoteToProject(
