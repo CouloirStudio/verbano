@@ -1,5 +1,7 @@
 import 'dotenv/config';
-import OpenAI from 'openai';
+import OpenAI, { toFile } from 'openai';
+import { Audio } from 'openai/resources';
+import Transcription = Audio.Transcription;
 
 class OpenAIService {
   private readonly apiKey: string;
@@ -16,6 +18,27 @@ class OpenAIService {
     if (!this.openai) {
       throw new Error('Failed to initialize OpenAI.');
     }
+  }
+
+  get openaiForTesting() {
+    return this.openai;
+  }
+
+  public async transcribeAudio(audio: Blob): Promise<Transcription | string> {
+    console.log(audio);
+    const file = await toFile(audio, 'audio.wav');
+
+    console.log('File', file);
+
+    try {
+      return await this.openai.audio.transcriptions.create({
+        file: file,
+        model: 'whisper-1',
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    return 'something went wrong :(';
   }
 
   /**
@@ -87,10 +110,6 @@ class OpenAIService {
       console.error(error);
       throw new Error('Failed to generate title.');
     }
-  }
-
-  get openaiForTesting() {
-    return this.openai;
   }
 }
 
