@@ -1,8 +1,8 @@
 import { useProjectContext } from '../app/contexts/ProjectContext';
 import styles from '../styles/noteDashboard.module.scss';
 import ScrollView from '../app/components/ScrollView';
-import TranscriptionDisplay from '../app/components/TranscriptionDisplay';
-import TranscriptionButton from '@/app/components/Transcription';
+import TranscriptionDisplay from '../app/components/Transcription/TranscriptionDisplay';
+import TranscriptionButton from '@/app/components/Transcription/TranscriptionButton';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
@@ -14,7 +14,7 @@ export default function Home() {
       <ScrollView>
         <div className={styles.noteWrapper}>
           <TranscriptionButton />
-          <TranscriptionDisplay />
+          <TranscriptionDisplay Id={selectedNote?.id} />
         </div>
       </ScrollView>
       <div className={styles.footer}>

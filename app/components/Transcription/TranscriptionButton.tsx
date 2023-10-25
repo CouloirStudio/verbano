@@ -37,7 +37,7 @@ function TranscriptionButton() {
   };
 
   return (
-    <IconButton onClick={transcribeAudio}>
+    <IconButton disabled={selectedNote === undefined} onClick={transcribeAudio}>
       <DriveFileRenameOutlineOutlinedIcon />
     </IconButton>
   );
