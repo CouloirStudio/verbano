@@ -5,6 +5,7 @@ import TranscriptionDisplay from '../app/components/Transcription/TranscriptionD
 import TranscriptionButton from '@/app/components/Transcription/TranscriptionButton';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { NoteContextProvider } from '@/app/contexts/NoteContext';
 
 export default function Home() {
   const { selectedNote } = useProjectContext();
@@ -13,8 +14,10 @@ export default function Home() {
     <div className={styles.container}>
       <ScrollView>
         <div className={styles.noteWrapper}>
-          <TranscriptionButton />
-          <TranscriptionDisplay Id={selectedNote?.id} />
+          <NoteContextProvider>
+            <TranscriptionButton />
+            <TranscriptionDisplay Id={selectedNote?.id} />
+          </NoteContextProvider>
         </div>
       </ScrollView>
       <div className={styles.footer}>

@@ -4,13 +4,15 @@ import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import { transcribe } from '@/app/api/transcription';
 import IconButton from '@mui/material/IconButton';
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import { useNoteContext } from '@/app/contexts/NoteContext';
 
 function TranscriptionButton() {
   const BASE_URL = 'http://localhost:3000';
-
   const context = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNote = context.selectedNote;
+
+  const { setTranscription } = useNoteContext();
   const transcribeAudio = () => {
     try {
       if (selectedNote) {
@@ -18,12 +20,11 @@ function TranscriptionButton() {
           selectedNote?.audioLocation,
           BASE_URL,
           selectedNote?.id,
-        ).then((transcription) => {
+        ).then((transcription: Transcription) => {
           if (!transcription) {
             return;
           }
-          const updatedNote = { ...selectedNote, transcription };
-          context.setSelectedNote(updatedNote);
+          setTranscription(transcription.text);
         });
       } else {
         setIsError(true);
