@@ -20,10 +20,11 @@ function TranscriptionButton() {
           selectedNote?.audioLocation,
           BASE_URL,
           selectedNote?.id,
-        ).then((transcription: Transcription) => {
+        ).then((transcription) => {
           if (!transcription) {
             return;
           }
+          // this works
           setTranscription(transcription.text);
         });
       } else {
