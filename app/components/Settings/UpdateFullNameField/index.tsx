@@ -34,31 +34,37 @@ interface FullNameInputProps {
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  */
 const UpdateFullName: React.FC<FullNameInputProps> = ({
-  firstName,
-  lastName,
-  onFirstNameChange,
-  onLastNameChange,
-}) => {
+                                                        firstName,
+                                                        lastName,
+                                                        onFirstNameChange,
+                                                        onLastNameChange,
+                                                      }) => {
   return (
     <>
-      <InputField label="Update First Name" icon={<AiOutlineUser />}>
-        <input
-          type="text"
-          id={'firstName'}
-          value={firstName}
+      <div data-cy="first-name">
+        <InputField
+          label="Update First Name"
+          icon={<AiOutlineUser/>}
+          clearError={() => {}}
+          error={false}
+          isRequired={false}
           onChange={onFirstNameChange}
-          required
+          type={'text'}
+          value={firstName}
         />
-      </InputField>
-      <InputField label="Update Last Name" icon={<AiOutlineUser />}>
-        <input
-          type="text"
-          id={'lastName'}
-          value={lastName}
+      </div>
+      <div data-cy="last-name">
+        <InputField
+          label="Update Last Name"
+          icon={<AiOutlineUser/>}
+          clearError={() => {}}
+          error={false}
+          isRequired={false}
           onChange={onLastNameChange}
-          required
+          type={'text'}
+          value={lastName}
         />
-      </InputField>
+      </div>
     </>
   );
 };
