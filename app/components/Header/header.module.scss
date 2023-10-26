@@ -27,3 +27,15 @@
 .link:hover {
   text-decoration: underline;
 }
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1; 
+}
+
+.logo {
+  width: auto;
+  height: $header-height - 10px;
+}

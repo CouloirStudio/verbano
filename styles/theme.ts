@@ -3,6 +3,7 @@ import { createTheme, darken, ThemeOptions } from '@mui/material/styles';
 interface CustomThemeOptions extends ThemeOptions {
   custom?: {
     headerBackground?: string;
+    logoColour?: string;
   };
 }
 
@@ -51,6 +52,7 @@ export const lightThemeOptions: CustomThemeOptions = {
   },
   custom: {
     headerBackground: primaryColor,
+    logoColour: primaryContrastText,
   },
   typography: commonTypography,
   components: {
@@ -85,6 +87,7 @@ export const darkThemeOptions: CustomThemeOptions = {
   },
   custom: {
     headerBackground: '#272727',
+    logoColour: primaryColor,
   },
   typography: commonTypography,
 };
