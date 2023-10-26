@@ -11,6 +11,7 @@ import {
   MOVE_NOTE_TO_PROJECT,
 } from '@/app/graphql/mutations/addNotes';
 import { NoteType, ProjectNoteType } from '@/app/resolvers/types';
+import { useTheme } from '@mui/material/styles';
 
 /**
  * Extends the basic NoteType with a position property.
@@ -78,6 +79,10 @@ const Sidebar: React.FC = () => {
   const [moveNoteToProject] = useMutation(MOVE_NOTE_TO_PROJECT);
   const [moveNotePosition] = useMutation(MOVE_NOTE_ORDER);
 
+  const theme = useTheme();
+  const sidebarBg = theme.custom?.contrastBackground ?? '';
+  const textColour = theme.custom?.text ?? '';
+
   if (!projects) return <p>Loading...</p>;
 
   const handleDragEnd = async (result: DropResult) => {
@@ -143,7 +148,10 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className={styles.sidebar}>
+    <div
+      className={styles.sidebar}
+      style={{ backgroundColor: sidebarBg, color: textColour }}
+    >
       <DragDropContext onDragEnd={handleDragEnd}>
         <ProjectTree />
         <NoteTree />

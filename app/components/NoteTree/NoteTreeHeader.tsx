@@ -10,7 +10,6 @@ function NoteTreeHeader() {
   return (
     <div className={styles.noteTreeHeader}>
       {!searchActive && <CreateNoteButton />}
-      {!searchActive && <PiNotePencil />}
       <SearchBar
         searchActive={searchActive}
         setSearchActive={setSearchActive}

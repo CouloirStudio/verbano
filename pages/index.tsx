@@ -5,12 +5,14 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { NoteContextProvider } from '@/app/contexts/NoteContext';
 import NoteDetails from '@/app/components/Note/NoteDetails';
+import { useTheme } from '@mui/material/styles';
 
 export default function Home() {
   const { selectedNote } = useProjectContext();
+  const theme = useTheme();
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ backgroundColor: theme.custom?.contrastBackground ?? '' }}>
       <div className={styles.noteWrapper}>
         {selectedNote && (
           <NoteContextProvider>
@@ -21,7 +23,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className={styles.footer}>
+      <div className={styles.footer} style={{ backgroundColor: theme.custom?.moreContrastBackground ?? '', color: theme.custom?.text ?? '' }}>
         <Box className={styles.footerContent}>
           <Typography variant={'subtitle1'}>Source Mode</Typography>
           {selectedNote && selectedNote.transcription && (
