@@ -18,22 +18,12 @@ import ModalComponent from '@/app/components/Settings/SettingsModal';
 import { deepPurple } from '@mui/material/colors';
 
 /**
- * Extends the MUI Theme with custom properties.
- */
-interface CustomTheme extends Theme {
-  custom?: {
-    headerBackground?: string;
-    logoColour?: string;
-  };
-}
-
-/**
  * Generates style properties for an avatar based on the user's name.
  * @param name - The name of the user.
  * @param theme - The theme object used for styling.
  * @returns An object containing style properties for the avatar.
  */
-function stringAvatar(name: string, theme: CustomTheme) {
+function stringAvatar(name: string, theme: Theme) {
   const secondaryPalette = [
     theme.palette.info.light,
     theme.palette.info.main,
@@ -53,7 +43,7 @@ function stringAvatar(name: string, theme: CustomTheme) {
  */
 const Header: React.FC = () => {
   const currentUser = useUser();
-  const theme: CustomTheme = useTheme();
+  const theme = useTheme();
   const { isDarkMode, toggleTheme } = useThemeContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isModalOpen, setModalOpen] = useState(false);

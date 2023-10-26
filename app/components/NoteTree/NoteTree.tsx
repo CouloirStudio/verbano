@@ -7,7 +7,7 @@ import { ProjectType } from '../../resolvers/types';
 import NoteTreeHeader from '@/app/components/NoteTree/NoteTreeHeader';
 import Typography from '@mui/material/Typography';
 import styles from './noteTree.module.scss';
-
+import { useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 
 import {
@@ -64,6 +64,8 @@ function NoteTree() {
   const classes = useStyles(); // Get the styles
   const context = useProjectContext();
   const [activeTab, setActiveTab] = useState(0);
+
+  const theme = useTheme();
 
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -159,7 +161,10 @@ function NoteTree() {
   };
 
   return (
-    <Box className={styles.section}>
+    <Box
+      className={styles.section}
+      style={{ backgroundColor: theme.custom?.moreContrastBackground }}
+    >
       <Tabs
         value={activeTab}
         onChange={(event, newValue) => setActiveTab(newValue)}

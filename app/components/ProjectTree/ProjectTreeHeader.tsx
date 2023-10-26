@@ -1,6 +1,7 @@
 import CreateProjectButton from '@/app/components/ProjectTree/CreateProjectButon';
 import React from 'react';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 
 const styles = {
   display: 'flex',
@@ -10,9 +11,13 @@ const styles = {
 };
 
 function ProjectTreeHeader() {
+  const theme = useTheme();
   return (
     <div style={styles}>
-      <Typography variant="h5">Projects</Typography>
+      <Typography variant="h5" style={{ color: theme.palette.primary.main }}>
+        {' '}
+        Projects{' '}
+      </Typography>
       <CreateProjectButton />
     </div>
   );

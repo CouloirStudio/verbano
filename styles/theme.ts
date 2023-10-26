@@ -3,6 +3,10 @@ import { createTheme, darken, ThemeOptions } from '@mui/material/styles';
 interface CustomThemeOptions extends ThemeOptions {
   custom?: {
     headerBackground?: string;
+    mainBackground?: string;
+    contrastBackground?: string;
+    moreContrastBackground?: string;
+    text?: string;
     logoColour?: string;
   };
 }
@@ -15,6 +19,8 @@ const successColor = '#68caa8';
 const infoColor = '#688aca';
 const warningColor = '#ca7768';
 const errorColor = '#ca686a';
+const white = '#FFFFFF';
+const black = '#000000';
 
 // Shared Typography
 const quicksand = '"Quicksand", "Helvetica", "Arial", sans-serif';
@@ -52,6 +58,10 @@ export const lightThemeOptions: CustomThemeOptions = {
   },
   custom: {
     headerBackground: primaryColor,
+    mainBackground: white,
+    contrastBackground: '#FAFAFA',
+    moreContrastBackground: '#EEEEEE',
+    text: black,
     logoColour: primaryContrastText,
   },
   typography: commonTypography,
@@ -87,6 +97,10 @@ export const darkThemeOptions: CustomThemeOptions = {
   },
   custom: {
     headerBackground: '#272727',
+    mainBackground: '#2F2F2F',
+    contrastBackground: '#1E1E1E',
+    moreContrastBackground: '#121212',
+    text: white,
     logoColour: primaryColor,
   },
   typography: commonTypography,
