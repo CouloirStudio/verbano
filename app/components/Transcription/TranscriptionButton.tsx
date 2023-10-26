@@ -71,17 +71,19 @@ const TranscriptionButton = () => {
 
   return (
     <Tooltip title="Transcribe">
-      <IconButton
-        sx={{
-          //temporary styling for presentation
-          width: '50px',
-          height: '50px',
-        }}
-        disabled={!selectedNote?.audioLocation}
-        onClick={transcribeAudio}
-      >
-        <TbFileTextAi />
-      </IconButton>
+      <span>
+        <IconButton
+          sx={{
+            //temporary styling for presentation
+            width: '50px',
+            height: '50px',
+          }}
+          disabled={!selectedNote?.audioLocation}
+          onClick={transcribeAudio}
+        >
+          <TbFileTextAi />
+        </IconButton>
+      </span>
     </Tooltip>
   );
 };
