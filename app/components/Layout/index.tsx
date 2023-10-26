@@ -1,10 +1,9 @@
 import React from 'react';
-
-import Header from '../Header';
-import Sidebar from '../Sidebar';
+import Header from '@/app/components/Header';
+import Sidebar from '@/app/components/Sidebar';
 import styles from './layout.module.scss';
-import { ErrorModalContextProvider } from '../../contexts/ErrorModalContext';
-import ErrorModal from '../../components/ErrorModal';
+import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
+import ErrorModal from '@/app/components/ErrorModal';
 
 interface LayoutProps {
   children: React.ReactNode;

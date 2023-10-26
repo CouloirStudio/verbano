@@ -1,4 +1,4 @@
-@import '../_shared/_variables.scss';
+@import '@/app/components/_shared/_variables.scss';
 
 .header {
   width: 100%;
@@ -7,13 +7,15 @@
   color: #fff;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  padding: 0 20px;
 }
 
 .linkContainer {
-  margin-left: 100px; // Will have to adjust css
-  position: absolute;
-  right: 100px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 50px;
 }
 
 .link {

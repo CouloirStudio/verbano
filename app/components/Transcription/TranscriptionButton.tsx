@@ -1,11 +1,11 @@
-import React, {useEffect, useRef} from 'react';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
-import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
-import {transcribe} from '@/app/api/transcription';
+import React, { useEffect, useRef } from 'react';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { transcribe } from '@/app/api/transcription';
 import IconButton from '@mui/material/IconButton';
-import {useNoteContext} from '@/app/contexts/NoteContext';
-import {TbFileTextAi} from 'react-icons/tb';
-import {Tooltip} from '@mui/material';
+import { useNoteContext } from '@/app/contexts/NoteContext';
+import { TbFileTextAi } from 'react-icons/tb';
+import { Tooltip } from '@mui/material';
 
 /**
  * A button that grabs the selected note and transcribes the audio. .

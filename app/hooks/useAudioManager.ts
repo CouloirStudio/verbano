@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import {useRecorderContext} from '../contexts/RecorderContext';
-import {useErrorModalContext} from '../contexts/ErrorModalContext';
-import {AudioRecorder} from '../api/recorder';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
+import { useState } from 'react';
+import { useRecorderContext } from '../contexts/RecorderContext';
+import { useErrorModalContext } from '../contexts/ErrorModalContext';
+import { AudioRecorder } from '../api/recorder';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 /**
  * Custom hook to manage the audio recording and uploading functionalities.

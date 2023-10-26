@@ -1,7 +1,7 @@
 // @ts-ignore
 
 import client from '../config/apolloClient';
-import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
+import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
 
 /**
  * Type representing the structure of the response received

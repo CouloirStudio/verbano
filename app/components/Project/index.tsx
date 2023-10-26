@@ -1,6 +1,6 @@
 import styles from './Project.module.scss';
 import Note from '../Note';
-import {NoteType} from '../../resolvers/types';
+import { NoteType } from '../../resolvers/types';
 
 /**
  * Props for the Project component.

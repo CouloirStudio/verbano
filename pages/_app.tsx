@@ -1,13 +1,14 @@
 import { useRouter } from 'next/router';
-import '../styles/globals.scss';
+import '@/styles/globals.scss';
 import type { AppProps } from 'next/app';
-import Layout from '../app/components/Layout/index';
-import { ProjectProvider } from '../app/contexts/ProjectContext';
+import Layout from '@/app/components/Layout';
+import { ProjectProvider } from '@/app/contexts/ProjectContext';
 import { ApolloProvider } from '@apollo/client';
-import client from '../app/config/apolloClient';
-import { ErrorModalContextProvider } from '../app/contexts/ErrorModalContext';
-import ErrorModal from '../app/components/ErrorModal';
-import { UserProvider } from '../app/components/UserProvider';
+import client from '@/app/config/apolloClient';
+import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
+import ErrorModal from '@/app/components/ErrorModal';
+import { UserProvider } from '@/app/components/UserProvider';
+import CustomThemeProvider from '@/app/contexts/ThemeContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -16,27 +17,27 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.pathname.startsWith('/settings');
 
   const PageContent = (
-    <ApolloProvider client={client}>
-      <UserProvider>
-        <ErrorModalContextProvider>
-          <ErrorModal />
-          {isExcludedPage ? (
-            <Component {...pageProps} />
-          ) : (
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          )}
-        </ErrorModalContextProvider>
-      </UserProvider>
-    </ApolloProvider>
+    <CustomThemeProvider>
+      <ApolloProvider client={client}>
+        <UserProvider>
+          <ProjectProvider>
+            <ErrorModalContextProvider>
+              <ErrorModal />
+              {isExcludedPage ? (
+                <Component {...pageProps} />
+              ) : (
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              )}
+            </ErrorModalContextProvider>
+          </ProjectProvider>
+        </UserProvider>
+      </ApolloProvider>
+    </CustomThemeProvider>
   );
 
-  return (
-    <ApolloProvider client={client}>
-      <ProjectProvider>{PageContent}</ProjectProvider>
-    </ApolloProvider>
-  );
+  return PageContent;
 }
 
 export default MyApp;

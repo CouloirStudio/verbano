@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext, useState} from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 /**
  * This component provides context for what is contained in the notes details. Currently just the transcription components.

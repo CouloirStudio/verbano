@@ -1,30 +1,69 @@
 import React, { useState } from 'react';
 import styles from './header.module.scss';
-import dynamic from 'next/dynamic';
-import { RecorderProvider } from '../../contexts/RecorderContext';
-
-import { Avatar, Divider, Menu, MenuItem } from '@mui/material';
-import { useUser } from '@/app/components/UserProvider';
-import { deepPurple } from '@mui/material/colors';
+import {
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Divider,
+  useTheme,
+  Theme,
+} from '@mui/material';
+import { Nightlight, WbSunny } from '@mui/icons-material';
 import { BiLogOut } from 'react-icons/bi';
 import { IoSettingsOutline } from 'react-icons/io5';
+import { useUser } from '@/app/components/UserProvider';
+import { useThemeContext } from '@/app/contexts/ThemeContext';
 import ModalComponent from '@/app/components/Settings/SettingsModal';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { deepPurple } from '@mui/material/colors';
 
-const Recorder = dynamic(() => import('../../components/Recorder'), {
-  ssr: false,
-});
+/**
+ * Extends the MUI Theme with custom properties.
+ */
+interface CustomTheme extends Theme {
+  custom?: {
+    headerBackground?: string;
+  };
+}
 
-function Header(): React.JSX.Element | null {
+/**
+ * Generates style properties for an avatar based on the user's name.
+ * @param name - The name of the user.
+ * @param theme - The theme object used for styling.
+ * @returns An object containing style properties for the avatar.
+ */
+function stringAvatar(name: string, theme: CustomTheme) {
+  const secondaryPalette = [
+    theme.palette.info.light,
+    theme.palette.info.main,
+    theme.palette.info.dark,
+  ];
+  const randomIndex = Math.floor(name.length % secondaryPalette.length);
+  return {
+    sx: {
+      bgcolor: secondaryPalette[randomIndex],
+      color: theme.palette.getContrastText(secondaryPalette[randomIndex]),
+    },
+  };
+}
+
+/**
+ * Header component displaying the user's avatar and theme toggle button.
+ */
+const Header: React.FC = () => {
   const currentUser = useUser();
-  const { selectedProject, selectedNote } = useProjectContext();
-
-  const [anchorEl, setAnchorEl] = useState(null);
+  const theme: CustomTheme = useTheme();
+  const { isDarkMode, toggleTheme } = useThemeContext();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
   const open = Boolean(anchorEl);
+  const headerBackgroundColor = theme.custom?.headerBackground ?? '';
+  const userName = currentUser
+    ? `${currentUser.firstName} ${currentUser.lastName}`
+    : '';
 
-  const handleMenuOpen = (event): void => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -43,34 +82,41 @@ function Header(): React.JSX.Element | null {
   if (!currentUser) return null;
 
   return (
-    <div className={styles.header}>
-      {!selectedNote && (
-        <RecorderProvider>
-          <Recorder />
-        </RecorderProvider>
-      )}
+    <div
+      className={styles.header}
+      style={{ backgroundColor: headerBackgroundColor }}
+    >
       <div className={styles.linkContainer}>
-        <Avatar onClick={handleMenuOpen} sx={{ bgcolor: deepPurple[500] }}>
-          {currentUser.firstName?.substring(0, 1)}
+        <IconButton onClick={toggleTheme} className="roundedPrimary">
+          {isDarkMode ? <WbSunny /> : <Nightlight />}
+        </IconButton>
+        <Avatar
+          {...stringAvatar(userName, theme)}
+          onClick={handleMenuOpen}
+          sx={{ bgcolor: deepPurple[500] }}
+        >
+          {currentUser.firstName?.[0]}
         </Avatar>
         <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
           <MenuItem
-            sx={{ gap: '5px' }}
             onClick={() => {
               handleMenuClose();
               openModal();
             }}
+            className="menu-item"
           >
             <IoSettingsOutline />
             Settings
           </MenuItem>
+
           <Divider />
+
           <MenuItem
-            sx={{ gap: '5px' }}
             onClick={() => {
               handleMenuClose();
               window.location.replace('/logout');
             }}
+            className="menu-item"
           >
             <BiLogOut />
             Logout
@@ -78,10 +124,9 @@ function Header(): React.JSX.Element | null {
         </Menu>
       </div>
 
-      {/* Modal */}
       <ModalComponent open={isModalOpen} onClose={closeModal} />
     </div>
   );
-}
+};
 
 export default Header;

@@ -1,11 +1,11 @@
 import styles from './transcription.module.scss';
-import {useProjectContext} from '../../contexts/ProjectContext';
-import {GET_TRANSCRIPTION} from '../../graphql/queries/getNotes';
+import { useProjectContext } from '../../contexts/ProjectContext';
+import { GET_TRANSCRIPTION } from '../../graphql/queries/getNotes';
 import Box from '@mui/material/Box';
-import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
-import React, {useEffect} from 'react';
-import {useLazyQuery} from '@apollo/client';
-import {useNoteContext} from '@/app/contexts/NoteContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import React, { useEffect } from 'react';
+import { useLazyQuery } from '@apollo/client';
+import { useNoteContext } from '@/app/contexts/NoteContext';
 import Display from '@/app/components/Display';
 import ScrollView from '@/app/components/ScrollView';
 
