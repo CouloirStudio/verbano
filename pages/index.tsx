@@ -16,7 +16,7 @@ export default function Home() {
         <div className={styles.noteWrapper}>
           <NoteContextProvider>
             <TranscriptionButton />
-            <TranscriptionDisplay Id={selectedNote?.id} />
+            <TranscriptionDisplay />
           </NoteContextProvider>
         </div>
       </ScrollView>
