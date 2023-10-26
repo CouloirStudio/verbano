@@ -1,23 +1,19 @@
 import styles from './transcription.module.scss';
-import { useProjectContext } from '../../contexts/ProjectContext';
-import { GET_TRANSCRIPTION } from '../../graphql/queries/getNotes';
+import {useProjectContext} from '../../contexts/ProjectContext';
+import {GET_TRANSCRIPTION} from '../../graphql/queries/getNotes';
 import Box from '@mui/material/Box';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import React, { useEffect } from 'react';
-import { useLazyQuery } from '@apollo/client';
-import { useNoteContext } from '@/app/contexts/NoteContext';
+import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
+import React, {useEffect} from 'react';
+import {useLazyQuery} from '@apollo/client';
+import {useNoteContext} from '@/app/contexts/NoteContext';
 import Display from '@/app/components/Display';
-
-interface TranscriptionDisplayProps {
-  Id?: string;
-}
 
 /**
  * A functional component to display a transcription.
  * @param Id
  * @constructor
  */
-const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
+const TranscriptionDisplay: React.FC = () => {
   const { selectedNote } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const { transcription, setTranscription } = useNoteContext();
@@ -28,9 +24,11 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
   // Perform these actions when the component is rendered
   useEffect(() => {
     // Check for existing transcription
-    if (Id) {
-      getTranscript({ variables: { id: Id } });
-    }
+
+    if (!selectedNote?.id) return;
+
+    getTranscript({ variables: { id: selectedNote.id } });
+
     if (data && data.getTranscription) {
       try {
         const transcriptionData = JSON.parse(data.getTranscription);
@@ -46,7 +44,14 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
     } else {
       setTranscription('');
     }
-  }, [data, setTranscription, setIsError, setErrorMessage, Id, getTranscript]);
+  }, [
+    data,
+    setTranscription,
+    setIsError,
+    setErrorMessage,
+    selectedNote?.id,
+    getTranscript,
+  ]);
 
   return (
     <Box className={styles.transcription}>
