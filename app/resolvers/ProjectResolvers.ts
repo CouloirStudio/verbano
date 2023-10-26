@@ -1,7 +1,7 @@
-import {INote, Note} from '../models/Note';
-import {IProject, Project} from '../models/Project';
-import {ApolloError} from 'apollo-server-express';
-import {User} from '../models/User';
+import { INote, Note } from "../models/Note";
+import { IProject, Project } from "../models/Project";
+import { ApolloError } from "apollo-server-express";
+import { User } from "../models/User";
 
 /**
  * Resolvers for querying projects from the database.
@@ -68,14 +68,13 @@ export const ProjectMutations = {
         audioLocation: '',
         transcription: '',
         tags: [],
-        projectId: project._id,
         noteName: 'Default Note',
       });
 
       const savedDefaultNote = await defaultNote.save();
 
       // Add the default note's ID to the project's notes array
-      project.notes.push(savedDefaultNote._id);
+      project.notes.push({ note: savedDefaultNote._id, position: 0 });
       await project.save();
 
       if (!user.projectIds) {
