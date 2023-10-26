@@ -1,10 +1,10 @@
-import React from "react";
-import { useProjectContext } from "@/app/contexts/ProjectContext";
-import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
-import { transcribe } from "@/app/api/transcription";
-import IconButton from "@mui/material/IconButton";
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-import { useNoteContext } from "@/app/contexts/NoteContext";
+import React from 'react';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
+import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
+import {transcribe} from '@/app/api/transcription';
+import IconButton from '@mui/material/IconButton';
+import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import {useNoteContext} from '@/app/contexts/NoteContext';
 
 /**
  * A button that grabs the selected note and transcribes the audio. .
@@ -23,19 +23,24 @@ const TranscriptionButton = () => {
   const transcribeAudio = () => {
     try {
       if (selectedNote) {
-        // Transcribe audio
-        transcribe(
-          selectedNote?.audioLocation,
-          BASE_URL,
-          selectedNote?.id,
-        ).then((transcription) => {
-          if (!transcription) {
-            return;
-          }
-          // Set transcription in the NoteContext so that the display updates
-          // this works
-          setTranscription(transcription.text);
-        });
+        try {
+          // Transcribe audio
+          transcribe(
+            selectedNote?.audioLocation,
+            BASE_URL,
+            selectedNote?.id,
+          ).then((transcription) => {
+            if (!transcription) {
+              return;
+            }
+            // Set transcription in the NoteContext so that the display updates
+            // this works
+            setTranscription(transcription.text);
+          });
+        } catch (err: any) {
+          setErrorMessage(err.message);
+          setIsError(true);
+        }
       } else {
         // There should be a selected note if this button is pressed
         setIsError(true);
@@ -49,7 +54,16 @@ const TranscriptionButton = () => {
   };
 
   return (
-    <IconButton disabled={selectedNote === undefined} onClick={transcribeAudio}>
+    <IconButton
+      sx={{
+        //temporary styling for presentation
+        width: '50px',
+        height: '50px',
+        margin: 'auto',
+      }}
+      disabled={!selectedNote?.audioLocation}
+      onClick={transcribeAudio}
+    >
       <DriveFileRenameOutlineOutlinedIcon />
     </IconButton>
   );
