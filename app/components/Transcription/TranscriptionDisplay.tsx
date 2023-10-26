@@ -7,6 +7,7 @@ import React, {useEffect} from 'react';
 import {useLazyQuery} from '@apollo/client';
 import {useNoteContext} from '@/app/contexts/NoteContext';
 import Display from '@/app/components/Display';
+import ScrollView from '@/app/components/ScrollView';
 
 /**
  * A functional component to display a transcription.
@@ -55,7 +56,9 @@ const TranscriptionDisplay: React.FC = () => {
 
   return (
     <Box className={styles.transcription}>
-      <Display content={transcription} title={selectedNote?.noteName} />
+      <ScrollView className={styles.scrollView}>
+        <Display content={transcription} title={selectedNote?.noteName} />
+      </ScrollView>
     </Box>
   );
 };

@@ -3,8 +3,9 @@ import {useProjectContext} from '@/app/contexts/ProjectContext';
 import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
 import {transcribe} from '@/app/api/transcription';
 import IconButton from '@mui/material/IconButton';
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import {useNoteContext} from '@/app/contexts/NoteContext';
+import {TbFileTextAi} from 'react-icons/tb';
+import {Tooltip} from '@mui/material';
 
 /**
  * A button that grabs the selected note and transcribes the audio. .
@@ -69,18 +70,19 @@ const TranscriptionButton = () => {
   };
 
   return (
-    <IconButton
-      sx={{
-        //temporary styling for presentation
-        width: '50px',
-        height: '50px',
-        margin: 'auto',
-      }}
-      disabled={!selectedNote?.audioLocation}
-      onClick={transcribeAudio}
-    >
-      <DriveFileRenameOutlineOutlinedIcon />
-    </IconButton>
+    <Tooltip title="Transcribe">
+      <IconButton
+        sx={{
+          //temporary styling for presentation
+          width: '50px',
+          height: '50px',
+        }}
+        disabled={!selectedNote?.audioLocation}
+        onClick={transcribeAudio}
+      >
+        <TbFileTextAi />
+      </IconButton>
+    </Tooltip>
   );
 };
 
