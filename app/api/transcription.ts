@@ -9,6 +9,9 @@ export const transcribe = async (
   baseURL: string,
   noteID: string,
 ): Promise<string> => {
+  if (!audioKey) {
+    throw new Error('This note does not have any audio recorded.');
+  }
   // setting request parameters
   const data = { key: audioKey, id: noteID };
   // Sending transcription request to the backend
