@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useProjectContext} from '@/app/contexts/ProjectContext';
 import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
 import {transcribe} from '@/app/api/transcription';
@@ -17,6 +17,12 @@ const TranscriptionButton = () => {
   const selectedNote = context.selectedNote;
   const { setTranscription } = useNoteContext();
 
+  const selectedNoteRef = useRef(selectedNote);
+
+  useEffect(() => {
+    selectedNoteRef.current = selectedNote;
+  }, [selectedNote]);
+
   /**
    * Transcribes audio with Whisper and sets transcription state to the new transcription.
    */
@@ -33,6 +39,15 @@ const TranscriptionButton = () => {
             if (!transcription) {
               return;
             }
+
+            // Check that the selected note has not changed since the transcription was requested
+            const currentNoteId = selectedNoteRef.current
+              ? selectedNoteRef.current.id
+              : null;
+            if (selectedNote.id !== currentNoteId) {
+              return;
+            }
+
             // Set transcription in the NoteContext so that the display updates
             // this works
             setTranscription(transcription.text);
