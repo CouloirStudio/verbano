@@ -1,21 +1,6 @@
 import mongoose from 'mongoose';
-import { Project } from './Project';
 
 const uri = process.env.MONGO_URI || '';
-
-async function createDefaultTestProject() {
-  const projectName = 'TestProject';
-  let testProject = await Project.findOne({ projectName });
-
-  if (!testProject) {
-    testProject = new Project({
-      projectName: projectName,
-      projectDescription: 'This is a default test project.',
-    });
-    await testProject.save();
-    console.log('Default TestProject created.');
-  }
-}
 
 export const connectDB = async () => {
   try {
@@ -24,8 +9,6 @@ export const connectDB = async () => {
     });
 
     console.log('Connected to MongoDB using Mongoose!');
-
-    await createDefaultTestProject();
 
     mongoose.connection.once('connected', () => {
       console.log('Mongoose default connection is open');
