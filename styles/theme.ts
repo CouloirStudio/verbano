@@ -7,6 +7,7 @@ interface CustomThemeOptions extends ThemeOptions {
     contrastBackground?: string;
     moreContrastBackground?: string;
     text?: string;
+    logoColour?: string;
   };
 }
 
@@ -61,6 +62,7 @@ export const lightThemeOptions: CustomThemeOptions = {
     contrastBackground: '#FAFAFA',
     moreContrastBackground: '#EEEEEE',
     text: black,
+    logoColour: primaryContrastText,
   },
   typography: commonTypography,
   components: {
@@ -99,6 +101,7 @@ export const darkThemeOptions: CustomThemeOptions = {
     contrastBackground: '#1E1E1E',
     moreContrastBackground: '#121212',
     text: white,
+    logoColour: primaryColor,
   },
   typography: commonTypography,
 };
