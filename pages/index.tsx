@@ -12,7 +12,10 @@ export default function Home() {
   const theme = useTheme();
 
   return (
-    <div className={styles.container} style={{ backgroundColor: theme.custom?.contrastBackground ?? '' }}>
+    <div
+      className={styles.container}
+      style={{ backgroundColor: theme.custom?.contrastBackground ?? '' }}
+    >
       <div className={styles.noteWrapper}>
         {selectedNote && (
           <NoteContextProvider>
@@ -23,7 +26,13 @@ export default function Home() {
         )}
       </div>
 
-      <div className={styles.footer} style={{ backgroundColor: theme.custom?.moreContrastBackground ?? '', color: theme.custom?.text ?? '' }}>
+      <div
+        className={styles.footer}
+        style={{
+          backgroundColor: theme.custom?.moreContrastBackground ?? '',
+          color: theme.custom?.text ?? '',
+        }}
+      >
         <Box className={styles.footerContent}>
           <Typography variant={'subtitle1'}>Source Mode</Typography>
           {selectedNote && selectedNote.transcription && (

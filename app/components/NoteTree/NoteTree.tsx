@@ -161,7 +161,10 @@ function NoteTree() {
   };
 
   return (
-    <Box className={styles.section} style={{ backgroundColor: theme.custom?.moreContrastBackground }} >
+    <Box
+      className={styles.section}
+      style={{ backgroundColor: theme.custom?.moreContrastBackground }}
+    >
       <Tabs
         value={activeTab}
         onChange={(event, newValue) => setActiveTab(newValue)}
