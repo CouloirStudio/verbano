@@ -1,4 +1,4 @@
-import { gql } from "apollo-server-express";
+import { gql } from 'apollo-server-express';
 
 /**
  * GraphQL schema for the Note type and associated operations.

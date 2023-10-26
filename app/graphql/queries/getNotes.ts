@@ -1,5 +1,5 @@
-import gql from "graphql-tag";
-import { DocumentNode } from "graphql/language";
+import gql from 'graphql-tag';
+import { DocumentNode } from 'graphql/language';
 
 // graphql/queries/getNotes.ts
 export const GET_PROJECTS_AND_NOTES = gql`

@@ -1,6 +1,6 @@
-import React, {ChangeEvent} from 'react';
+import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Login/InputField';
-import {AiOutlineMail} from 'react-icons/ai';
+import { AiOutlineMail } from 'react-icons/ai';
 
 interface EmailInputProps {
   value: string;
@@ -29,7 +29,7 @@ const UpdateEmailField: React.FC<EmailInputProps> = ({ value, onChange }) => {
   return (
     <InputField
       label="Update Email"
-      icon={<AiOutlineMail/>}
+      icon={<AiOutlineMail />}
       clearError={() => {}}
       error={false}
       isRequired={false}
