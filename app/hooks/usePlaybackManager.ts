@@ -76,6 +76,7 @@ const usePlaybackManager = () => {
     try {
       const currentAudioPlayer = audioPlayerRef.current;
 
+      // If the audio source has changed, reset the current audio player
       if (currentAudioSourceRef.current !== audioKey) {
         if (currentAudioPlayer.isLoaded) {
           // Pause the current audio and reset the current time

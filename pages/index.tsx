@@ -1,8 +1,6 @@
 import { useProjectContext } from '../app/contexts/ProjectContext';
 import styles from '../styles/noteDashboard.module.scss';
-import ScrollView from '../app/components/ScrollView';
 import TranscriptionDisplay from '../app/components/Transcription/TranscriptionDisplay';
-import TranscriptionButton from '@/app/components/Transcription/TranscriptionButton';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { NoteContextProvider } from '@/app/contexts/NoteContext';
@@ -13,15 +11,16 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <ScrollView>
-        <div className={styles.noteWrapper}>
+      <div className={styles.noteWrapper}>
+        {selectedNote && (
           <NoteContextProvider>
             <NoteDetails />
-            <TranscriptionButton />
+
             <TranscriptionDisplay />
           </NoteContextProvider>
-        </div>
-      </ScrollView>
+        )}
+      </div>
+
       <div className={styles.footer}>
         <Box className={styles.footerContent}>
           <Typography variant={'subtitle1'}>Source Mode</Typography>
