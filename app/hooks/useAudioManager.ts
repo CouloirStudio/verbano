@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { uploadAudio } from '../api/audio';
-import { useRecorderContext } from '../contexts/RecorderContext';
-import { useErrorModalContext } from '../contexts/ErrorModalContext';
-import { AudioRecorder } from '../api/recorder';
+import {useState} from 'react';
+import {useRecorderContext} from '../contexts/RecorderContext';
+import {useErrorModalContext} from '../contexts/ErrorModalContext';
+import {AudioRecorder} from '../api/recorder';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
 
 /**
  * Custom hook to manage the audio recording and uploading functionalities.
@@ -13,6 +13,8 @@ const useAudioManager = () => {
   const BASE_URL = 'http://localhost:3000';
   const { setAudioBlob } = useRecorderContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
+  const { selectedProject, selectedNote, handleAudioUpload } =
+    useProjectContext(); // Retrieve selectedProject from context
 
   const [recordingState, setRecordingState] = useState<
     'idle' | 'recording' | 'processing'
@@ -57,8 +59,7 @@ const useAudioManager = () => {
     setRecordingState('processing');
     try {
       const blob = await mediaRecorder.stopRecording();
-      const data = await uploadAudio(blob, BASE_URL);
-      console.log('Uploaded successfully. URL:', data.url);
+      const data = await handleAudioUpload(blob);
       setAudioBlob(blob);
       mediaRecorder.cleanup();
       setRecordingState('idle');

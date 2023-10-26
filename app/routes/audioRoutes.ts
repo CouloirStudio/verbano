@@ -1,8 +1,8 @@
 import express from 'express';
 import multer from 'multer';
 import { generatePresignedUrl, uploadAudioToS3 } from '../services/AWSService';
-import { Note } from '../models/Note';
-import { Project } from '../models/Project';
+import { INote, Note } from '../models/Note';
+import { IProject, Project } from '../models/Project';
 
 const router = express.Router();
 
@@ -23,25 +23,47 @@ router.post('/upload', upload.single('audio'), async (req, res) => {
     const audioBuffer = req.file.buffer;
     const key = await uploadAudioToS3(audioBuffer);
 
-    // Get the TestProject ID
-    const testProject = await Project.findOne({ projectName: 'TestProject' });
+    let note: INote | null = null;
+    let project: IProject | null = null;
 
-    if (!testProject) {
-      throw new Error('TestProject not found');
+    if (req.body.noteId) {
+      note = await Note.findById(req.body.noteId);
+      if (note) {
+        project = await Project.findOne({ 'notes.note': note._id });
+        note.audioLocation = key;
+        await note.save();
+      }
     }
 
-    // Create a new Note entry with the URL and associate with TestProject
-    const note = new Note({
-      audioLocation: key,
-      projectId: testProject._id,
-      noteName: new Date().toISOString(), // Using date as note name for now.
-    });
+    // Check if projectId in request body
+    if (!project && req.body.projectId) {
+      project = await Project.findById(req.body.projectId);
+    }
 
-    await note.save();
+    if (!project) {
+      project = new Project({
+        projectName: 'New Project',
+      });
+      await project.save();
+    }
 
-    // Add note ID to the notes array of the project
-    testProject.notes.push(note._id);
-    await testProject.save();
+    if (!project) {
+      throw new Error('Project not found.');
+    }
+
+    if (!note) {
+      // Create a new Note entry with the URL and associate with TestProject
+      note = new Note({
+        audioLocation: key,
+        projectId: project._id,
+        noteName: new Date().toISOString(), // Using date as note name for now.
+      });
+      await note.save();
+
+      // Add note ID to the notes array of the project
+      project.notes.push({ note: note._id, position: project.notes.length });
+      await project.save();
+    }
 
     res.json({ success: true, noteId: note._id, key });
   } catch (error) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './recorder.module.scss';
+import { BsFillStopCircleFill, BsRecordCircle } from 'react-icons/bs';
 
 export interface RecordButtonProps {
   isRecording: boolean;
@@ -19,7 +20,7 @@ const RecordButton: React.FC<RecordButtonProps> = ({
       isRecording ? styles.recording : ''
     } ${styles[theme]}`} // Added theme styles here
   >
-    {isRecording ? 'Stop' : 'Start'}
+    {isRecording ? <BsFillStopCircleFill /> : <BsRecordCircle />}
   </button>
 );
 

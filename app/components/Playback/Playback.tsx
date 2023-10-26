@@ -3,22 +3,24 @@ import styles from './playback.module.scss';
 import usePlaybackManager from '@/app/hooks/usePlaybackManager';
 import PlaybackButton from './PlaybackButton';
 import { useErrorModalContext } from '../../contexts/ErrorModalContext';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 interface PlaybackProps {
-  audioUrl: string;
+  // audioUrl: string;
   baseUrl: string;
 }
 
-const Playback: React.FC<PlaybackProps> = ({ audioUrl, baseUrl }) => {
+const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
   const { startPlayback, pausePlayback, playbackState } = usePlaybackManager();
   const { setIsError, setErrorMessage } = useErrorModalContext();
+  const { selectedNote } = useProjectContext();
 
   const togglePlayback = async () => {
     try {
       switch (playbackState) {
         case 'idle':
         case 'paused':
-          await startPlayback(baseUrl, audioUrl);
+          await startPlayback(baseUrl, selectedNote?.audioLocation || '');
           break;
         case 'playing':
           await pausePlayback();

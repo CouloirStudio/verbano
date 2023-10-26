@@ -9,7 +9,6 @@ const router = express.Router();
  * Endpoint to transcribe audio
  */
 router.post('/transcribe', async (req, res) => {
-  console.log('inside transcription route');
   try {
     const data = req.body;
     const key = data.key;
@@ -38,7 +37,6 @@ router.post('/transcribe', async (req, res) => {
     }
     note.transcription = JSON.stringify(transcription);
     note.save();
-
     // return the transcription
     res.json({ success: true, transcription: transcription });
   } catch (error) {

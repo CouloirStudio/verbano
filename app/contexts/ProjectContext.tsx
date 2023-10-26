@@ -84,12 +84,30 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
           setSelectedProject(updatedSelectedProject || null);
         }
       }
+
+      if (selectedNote) {
+        const updatedSelectedNote = data.listProjects
+          .find((project) => project.id === selectedProject?.id)
+          ?.notes.find((note) => note.note.id === selectedNote.id);
+
+        if (
+          JSON.stringify(updatedSelectedNote) !== JSON.stringify(selectedNote)
+        ) {
+          if (updatedSelectedNote) setSelectedNote(updatedSelectedNote.note);
+        }
+      }
     }
   }, [data, selectedProject]);
 
   async function handleAudioUpload(audioFile: Blob) {
     try {
-      await uploadAudio(audioFile, 'http://localhost:3000');
+      const response = await uploadAudio(
+        audioFile,
+        'http://localhost:3000',
+        selectedProject,
+        selectedNote,
+      );
+
       const { data: updatedData } = await client.readQuery({
         query: GET_PROJECTS_AND_NOTES,
       });
