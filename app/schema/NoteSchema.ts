@@ -21,6 +21,7 @@ const NoteSchema = gql`
     transcription: String
     tags: [String!]
     noteDescription: String
+    projectId: ID!
   }
 
   extend type Query {
