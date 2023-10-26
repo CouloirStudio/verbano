@@ -26,13 +26,12 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
   // Use GraphQL to get the transcription
   const [getTranscript, { data }] = useLazyQuery(GET_TRANSCRIPTION);
 
+  // Perform these actions when the component is rendered
   useEffect(() => {
+    // Check for existing transcription
     if (Id) {
       getTranscript({ variables: { id: Id } });
     }
-  }, [Id, getTranscript]);
-
-  useEffect(() => {
     if (data && data.getTranscription) {
       try {
         const transcriptionData = JSON.parse(data.getTranscription);
@@ -46,7 +45,7 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
         }
       }
     }
-  }, [data, setTranscription, setIsError, setErrorMessage]);
+  }, [data, setTranscription, setIsError, setErrorMessage, Id, getTranscript]);
 
   return (
     <Box className={styles.transcription}>
