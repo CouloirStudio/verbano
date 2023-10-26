@@ -18,9 +18,8 @@ interface TranscriptionDisplayProps {
  * @constructor
  */
 const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
-  const context = useProjectContext();
+  const { selectedNote } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
-  const selectedNote = context.selectedNote;
   const { transcription, setTranscription } = useNoteContext();
 
   // Use GraphQL to get the transcription
@@ -44,6 +43,8 @@ const TranscriptionDisplay: React.FC<TranscriptionDisplayProps> = ({ Id }) => {
           setErrorMessage(`An unknown error occurred.`);
         }
       }
+    } else {
+      setTranscription('');
     }
   }, [data, setTranscription, setIsError, setErrorMessage, Id, getTranscript]);
 
