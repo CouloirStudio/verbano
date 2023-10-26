@@ -1,7 +1,7 @@
 // @ts-ignore
 
-import client from "../config/apolloClient";
-import { GET_PROJECTS_AND_NOTES } from "../graphql/queries/getNotes";
+import client from '../config/apolloClient';
+import {GET_PROJECTS_AND_NOTES} from '../graphql/queries/getNotes';
 
 /**
  * Type representing the structure of the response received
@@ -23,17 +23,23 @@ type UploadAudioResponse = {
  *
  * @param blob - The audio blob to be uploaded.
  * @param baseURL - The base URL to which the audio should be uploaded.
+ * @param selectedProject - The project to which the audio should be uploaded.
+ * @param selectedNote - The note to which the audio should be uploaded.
  * @returns A promise that resolves to an object representing the server's response to the upload request.
  * @throws Will throw an error if the upload is unsuccessful.
  */
 export const uploadAudio = async (
   blob: Blob,
   baseURL: string,
+  selectedProject: { id: string } | null,
+  selectedNote: { id: string } | null,
 ): Promise<UploadAudioResponse> => {
   // Logging blob info
 
   const formData = new FormData();
   formData.append('audio', blob, 'myAudioBlob.wav');
+  if (selectedProject) formData.append('projectId', selectedProject.id);
+  if (selectedNote) formData.append('noteId', selectedNote.id);
 
   const response = await fetch(`${baseURL}/audio/upload`, {
     method: 'POST',

@@ -42,9 +42,7 @@ const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
 
   return (
     <div className={styles.playback}>
-      {!selectedNote?.audioLocation ? (
-        ''
-      ) : playbackState === 'processing' ? (
+      {playbackState === 'processing' ? (
         <span>Processing...</span>
       ) : (
         <PlaybackButton
