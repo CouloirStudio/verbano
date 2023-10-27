@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router';
 import '@/styles/globals.scss';
 import type { AppProps } from 'next/app';
-import Layout from '@/app/components/Layout';
+import Layout from '@/app/components/Layout/MainLayout';
 import { ProjectProvider } from '@/app/contexts/ProjectContext';
 import { ApolloProvider } from '@apollo/client';
 import client from '@/app/config/apolloClient';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
-import ErrorModal from '@/app/components/ErrorModal';
-import { UserProvider } from '@/app/components/UserProvider';
+import ErrorModal from '@/app/components/Modals/ErrorModal';
+import { UserProvider } from '@/app/contexts/UserContext';
 import CustomThemeProvider from '@/app/contexts/ThemeContext';
 
 function MyApp({ Component, pageProps }: AppProps) {

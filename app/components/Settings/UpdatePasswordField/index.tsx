@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react';
-import InputField from '@/app/components/Login/InputField';
+import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineLock } from 'react-icons/ai';
 
 interface PasswordInputProps {

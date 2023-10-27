@@ -1,10 +1,10 @@
 import { useProjectContext } from '@/app/contexts/ProjectContext';
-import styles from '@/styles/noteDashboard.module.scss';
-import TranscriptionDisplay from '@/app/components/Transcription/TranscriptionDisplay';
+import styles from '@/pages/styles/noteDashboard.module.scss';
+import TranscriptionDisplay from '@/app/components/Audio/Transcription/TranscriptionDisplay';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { NoteContextProvider } from '@/app/contexts/NoteContext';
-import NoteDetails from '@/app/components/Note/NoteDetails';
+import NoteDetails from '@/app/components/Notes/Note/NoteDetails';
 import { useTheme } from '@mui/material/styles';
 
 export default function Home() {

@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import InputField from '@/app/components/Login/InputField';
+import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineUser } from 'react-icons/ai';
 
 interface FullNameInputProps {
