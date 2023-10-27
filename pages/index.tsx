@@ -1,6 +1,6 @@
-import { useProjectContext } from '../app/contexts/ProjectContext';
-import styles from '../styles/noteDashboard.module.scss';
-import TranscriptionDisplay from '../app/components/Transcription/TranscriptionDisplay';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import styles from '@/styles/noteDashboard.module.scss';
+import TranscriptionDisplay from '@/app/components/Transcription/TranscriptionDisplay';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { NoteContextProvider } from '@/app/contexts/NoteContext';
@@ -14,39 +14,38 @@ export default function Home() {
   return (
     <div
       className={styles.container}
-      style={{ backgroundColor: theme.custom?.contrastBackground ?? '' }}
+      style={{ backgroundColor: theme.custom?.mainBackground ?? '' }}
     >
       <div className={styles.noteWrapper}>
         {selectedNote && (
           <NoteContextProvider>
             <NoteDetails />
-
             <TranscriptionDisplay />
           </NoteContextProvider>
         )}
       </div>
 
-      <div
+      <Box
         className={styles.footer}
-        style={{
-          backgroundColor: theme.custom?.moreContrastBackground ?? '',
+        sx={{
+          backgroundColor: theme.custom?.contrastBackground ?? '',
           color: theme.custom?.text ?? '',
         }}
       >
         <Box className={styles.footerContent}>
-          <Typography variant={'subtitle1'}>Source Mode</Typography>
+          <Typography variant="subtitle1">Source Mode</Typography>
           {selectedNote && selectedNote.transcription && (
-            <Typography variant={'subtitle1'}>
-              Words: {selectedNote?.transcription?.toString().split(' ').length}
-            </Typography>
-          )}
-          {selectedNote && selectedNote.transcription && (
-            <Typography variant={'subtitle1'}>
-              Characters: {selectedNote?.transcription?.toString().length}
-            </Typography>
+            <>
+              <Typography variant="subtitle1">
+                Words: {selectedNote.transcription.toString().split(' ').length}
+              </Typography>
+              <Typography variant="subtitle1">
+                Characters: {selectedNote.transcription.toString().length}
+              </Typography>
+            </>
           )}
         </Box>
-      </div>
+      </Box>
     </div>
   );
 }
