@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
+import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes';
 import { NoteType, ProjectType } from '../graphql/resolvers/types';
 import { uploadAudio } from '../api/audio';
 import client from '../config/apolloClient';
@@ -52,7 +52,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   );
 
   const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
-    GET_PROJECTS_AND_NOTES,
+    GetProjectsAndNotes,
   );
 
   async function refetchData() {
@@ -109,7 +109,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
       );
 
       const { data: updatedData } = await client.readQuery({
-        query: GET_PROJECTS_AND_NOTES,
+        query: GetProjectsAndNotes,
       });
       if (updatedData && updatedData.listProjects) {
         setProjects(updatedData.listProjects);

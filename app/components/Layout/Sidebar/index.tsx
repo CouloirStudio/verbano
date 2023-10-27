@@ -1,15 +1,13 @@
 import React from 'react';
 import styles from './sidebar.module.scss';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
-import ProjectTree from '../../Projects/ProjectTree';
+import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { GET_NOTE } from '@/app/graphql/queries/getNotes';
-import {
-  MOVE_NOTE_ORDER,
-  MOVE_NOTE_TO_PROJECT,
-} from '@/app/graphql/mutations/addNotes';
+import GetNote from '@/app/graphql/queries/GetNote';
+import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder';
+import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject';
 import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
 import { useTheme } from '@mui/material/styles';
 
@@ -75,9 +73,9 @@ const Sidebar: React.FC = () => {
   const { projects, selectedProject, setSelectedProject, refetchData } =
     useProjectContext();
 
-  const [getNote, { data: noteData }] = useLazyQuery(GET_NOTE);
-  const [moveNoteToProject] = useMutation(MOVE_NOTE_TO_PROJECT);
-  const [moveNotePosition] = useMutation(MOVE_NOTE_ORDER);
+  const [getNote, { data: noteData }] = useLazyQuery(GetNote);
+  const [moveNoteToProject] = useMutation(MoveNoteToProject);
+  const [moveNotePosition] = useMutation(MoveNoteOrder);
 
   const theme = useTheme();
   const sidebarBg = theme.custom?.moreContrastBackground ?? '';

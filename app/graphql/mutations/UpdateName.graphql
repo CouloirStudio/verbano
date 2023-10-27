@@ -1,0 +1,7 @@
+mutation UpdateName($email: String!, $firstName: String!, $lastName: String!) {
+  updateName(email: $email, firstName: $firstName, lastName: $lastName) {
+    email
+    firstName
+    lastName
+  }
+}

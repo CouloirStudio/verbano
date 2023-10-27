@@ -3,7 +3,7 @@ import React from 'react';
 import { useMutation } from '@apollo/client';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { PiNote } from 'react-icons/pi';
-import { ADD_NOTE } from '@/app/graphql/mutations/addNotes'; // adjust the path accordingly
+import AddNote from '@/app/graphql/mutations/AddNote';
 
 const style = {
   color: '#4d99a8',
@@ -12,7 +12,7 @@ const style = {
 
 function CreateProjectButton() {
   // Define the mutation hook
-  const [addNote, { data, loading, error }] = useMutation(ADD_NOTE);
+  const [addNote, { data, loading, error }] = useMutation(AddNote);
 
   const context = useProjectContext();
 

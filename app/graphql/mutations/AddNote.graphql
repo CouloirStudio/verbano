@@ -1,0 +1,11 @@
+mutation AddNote($input: NoteInput!) {
+  addNote(input: $input) {
+    id
+    audioLocation
+    dateCreated
+    transcription
+    tags
+    noteName
+    noteDescription
+  }
+}

@@ -4,8 +4,8 @@ import { useMutation } from '@apollo/client';
 import { Button, CircularProgress, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
 
-import { CURRENT_USER_QUERY } from '@/app/graphql/queries/getUsers';
-import { LOGIN_MUTATION } from '@/app/graphql/mutations/addUsers';
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
+import UserLogin from '@/app/graphql/mutations/UserLogin';
 
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { useTheme } from '@mui/material/styles';
@@ -17,10 +17,10 @@ const LoginPage = () => {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const theme = useTheme();
 
-  const [login] = useMutation(LOGIN_MUTATION, {
+  const [login] = useMutation(UserLogin, {
     update: (cache, { data: { login } }) =>
       cache.writeQuery({
-        query: CURRENT_USER_QUERY,
+        query: GetCurrentUser,
         data: { currentUser: login.user },
       }),
   });

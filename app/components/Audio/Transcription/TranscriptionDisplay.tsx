@@ -1,6 +1,6 @@
 import styles from './transcription.module.scss';
 import { useProjectContext } from '../../../contexts/ProjectContext';
-import { GET_TRANSCRIPTION } from '../../../graphql/queries/getNotes';
+import GetTranscription from '@/app/graphql/queries/GetTranscription';
 import Box from '@mui/material/Box';
 import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import React, { useEffect } from 'react';
@@ -20,7 +20,7 @@ const TranscriptionDisplay: React.FC = () => {
   const { transcription, setTranscription } = useNoteContext();
 
   // Use GraphQL to get the transcription
-  const [getTranscript, { data }] = useLazyQuery(GET_TRANSCRIPTION);
+  const [getTranscript, { data }] = useLazyQuery(GetTranscription);
 
   // Perform these actions when the component is rendered
   useEffect(() => {

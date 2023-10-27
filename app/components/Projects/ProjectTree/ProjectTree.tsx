@@ -18,7 +18,7 @@ import { ProjectNoteType, ProjectType } from '../../../graphql/resolvers/types';
 import { Droppable } from '@hello-pangea/dnd';
 import { useMutation } from '@apollo/client';
 import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
-import { DELETE_PROJECT } from '@/app/graphql/mutations/addProjects';
+import DeleteProject from '@/app/graphql/mutations/DeleteProject';
 
 interface CustomTreeContextType {
   project?: ProjectType;
@@ -162,7 +162,7 @@ function ProjectTree() {
   const [rightClickedProjectId, setRightClickedProjectId] = useState<
     string | null
   >(null);
-  const [deleteProject, { loading, error }] = useMutation(DELETE_PROJECT);
+  const [deleteProject, { loading, error }] = useMutation(DeleteProject);
 
   const handleContextMenu = (event: React.MouseEvent, projectId: string) => {
     event.preventDefault();

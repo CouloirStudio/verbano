@@ -1,0 +1,12 @@
+query GetProject($id: ID!) {
+  getProject(id: $id) {
+    id
+    projectName
+    notes {
+      note {
+        id
+      }
+      position
+    }
+  }
+}

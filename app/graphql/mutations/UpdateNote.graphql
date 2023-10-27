@@ -1,0 +1,11 @@
+mutation UpdateNote($id: ID!, $input: NoteInput!) {
+  updateNote(id: $id, input: $input) {
+    id
+    audioLocation
+    dateCreated
+    transcription
+    tags
+    noteName
+    noteDescription
+  }
+}
