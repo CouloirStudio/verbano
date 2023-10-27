@@ -17,7 +17,7 @@ import { useUser } from '@/app/contexts/UserContext';
  * It displays user information and navigation links to various settings options.
  *
  * @remarks
- * This component uses data from the `CURRENT_USER_QUERY` to display the user's first name, last name, and email.
+ * This component uses data from the `GetCurrentUser` to display the user's first name, last name, and email.
  *
  * @see {@link https://nextjs.org/ | Next.js} for routing capabilities.
  * @see {@link https://www.apollographql.com/docs/react/ | Apollo Client} for GraphQL queries.

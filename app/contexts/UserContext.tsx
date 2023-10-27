@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext } from 'react';
-import { CURRENT_USER_QUERY } from '@/app/graphql/queries/getUsers';
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
 import { IUser } from '@/app/models/User';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -14,7 +14,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const { loading, error, data } = useQuery(CURRENT_USER_QUERY);
+  const { loading, error, data } = useQuery(GetCurrentUser);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;

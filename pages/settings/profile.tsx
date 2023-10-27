@@ -4,17 +4,15 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import styles from '../../styles/globalSettings.module.scss';
 import classes from '../../styles/globalSettings.module.scss';
-import { CURRENT_USER_QUERY } from '@/app/graphql/queries/getUsers';
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
 import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import UpdateEmailField from '@/app/components/Settings/UpdateEmailField/index';
 import UpdateFullName from '@/app/components/Settings/UpdateFullNameField';
 import { SettingsSidebar } from '@/app/components/Settings/SettingsSidebar';
 import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
-import {
-  UPDATE_FULL_NAME_MUTATION,
-  UPDATE_EMAIL_MUTATION,
-  UPDATE_PASSWORD_MUTATION,
-} from '@/app/graphql/mutations/addSettings';
+import UpdateName from '@/app/graphql/mutations/UpdateName';
+import UpdateEmail from '@/app/graphql/mutations/UpdateEmail';
+import UpdatePassword from '@/app/graphql/mutations/UpdatePassword';
 import CurrentUserData from './interface/CurrentUserData';
 
 /**
@@ -50,7 +48,7 @@ const Profile = () => {
 
   // Use Apollo Client to fetch user data
   const { loading, error, data, refetch } = useQuery<CurrentUserData>(
-    CURRENT_USER_QUERY,
+    GetCurrentUser,
     {
       onError: (error) => {
         // Handle errors from the query
@@ -62,7 +60,7 @@ const Profile = () => {
   );
 
   // Define a mutation to update the user's email with Apollo Client
-  const [updateEmail] = useMutation(UPDATE_EMAIL_MUTATION, {
+  const [updateEmail] = useMutation(UpdateEmail, {
     onError: (error) => {
       console.error('Error updating email', error.message);
       setErrorMessage(error.message);
@@ -71,7 +69,7 @@ const Profile = () => {
     update: (cache, { data: { updateEmail } }) => {
       // Update the cache with the new email data
       const userData = cache.readQuery<CurrentUserData>({
-        query: CURRENT_USER_QUERY,
+        query: GetCurrentUser,
       });
 
       if (userData && userData.currentUser) {
@@ -84,7 +82,7 @@ const Profile = () => {
         };
 
         cache.writeQuery({
-          query: CURRENT_USER_QUERY,
+          query: GetCurrentUser,
           data: updatedUserData,
         });
         console.log('Updated cache data:', userData);
@@ -93,7 +91,7 @@ const Profile = () => {
   });
 
   // Define a mutation to update the user's full name with Apollo Client
-  const [updateFullName] = useMutation(UPDATE_FULL_NAME_MUTATION, {
+  const [updateFullName] = useMutation(UpdateName, {
     onError: (error) => {
       // Handle errors from the mutation
       console.error('Error updating full name:', error.message);
@@ -106,7 +104,7 @@ const Profile = () => {
 
       // Update the cache with the new full name data
       const userData = cache.readQuery<CurrentUserData>({
-        query: CURRENT_USER_QUERY,
+        query: GetCurrentUser,
       });
 
       console.log('Current cache data:', userData);
@@ -123,7 +121,7 @@ const Profile = () => {
         };
 
         cache.writeQuery({
-          query: CURRENT_USER_QUERY,
+          query: GetCurrentUser,
           data: updatedUserData,
         });
         console.log('Updated cache data:', userData);

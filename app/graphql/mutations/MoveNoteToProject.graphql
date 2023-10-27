@@ -1,0 +1,11 @@
+mutation MoveNoteToProject($noteId: ID!, $projectId: ID!) {
+  moveNoteToProject(noteId: $noteId, projectId: $projectId) {
+    id
+    audioLocation
+    dateCreated
+    transcription
+    tags
+    noteName
+    noteDescription
+  }
+}

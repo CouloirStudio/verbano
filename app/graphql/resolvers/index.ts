@@ -19,7 +19,7 @@ const resolvers = {
   },
   Project: {
     ...ProjectType,
-  }, // <-- Add this line
+  },
 };
 
 export default resolvers;

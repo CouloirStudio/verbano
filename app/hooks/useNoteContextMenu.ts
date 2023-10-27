@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { DELETE_NOTE } from '@/app/graphql/mutations/addNotes';
+import DeleteNote from '@/app/graphql/mutations/DeleteNote';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 export const useNoteContextMenu = () => {
@@ -12,7 +12,7 @@ export const useNoteContextMenu = () => {
   const [rightClickedNoteId, setRightClickedNoteId] = useState<string | null>(
     null,
   );
-  const [deleteNote, { loading, error }] = useMutation(DELETE_NOTE);
+  const [deleteNote, { loading, error }] = useMutation(DeleteNote);
 
   const handleContextMenu = (event: React.MouseEvent, noteId: string) => {
     event.preventDefault();

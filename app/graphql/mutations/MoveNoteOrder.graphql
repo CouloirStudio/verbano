@@ -1,0 +1,11 @@
+mutation MoveNoteOrder($noteId: ID!, $order: Int!) {
+  moveNoteOrder(noteId: $noteId, order: $order) {
+    id
+    audioLocation
+    dateCreated
+    transcription
+    tags
+    noteName
+    noteDescription
+  }
+}

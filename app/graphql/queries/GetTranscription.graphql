@@ -1,0 +1,3 @@
+query GetTranscription($id: ID!) {
+  getTranscription(id: $id)
+}

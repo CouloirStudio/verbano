@@ -1,19 +1,9 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
-
-const CURRENT_USER_QUERY = gql`
-  query CurrentUserQuery {
-    currentUser {
-      id
-      firstName
-      lastName
-      email
-    }
-  }
-`;
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser'
 
 const User = () => {
-  const { loading, error, data } = useQuery(CURRENT_USER_QUERY);
+  const { loading, error, data } = useQuery(GetCurrentUser);
 
   const isLoggedIn = data?.currentUser;
   if (isLoggedIn) {

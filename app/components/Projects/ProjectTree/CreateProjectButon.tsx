@@ -1,7 +1,7 @@
 import { CircularProgress, IconButton } from '@mui/material';
 import React from 'react';
 import { useMutation } from '@apollo/client';
-import { ADD_PROJECT } from '../../../graphql/mutations/addProjects';
+import AddProject from '@/app/graphql/mutations/AddProject';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { useProjectContext } from '@/app/contexts/ProjectContext'; // adjust the path accordingly
 
@@ -12,7 +12,7 @@ const style = {
 
 function CreateProjectButton() {
   // Define the mutation hook
-  const [addProject, { data, loading, error }] = useMutation(ADD_PROJECT);
+  const [addProject, { data, loading, error }] = useMutation(AddProject);
 
   const context = useProjectContext();
 

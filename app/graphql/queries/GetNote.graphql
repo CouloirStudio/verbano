@@ -1,0 +1,11 @@
+query GetNote($id: ID!) {
+  getNote(id: $id) {
+    id
+    audioLocation
+    dateCreated
+    transcription
+    tags
+    noteName
+    noteDescription
+  }
+}

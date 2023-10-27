@@ -1,7 +1,7 @@
 // @ts-ignore
 
 import client from '../config/apolloClient';
-import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
+import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes';
 
 /**
  * Type representing the structure of the response received
@@ -55,7 +55,7 @@ export const uploadAudio = async (
   // If the upload was successful, refetch the projects and notes
   if (data.success) {
     await client.query({
-      query: GET_PROJECTS_AND_NOTES,
+      query: GetProjectsAndNotes,
       fetchPolicy: 'network-only', // Bypass cache to get fresh data
     });
   }
