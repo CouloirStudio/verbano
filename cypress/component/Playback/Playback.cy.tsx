@@ -1,7 +1,7 @@
 import React from 'react';
-import Playback from '@/app/components/Playback/Playback';
+import Playback from '@/app/components/Audio/Playback/Playback';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
-import ErrorModal from '@/app/components/ErrorModal';
+import ErrorModal from '@/app/components/Modals/ErrorModal';
 
 describe('<Playback />', () => {
   beforeEach(() => {

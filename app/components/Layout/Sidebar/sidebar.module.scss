@@ -1,0 +1,25 @@
+@import '@/app/components/_shared/_variables.scss';
+
+.sidebar {
+  width: 600px;
+  flex-shrink: 0;
+  color: $card-color;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  height: calc(100vh - $header-height);
+  overflow-y: auto;
+
+  h1 {
+    @include verticalSpacing($spacing-base);
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      @include verticalSpacing(0.5rem);
+    }
+  }
+}

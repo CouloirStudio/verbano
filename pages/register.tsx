@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import styles from '../styles/register.module.scss';
+import styles from '@/pages/styles/register.module.scss';
 import { SIGNUP_MUTATION } from '@/app/graphql/mutations/addUsers';
 import { Button, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import InputField from '@/app/components/Login/InputField';
+import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
 
 const RegisterPage = () => {

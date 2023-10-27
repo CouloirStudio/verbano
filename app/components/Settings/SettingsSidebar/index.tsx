@@ -8,8 +8,8 @@ import {
   AiOutlineUser,
 } from 'react-icons/ai';
 import styles from './settingsSidebar.module.scss';
-import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
-import { useUser } from '../../UserProvider';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { useUser } from '@/app/contexts/UserContext';
 
 /**
  * `SettingsSidebar` is a React functional component that provides a sidebar for user settings.

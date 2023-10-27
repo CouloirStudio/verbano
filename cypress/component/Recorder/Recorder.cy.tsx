@@ -1,7 +1,7 @@
 import React from 'react';
 import { AudioRecorder } from '@/app/api/recorder';
-import Recorder from '../../../app/components/Recorder';
-import ErrorModal from '../../../app/components/ErrorModal';
+import Recorder from '../../../app/components/Audio/Recorder';
+import ErrorModal from '../../../app/components/Modals/ErrorModal';
 import { RecorderProvider } from '@/app/contexts/RecorderContext';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
 import client from '../../../app/config/apolloClient';

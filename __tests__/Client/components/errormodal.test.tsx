@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { render, screen } from '@testing-library/react';
-import ErrorModal from '@/app/components/ErrorModal';
+import ErrorModal from '@/app/components/Modals/ErrorModal';
 import { expect } from '@jest/globals';
 import {
   ErrorModalContextProvider,

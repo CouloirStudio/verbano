@@ -1,6 +1,6 @@
 import React from 'react';
 import { MockedProvider } from '@apollo/client/testing';
-import CreateProjectButton from '../../../app/components/ProjectTree/CreateProjectButon';
+import CreateProjectButton from '../../../app/components/Projects/ProjectTree/CreateProjectButon';
 import { ProjectProvider } from '../../../app/contexts/ProjectContext';
 
 describe('<CreateProjectButton />', () => {

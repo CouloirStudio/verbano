@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECTS_AND_NOTES } from '../graphql/queries/getNotes';
-import { NoteType, ProjectType } from '../resolvers/types';
+import { NoteType, ProjectType } from '../graphql/resolvers/types';
 import { uploadAudio } from '../api/audio';
 import client from '../config/apolloClient';
 
