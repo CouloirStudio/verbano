@@ -80,7 +80,7 @@ const Sidebar: React.FC = () => {
   const [moveNotePosition] = useMutation(MOVE_NOTE_ORDER);
 
   const theme = useTheme();
-  const sidebarBg = theme.custom?.contrastBackground ?? '';
+  const sidebarBg = theme.custom?.moreContrastBackground ?? '';
   const textColour = theme.custom?.text ?? '';
 
   if (!projects) return <p>Loading...</p>;

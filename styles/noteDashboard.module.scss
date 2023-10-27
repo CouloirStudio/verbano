@@ -13,7 +13,6 @@
     height: 25px;
     bottom: 0;
     left: 0;
-    background-color: #E0E0E0;
     justify-content: right;
 
     .footerContent {
@@ -29,13 +28,5 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-
-  > div {
-    border-bottom: 1px solid #ccc;
-
-    &:first-child {
-      border-top: 1px solid #ccc;
-    }
-  }
 }
 

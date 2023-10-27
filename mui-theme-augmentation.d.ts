@@ -3,15 +3,14 @@ import '@mui/material/styles';
 declare module '@mui/material/styles' {
   interface Theme {
     custom?: {
-      headerBackground?: string;
-      mainBackground?: string;
+      [key: string]: string | undefined;
     };
   }
-  // allow configuration using `createTheme`
+
+  // Allow configuration using `createTheme`
   interface ThemeOptions {
     custom?: {
-      headerBackground?: string;
-      mainBackground?: string;
+      [key: string]: string | undefined;
     };
   }
 }

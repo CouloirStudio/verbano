@@ -35,6 +35,7 @@ const InputField: React.FC<InputFieldProps> = ({
       {icon}
       {error ? (
         <TextField
+          fullWidth
           value={value}
           onChange={customOnChange}
           required={isRequired}
@@ -45,6 +46,7 @@ const InputField: React.FC<InputFieldProps> = ({
         />
       ) : (
         <TextField
+          fullWidth
           id="outlined-basic"
           value={value}
           onChange={onChange}

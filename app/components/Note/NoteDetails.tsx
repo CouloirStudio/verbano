@@ -7,26 +7,27 @@ import Recorder from '@/app/components/Recorder';
 import { Playback } from '@/app/components/Playback';
 import { TranscriptionButton } from '@/app/components/Transcription';
 import { useNoteContext } from '@/app/contexts/NoteContext';
+import { useTheme } from '@mui/material/styles';
 
 const NoteDetails = () => {
   const { selectedNote } = useProjectContext();
-  const {
-    transcription,
-    setTranscription,
-    refreshNoteDetails: refreshNoteDetails,
-  } = useNoteContext();
+  const { transcription, setTranscription, refreshNoteDetails } =
+    useNoteContext();
   const [hasRecording, setHasRecording] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
-    if (selectedNote && selectedNote.audioLocation) {
-      setHasRecording(true);
-    } else {
-      setHasRecording(false);
-    }
+    setHasRecording(!!(selectedNote && selectedNote.audioLocation));
   }, [selectedNote, refreshNoteDetails]);
 
   return (
-    <Box className={styles.noteDetailsContainer}>
+    <Box
+      className={styles.noteDetailsContainer}
+      sx={{
+        color: theme.custom?.text,
+        backgroundColor: theme.custom?.mainBackground,
+      }}
+    >
       {!hasRecording ? (
         <RecorderProvider>
           <Recorder refreshNoteDetails={refreshNoteDetails} />

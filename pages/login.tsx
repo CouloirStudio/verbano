@@ -1,20 +1,21 @@
-import styles from '../styles/login.module.scss';
+import styles from '@/styles/login.module.scss';
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { Button, CircularProgress, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
-import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
 
-import { CURRENT_USER_QUERY } from '../app/graphql/queries/getUsers';
-import { LOGIN_MUTATION } from '../app/graphql/mutations/addUsers';
+import { CURRENT_USER_QUERY } from '@/app/graphql/queries/getUsers';
+import { LOGIN_MUTATION } from '@/app/graphql/mutations/addUsers';
 
 import InputField from '@/app/components/Login/InputField';
+import { useTheme } from '@mui/material/styles';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setIsError] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const theme = useTheme();
 
   const [login] = useMutation(LOGIN_MUTATION, {
     update: (cache, { data: { login } }) =>
@@ -67,9 +68,10 @@ const LoginPage = () => {
             <Divider variant="middle" />
             <Button
               sx={{
-                backgroundColor: '#de5246',
+                width: '100%',
+                backgroundColor: theme.palette.primary.main,
                 '&:hover': {
-                  backgroundColor: '#de5246',
+                  backgroundColor: theme.palette.primary.dark,
                 },
               }}
               startIcon={<FaGoogle />}
@@ -81,36 +83,36 @@ const LoginPage = () => {
             >
               Login with Google
             </Button>
-            <Divider variant="middle" />
             <div className={styles.loginForm}>
               <form onSubmit={handleSubmit}>
                 {/*Username Field*/}
-                <div data-cy="username-input-field">
+                <div data-cy="username-input-field" className={styles.input}>
                   <InputField
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     isRequired={true}
                     label={'Username'}
                     type={'text'}
-                    icon={<AiOutlineUser />}
                     error={isError}
                     clearError={clearError}
+                    icon={undefined}
                   />
                 </div>
 
                 {/*Password Field*/}
-                <div data-cy="password-input-field">
+                <div data-cy="password-input-field" className={styles.input}>
                   <InputField
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     isRequired={true}
                     label={'Password'}
                     type={'password'}
-                    icon={<AiOutlineLock />}
                     error={isError}
                     clearError={clearError}
+                    icon={undefined}
                   />
                 </div>
+
                 {isError ? <p>Incorrect Email or Password</p> : null}
                 <Button
                   id={'loginButton'}
@@ -120,6 +122,7 @@ const LoginPage = () => {
                   variant="contained"
                   color="primary"
                   type="submit"
+                  className={styles.button} // Apply the button style
                 >
                   Login
                 </Button>

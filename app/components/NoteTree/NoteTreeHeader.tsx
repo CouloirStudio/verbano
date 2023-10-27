@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import CreateNoteButton from '@/app/components/NoteTree/CreateNoteButton';
-import { PiNotePencil } from 'react-icons/pi';
 import SearchBar from './SearchBar';
 import styles from './noteTree.module.scss';
 
