@@ -1,6 +1,6 @@
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
-import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser'
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
 
 const User = () => {
   const { loading, error, data } = useQuery(GetCurrentUser);
