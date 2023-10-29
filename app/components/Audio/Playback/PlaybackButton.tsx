@@ -11,34 +11,32 @@ export interface PlaybackButtonProps {
 const PlaybackButton: React.FC<PlaybackButtonProps> = ({
   playbackState,
   togglePlayback,
-  theme = 'light',
 }) => {
-  const { playbackButton, playing, light, dark } = styles;
+  const { playbackButton } = styles;
 
   return (
     <button
       onClick={togglePlayback}
-      className={`${playbackButton} ${
-        playbackState === PlaybackState.PLAYING ? playing : ''
-      } ${theme === 'light' ? light : dark}`}
+      className={`${playbackButton}`}
     >
-      {getButtonLabel(playbackState)}
+        {getButtonIcon(playbackState)}
     </button>
   );
 };
 
-function getButtonLabel(playbackState: PlaybackState): string {
+import Image from 'next/image';
+
+function getButtonIcon(playbackState: PlaybackState): JSX.Element {
   switch (playbackState) {
     case PlaybackState.PLAYING:
-      return 'Pause';
+      return <Image src="/icons/Pause-Button.svg" alt="Pause" width={163} height={42} />;
     case PlaybackState.PAUSED:
-      return 'Resume';
+      return <Image src="/icons/Resume-Button.svg" alt="Resume" width={163} height={42} />;
     case PlaybackState.IDLE:
-      return 'Play';
-    default: {
-      console.log('invalid state passed' + playbackState);
-      return 'error';
-    }
+      return <Image src="/icons/Play-Button.svg" alt="Play" width={163} height={42} />;
+    default:
+      console.log('Invalid state passed: ' + playbackState);
+      return <div>Error</div>;
   }
 }
 
