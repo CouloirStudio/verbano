@@ -1,7 +1,7 @@
-import { INote, Note } from '../../models/Note';
-import { IProject, Project } from '../../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../../models/User';
+import {INote, Note} from '../../models/Note';
+import {IProject, Project} from '../../models/Project';
+import {ApolloError} from 'apollo-server-express';
+import {User} from '../../models/User';
 
 /**
  * Resolvers for querying projects from the database.
@@ -12,8 +12,20 @@ export const ProjectQueries = {
    * @throws ApolloError - Throws an error if no projects are found.
    * @returns An array of projects.
    */
-  async listProjects(): Promise<IProject[]> {
-    const projects = await Project.find().populate('notes.note');
+  async listProjects(_: unknown, args: {}, context: any): Promise<IProject[]> {
+    if (!context.getUser()) {
+      throw new Error('User not authenticated.');
+    }
+
+    const user = await User.findById(context.getUser()._id);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    const projectIds = user.projectIds;
+
+    const projects = await Project.find({
+      _id: { $in: projectIds },
+    }).populate('notes.note');
 
     projects.forEach((project) => {
       project.notes = project.notes.filter((noteRef) => noteRef.note);
