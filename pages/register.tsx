@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import styles from '@/pages/styles/register.module.scss';
-import { SIGNUP_MUTATION } from '@/app/graphql/mutations/addUsers';
+import UserSignup from '@/app/graphql/mutations/UserSignup';
 import { Button, Divider } from '@mui/material';
 import { FaGoogle } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import InputField from '@/app/components/Authentication/Login/InputField';
-import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai';
+import { useTheme } from '@mui/material/styles';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -14,9 +14,10 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setIsError] = useState(false);
-  const [signup] = useMutation(SIGNUP_MUTATION);
+  const [signup] = useMutation(UserSignup);
 
   const router = useRouter();
+  const theme = useTheme();
 
   const clearError = () => {
     setIsError(false);
@@ -50,9 +51,10 @@ const RegisterPage = () => {
         <Divider variant={'middle'} />
         <Button
           sx={{
-            backgroundColor: '#de5246',
+            width: '100%',
+            backgroundColor: theme.palette.primary.main,
             '&:hover': {
-              backgroundColor: '#de5246',
+              backgroundColor: theme.palette.primary.dark,
             },
           }}
           startIcon={<FaGoogle />}
@@ -64,7 +66,6 @@ const RegisterPage = () => {
         >
           Register with Google
         </Button>
-        <Divider variant={'middle'} />
         <form onSubmit={handleSubmit}>
           {/* FirstNameField */}
           <div data-cy="firstname-input-field">
@@ -74,9 +75,9 @@ const RegisterPage = () => {
               isRequired={true}
               label={'First Name'}
               type={'text'}
-              icon={<AiOutlineLock />}
               error={isError}
               clearError={clearError}
+              icon={undefined}
             />
           </div>
           {/* LastNameField */}
@@ -87,9 +88,9 @@ const RegisterPage = () => {
               isRequired={true}
               label={'Last Name'}
               type={'text'}
-              icon={<AiOutlineLock />}
               error={isError}
               clearError={clearError}
+              icon={undefined}
             />
           </div>
 
@@ -101,7 +102,6 @@ const RegisterPage = () => {
               isRequired={true}
               label={'Email'}
               type={'email'}
-              icon={<AiOutlineLock />}
               error={isError}
               clearError={clearError}
             />
@@ -115,9 +115,9 @@ const RegisterPage = () => {
               isRequired={true}
               label={'Password'}
               type={'password'}
-              icon={<AiOutlineLock />}
               error={isError}
               clearError={clearError}
+              icon={undefined}
             />
           </div>
           {isError ? <p>Invalid Credentials</p> : null}
