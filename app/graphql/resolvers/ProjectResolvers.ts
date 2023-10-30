@@ -12,7 +12,11 @@ export const ProjectQueries = {
    * @throws ApolloError - Throws an error if no projects are found.
    * @returns An array of projects.
    */
-  async listProjects(_: unknown, args: {}, context: any): Promise<IProject[]> {
+  async listProjects(
+    _: unknown,
+    __: unknown,
+    context: any,
+  ): Promise<IProject[]> {
     if (!context.getUser()) {
       throw new Error('User not authenticated.');
     }
