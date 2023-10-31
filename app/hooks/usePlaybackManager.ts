@@ -22,13 +22,16 @@ const usePlaybackManager = () => {
     PlaybackState.IDLE,
   );
 
-  const currentAudioSourceRef = useRef<string | null>(null);
-
   /**
    * A single AudioPlayer object is used throughout the hook and needs to have a persistent state throughout the lifetime of the component.
    * This is done so that once the audio is loaded it does not have to be loaded again.
    */
-  const audioPlayerRef = useRef(new AudioPlayer());
+  const audioPlayerRef = useRef<AudioPlayer>(new AudioPlayer());
+
+  /**
+   * A reference to the source of the audio player, this will be compared against for state management of the audio player.
+   */
+  const currentAudioSourceRef = useRef<string | null>(null);
 
   /**
    * Unified error handling.
@@ -51,9 +54,6 @@ const usePlaybackManager = () => {
    */
   const onEnd = () => {
     setPlaybackState(PlaybackState.IDLE);
-    //Before removing this, it wouldn't end after the second time playing audio
-    // Yall are better experts, so I'll keep this here for someone to explain it to me if something else breaks
-    //audioPlayerRef.current.audio?.removeEventListener('ended', onEnd);
   };
 
   /**
@@ -75,23 +75,13 @@ const usePlaybackManager = () => {
   const startPlayback = async (baseURL: string, audioKey: string) => {
     try {
       const currentAudioPlayer = audioPlayerRef.current;
-
-      // If the audio source has changed, reset the current audio player
-      if (currentAudioSourceRef.current !== audioKey) {
-        if (currentAudioPlayer.isLoaded) {
-          // Pause the current audio and reset the current time
-          currentAudioPlayer.pauseAudioPlayer();
-          if (currentAudioPlayer.audio) {
-            currentAudioPlayer.audio.currentTime = 0;
-          }
-          currentAudioPlayer.audio?.removeEventListener('ended', onEnd);
-          // Set the audio as not loaded for the new audioKey
-          currentAudioPlayer.isLoaded = false;
-        }
+      // if the player is not loaded, or if the audio key has changed, then load it again.
+      if (
+        !currentAudioPlayer.isLoaded ||
+        currentAudioSourceRef.current != audioKey
+      ) {
+        // updating reference
         currentAudioSourceRef.current = audioKey;
-      }
-
-      if (!currentAudioPlayer.isLoaded) {
         setPlaybackState(PlaybackState.PROCESSING);
         // Get signed URL from aws sdk
         const signedURL = await getAudio(baseURL, audioKey);
@@ -122,6 +112,8 @@ const usePlaybackManager = () => {
     startPlayback,
     pausePlayback,
     playbackState,
+    setPlaybackState,
+    currentAudioSourceRef,
   };
 };
 
