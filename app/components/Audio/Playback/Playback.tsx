@@ -29,6 +29,7 @@ const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
     if (selectedNote?.audioLocation != currentAudioSourceRef.current) {
       setPlaybackState(PlaybackState.IDLE);
     } else {
+      // Make the component state match the current audio player.
       updateStateFromPlayer();
     }
   }, [currentAudioSourceRef, selectedNote, setPlaybackState]);

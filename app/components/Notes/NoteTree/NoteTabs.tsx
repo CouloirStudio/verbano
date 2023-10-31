@@ -12,7 +12,6 @@ interface NoteTabsProps {
 const NoteTabs: React.FC<NoteTabsProps> = ({ activeTab, setActiveTab }) => {
   const classes = useStyles();
   const theme = useTheme();
-  console.log(theme);
 
   return (
     <Tabs

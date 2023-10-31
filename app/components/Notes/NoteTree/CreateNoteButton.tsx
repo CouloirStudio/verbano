@@ -28,8 +28,6 @@ function CreateProjectButton() {
           },
         },
       });
-
-      console.log('response:', response);
       context.refetchData();
     } catch (e) {
       console.error('Failed to create project:', e);

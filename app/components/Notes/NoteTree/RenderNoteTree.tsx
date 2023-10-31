@@ -18,7 +18,6 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   handleContextMenu,
 }) => {
   const theme = useTheme();
-  console.log(theme);
   const context = useProjectContext();
 
   // Create a sorted copy of the notes

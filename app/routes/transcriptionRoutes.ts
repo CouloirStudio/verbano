@@ -13,7 +13,6 @@ router.post('/transcribe', async (req, res) => {
     const data = req.body;
     const key = data.key;
     const noteID = data.id;
-    console.log(noteID);
 
     if (!key) {
       return res
