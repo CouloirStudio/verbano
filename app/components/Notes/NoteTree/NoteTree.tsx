@@ -11,6 +11,11 @@ import { useNoteContextMenu } from '@/app/hooks/useNoteContextMenu';
 
 function NoteTree() {
   const [activeTab, setActiveTab] = useState(0);
+  const [selectedNotes, setSelectedNotes] = React.useState<string[]>([]);
+  const clearSelectedNotes = () => {
+    setSelectedNotes([]);
+  };
+
   const theme = useTheme();
   const context = useProjectContext();
 
@@ -26,10 +31,16 @@ function NoteTree() {
 
       {activeTab === 0 && (
         <>
-          <NoteTreeHeader />
+          <NoteTreeHeader
+            selectedNotes={selectedNotes}
+            clearSelectedNotes={clearSelectedNotes}
+          />
+
           <RenderNoteTree
             project={context.selectedProject}
             handleContextMenu={handleContextMenu}
+            selectedNotes={selectedNotes}
+            setSelectedNotes={setSelectedNotes}
           />
         </>
       )}
