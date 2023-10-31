@@ -4,7 +4,7 @@ import TranscriptionDisplay from '@/app/components/Audio/Transcription/Transcrip
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { NoteContextProvider } from '@/app/contexts/NoteContext';
-import NoteDetails from '@/app/components/Notes/Note/NoteDetails';
+import { AudioHeader } from '@/app/components/Audio/AudioHeader';
 import { useTheme } from '@mui/material/styles';
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
       <div className={styles.noteWrapper}>
         {selectedNote && (
           <NoteContextProvider>
-            <NoteDetails />
+            <AudioHeader />
             <TranscriptionDisplay />
           </NoteContextProvider>
         )}

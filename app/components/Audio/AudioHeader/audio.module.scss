@@ -1,0 +1,5 @@
+@import '@/app/components/_shared/_variables.scss';
+
+.AudioContainer {
+  @include centerItems();
+}
