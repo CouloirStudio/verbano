@@ -11,25 +11,25 @@ export enum PlaybackState {
 }
 
 /**
- * Custom hook to manage audio playback and related states.
+ * Custom hook to manage the current audio element, and the state of the playback component.
  */
 const usePlaybackManager = () => {
   // Context to handle error messages in a modal
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
-  // Playback state management
+  // Playback state management for the playback component only
   const [playbackState, setPlaybackState] = useState<PlaybackState>(
     PlaybackState.IDLE,
   );
 
   /**
    * A single AudioPlayer object is used throughout the hook and needs to have a persistent state throughout the lifetime of the component.
-   * This is done so that once the audio is loaded it does not have to be loaded again.
+   * We only want one audio element at a time.
    */
   const audioPlayerRef = useRef<AudioPlayer>(new AudioPlayer());
 
   /**
-   * A reference to the source of the audio player, this will be compared against for state management of the audio player.
+   * A reference to the source of the audio player, this will be compared against to manage the state of the playback component.
    */
   const currentAudioSourceRef = useRef<string | null>(null);
 
@@ -108,17 +108,25 @@ const usePlaybackManager = () => {
     }
   };
 
+  /**
+   * This is called from the playback component if the selected note matches the currently playing audio element.
+   * From the state of the audio element, we can make the state of the playback component match the current audio element.
+   */
   const updateStateFromPlayer = () => {
     if (audioPlayerRef.current) {
-      if (audioPlayerRef.current.audio?.paused)
-        setPlaybackState(PlaybackState.PAUSED);
-      else if (audioPlayerRef.current.audio?.ended)
+      // These statements MUST stay in order.
+      // When an audio element hs ended it is also paused.
+      // But if it is paused, it is not always ended.
+      if (audioPlayerRef.current.audio?.ended)
         setPlaybackState(PlaybackState.IDLE);
+      else if (audioPlayerRef.current.audio?.paused)
+        setPlaybackState(PlaybackState.PAUSED);
       else if (!audioPlayerRef.current.isLoaded)
         setPlaybackState(PlaybackState.PROCESSING);
       else setPlaybackState(PlaybackState.PLAYING);
     }
   };
+
   return {
     startPlayback,
     pausePlayback,
