@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import {gql} from 'apollo-server-express';
 
 /**
  * GraphQL schema for the Project type and associated operations.
@@ -8,11 +8,17 @@ const ProjectSchema = gql`
     id: ID!
     projectName: String!
     projectDescription: String
-    notes: [ProjectNote]!
+    notes: [ProjectNote]
+    summaries: [ProjectSummary]
   }
 
   type ProjectNote {
     note: Note
+    position: Int
+  }
+
+  type ProjectSummary {
+    summary: Summary
     position: Int
   }
 

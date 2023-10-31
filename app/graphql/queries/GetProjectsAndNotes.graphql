@@ -1,17 +1,26 @@
 query GetProjectsAndNotes {
-  listProjects {
-    id
-    projectName
-    notes {
-      note {
+    listProjects {
         id
-        noteName
-        audioLocation
-        dateCreated
-        transcription
-        tags
-      }
-      position
+        projectName
+        notes {
+            note {
+                id
+                noteName
+                audioLocation
+                dateCreated
+                transcription
+                tags
+            }
+            position
+        }
+        summaries {
+            summary {
+                id
+                summaryName
+                dateCreated
+                content
+            }
+            position
+        }
     }
-  }
 }

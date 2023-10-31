@@ -8,6 +8,7 @@ import { Playback } from '@/app/components/Audio/Playback';
 import { TranscriptionButton } from '@/app/components/Audio/Transcription';
 import { useNoteContext } from '@/app/contexts/NoteContext';
 import { useTheme } from '@mui/material/styles';
+import SummarizeButton from '@/app/components/Audio/Summary/SummarizeButton';
 
 const NoteDetails = () => {
   const { selectedNote } = useProjectContext();
@@ -36,6 +37,7 @@ const NoteDetails = () => {
         <Playback baseUrl="http://localhost:3000" />
       )}
       <TranscriptionButton />
+      <SummarizeButton />
     </Box>
   );
 };

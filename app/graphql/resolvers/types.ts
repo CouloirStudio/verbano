@@ -54,8 +54,22 @@ export type NoteType = {
   noteDescription?: string;
 };
 
+export type SummaryType = {
+  id: string;
+  summaryName: string;
+  summaryDescription?: string;
+  content: string;
+  templateId: string;
+  noteIds: string[];
+};
+
 export type ProjectNoteType = {
   note: NoteType;
+  position: number;
+};
+
+export type ProjectSummaryType = {
+  summary: SummaryType;
   position: number;
 };
 
@@ -64,4 +78,5 @@ export type ProjectType = {
   projectName: string;
   projectDescription?: string;
   notes: ProjectNoteType[];
+  summaries: ProjectSummaryType[];
 };

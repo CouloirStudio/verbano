@@ -16,6 +16,7 @@ import resolvers from '@/app/graphql/resolvers/index';
 import { buildContext } from 'graphql-passport';
 import { User } from '@/app/models';
 import { UserMutations } from '@/app/graphql/resolvers/UserResolvers';
+import summaryRoutes from '@/app/routes/summaryRoutes';
 
 const port = parseInt(process.env.PORT || '3000', 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -81,6 +82,8 @@ export function createApp(mockMiddleware?: any) {
   app.use('/audio', audioRoutes);
 
   app.use('/transcription', transcriptionRoutes);
+
+  app.use('/summaries', summaryRoutes);
 
   return app;
 }
