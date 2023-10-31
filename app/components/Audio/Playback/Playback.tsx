@@ -19,16 +19,17 @@ const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
     playbackState,
     setPlaybackState,
     currentAudioSourceRef,
+    updateStateFromPlayer,
   } = usePlaybackManager();
   const { setIsError, setErrorMessage } = useErrorModalContext();
   const { selectedNote } = useProjectContext();
 
   useEffect(() => {
-    // On render, or if the selected note has changed, the component state will be idle.
+    // On render, if the selected note has changed, the component state will be idle.
     if (selectedNote?.audioLocation != currentAudioSourceRef.current) {
       setPlaybackState(PlaybackState.IDLE);
     } else {
-      // restore state?
+      updateStateFromPlayer();
     }
   }, [currentAudioSourceRef, selectedNote, setPlaybackState]);
 

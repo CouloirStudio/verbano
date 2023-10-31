@@ -108,12 +108,24 @@ const usePlaybackManager = () => {
     }
   };
 
+  const updateStateFromPlayer = () => {
+    if (audioPlayerRef.current) {
+      if (audioPlayerRef.current.audio?.paused)
+        setPlaybackState(PlaybackState.PAUSED);
+      else if (audioPlayerRef.current.audio?.ended)
+        setPlaybackState(PlaybackState.IDLE);
+      else if (!audioPlayerRef.current.isLoaded)
+        setPlaybackState(PlaybackState.PROCESSING);
+      else setPlaybackState(PlaybackState.PLAYING);
+    }
+  };
   return {
     startPlayback,
     pausePlayback,
     playbackState,
     setPlaybackState,
     currentAudioSourceRef,
+    updateStateFromPlayer,
   };
 };
 
