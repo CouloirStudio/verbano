@@ -183,9 +183,7 @@ function ProjectTree() {
         variables: { id: rightClickedProjectId },
       });
 
-      if (response.data.deleteProject) {
-        console.log('Project successfully deleted!');
-      } else {
+      if (!response.data.deleteProject) {
         console.error('Failed to delete the project.');
       }
 
