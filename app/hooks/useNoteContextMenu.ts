@@ -33,9 +33,7 @@ export const useNoteContextMenu = () => {
         variables: { id: rightClickedNoteId },
       });
 
-      if (response.data.deleteNote) {
-        console.log('Note successfully deleted!');
-      } else {
+      if (!response.data.deleteNote) {
         console.error('Failed to delete the note.');
       }
 
