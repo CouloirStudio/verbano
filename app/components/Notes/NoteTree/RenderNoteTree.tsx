@@ -35,14 +35,20 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
           ref={provided.innerRef}
           {...provided.droppableProps}
         >
-          {localNotes.map((note, index) => (
-            <NoteTreeItem
-              key={note.note.id}
-              note={note.note}
-              index={index}
-              handleContextMenu={handleContextMenu}
-            />
-          ))}
+          {localNotes.length > 0 ? (
+            localNotes.map((note, index) => (
+              <NoteTreeItem
+                key={note.note.id}
+                note={note.note}
+                index={index}
+                handleContextMenu={handleContextMenu}
+              />
+            ))
+          ) : (
+            <div className={styles.emptyState}>
+              Create a new note to start transcribing!
+            </div>
+          )}
           {provided.placeholder}
         </Box>
       )}
