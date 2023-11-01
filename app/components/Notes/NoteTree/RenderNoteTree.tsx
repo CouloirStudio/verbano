@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { Draggable, Droppable } from '@hello-pangea/dnd';
-import { ProjectType } from '@/app/graphql/resolvers/types';
+import { Droppable } from '@hello-pangea/dnd';
+import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
 import styles from './noteTree.module.scss';
 import { useTheme } from '@mui/material/styles';
-import { getItemStyle } from './utilityFunctions';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import NoteTreeItem from '@/app/components/Notes/NoteTree/NoteTreeItem';
 
 interface RenderNoteTreeProps {
   project: ProjectType | null;
@@ -22,16 +20,21 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   setSelectedNotes,
 }) => {
   const theme = useTheme();
-  const context = useProjectContext();
+  const [localNotes, setLocalNotes] = useState<ProjectNoteType[]>([]);
 
   const selectedStyle = {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   };
 
-  const sortedNotes = project?.notes
-    ? [...project.notes].sort((a, b) => a.position - b.position)
-    : [];
+  useEffect(() => {
+    if (project?.notes) {
+      const sortedNotes = [...project.notes].sort(
+        (a, b) => a.position - b.position,
+      );
+      setLocalNotes(sortedNotes);
+    }
+  }, [project]);
 
   const handleNoteClick = (event: React.MouseEvent, noteId: string) => {
     if (event.ctrlKey || event.metaKey) {
@@ -56,51 +59,26 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
 
   return (
     <Droppable droppableId="notes">
-      {(provided, snapshot) => (
+      {(provided) => (
         <Box
           className={styles.noteList}
           ref={provided.innerRef}
           {...provided.droppableProps}
         >
-          {sortedNotes.map((projectNote, index) => (
-            <Draggable
-              key={projectNote.note.id}
-              draggableId={projectNote.note.id}
-              index={index}
-            >
-              {(provided) => (
-                <Box
-                  onContextMenu={(e) =>
-                    handleContextMenu(e, projectNote.note.id)
-                  }
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  className={`${styles.note} ${
-                    // If the note is the active note, apply the active style
-                    context.selectedNote?.id === projectNote.note.id
-                      ? styles.active
-                      : ''
-                  }`}
-                  style={{
-                    ...getItemStyle(
-                      provided.draggableProps.style,
-                      snapshot.draggingOverWith === projectNote.note.id,
-                      theme,
-                    ),
-                    // If the note is in the multiselect, and it isn't the active note, apply the selected style
-                    ...(selectedNotes.includes(projectNote.note.id) &&
-                    context.selectedNote?.id !== projectNote.note.id
-                      ? selectedStyle
-                      : {}),
-                  }}
-                  onClick={(e) => handleNoteClick(e, projectNote.note.id)}
-                >
-                  <Typography>{projectNote.note.noteName}</Typography>
-                </Box>
-              )}
-            </Draggable>
-          ))}
+          {localNotes.length > 0 ? (
+            localNotes.map((note, index) => (
+              <NoteTreeItem
+                key={note.note.id}
+                note={note.note}
+                index={index}
+                handleContextMenu={handleContextMenu}
+              />
+            ))
+          ) : (
+            <div className={styles.emptyState}>
+              Create a new note to start transcribing!
+            </div>
+          )}
           {provided.placeholder}
         </Box>
       )}
