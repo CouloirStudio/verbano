@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -26,6 +26,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
   const theme = useTheme();
   const context = useProjectContext();
   const [updateNote] = useMutation(UpdateNote);
+  const [noteName, setNoteName] = useState(note.noteName);
 
   const handleClick = () => {
     if (context.selectedNote?.id !== note.id) {
@@ -51,6 +52,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
   }, [context.selectedNote, isEditing, note.id]);
 
   const submitUpdate = async (newValue: string): Promise<void> => {
+    setNoteName(newValue);
     try {
       await updateNote({
         variables: {
@@ -91,7 +93,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
               autoFocus
             />
           ) : (
-            <Typography>{note.noteName}</Typography>
+            <Typography>{noteName}</Typography>
           )}
         </Box>
       )}
