@@ -1,18 +1,16 @@
-import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import React, { ChangeEvent, KeyboardEvent, useState } from 'react';
 
-type UseDoubleClickEditReturn = {
+type UseDoubleClickEditReturn<T> = {
   isEditing: boolean;
-  value: string;
+  value: T;
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (
-    submitFunction: (value: string) => Promise<void>,
-  ) => Promise<void>;
+  handleSubmit: (submitFunction: (value: T) => Promise<void>) => Promise<void>;
   exitEditing: () => void;
   handleDoubleClick: () => void;
   handleBlur: () => void;
   handleKeyDown: (
     event: React.KeyboardEvent<HTMLDivElement>,
-    submitFunction: (value: string) => Promise<void>,
+    submitFunction: (value: T) => Promise<void>,
   ) => Promise<void>;
 };
 
@@ -20,7 +18,9 @@ type UseDoubleClickEditReturn = {
  * Custom hook to handle double click editing
  * @param initialValue - initial value of the input (text)
  */
-const useDoubleClickEdit = (initialValue: string): UseDoubleClickEditReturn => {
+const useDoubleClickEdit = <T>(
+  initialValue: T,
+): UseDoubleClickEditReturn<T> => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
 
@@ -37,18 +37,20 @@ const useDoubleClickEdit = (initialValue: string): UseDoubleClickEditReturn => {
    * @param event - change event
    */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+    setValue(event.target.value as unknown as T);
   };
 
   /**
    * Handle submit of the input
    * @param submitFunction - function to submit the value
    */
-  const handleSubmit = async (
-    submitFunction: (value: string) => Promise<void>,
-  ) => {
-    setIsEditing(false);
-    await submitFunction(value);
+  const handleSubmit = async (submitFunction: (value: T) => Promise<void>) => {
+    try {
+      await submitFunction(value);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Submission failed', error);
+    }
   };
 
   /**
@@ -56,6 +58,7 @@ const useDoubleClickEdit = (initialValue: string): UseDoubleClickEditReturn => {
    */
   const exitEditing = () => {
     setIsEditing(false);
+    setValue(initialValue);
   };
 
   /**
@@ -72,10 +75,12 @@ const useDoubleClickEdit = (initialValue: string): UseDoubleClickEditReturn => {
    */
   const handleKeyDown = async (
     event: KeyboardEvent<HTMLDivElement | HTMLInputElement>,
-    submitFunction: (value: string) => Promise<void>,
+    submitFunction: (value: T) => Promise<void>,
   ) => {
     if (event.key === 'Enter') {
       await handleSubmit(submitFunction);
+    } else if (event.key === 'Escape') {
+      exitEditing();
     }
   };
 
