@@ -1,7 +1,7 @@
-import {INote, Note} from '../../models/Note';
-import {IProject, Project} from '../../models/Project';
-import {ApolloError} from 'apollo-server-express';
-import {User} from '../../models/User';
+import { INote, Note } from '../../models/Note';
+import { IProject, Project } from '../../models/Project';
+import { ApolloError } from 'apollo-server-express';
+import { User } from '../../models/User';
 
 /**
  * Resolvers for querying projects from the database.

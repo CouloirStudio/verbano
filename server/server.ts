@@ -1,12 +1,12 @@
 import 'dotenv/config';
 import http from 'http';
 import 'module-alias/register';
-import {connectDB} from '@/app/models/Database';
-import {ApolloServer, Config, ExpressContext} from 'apollo-server-express';
+import { connectDB } from '@/app/models/Database';
+import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
 import typeDefs from '@/app/graphql/schema/index';
 import resolvers from '@/app/graphql/resolvers/index';
-import {buildContext} from 'graphql-passport';
-import {User} from '@/app/models';
+import { buildContext } from 'graphql-passport';
+import { User } from '@/app/models';
 import createApp from '@/server/app';
 
 /**

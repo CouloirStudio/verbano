@@ -1,1 +1,1 @@
-export {default as AudioHeader} from './AudioHeader'
+export { default as AudioHeader } from './AudioHeader';
