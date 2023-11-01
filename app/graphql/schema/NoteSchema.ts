@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import {gql} from 'apollo-server-express';
 
 /**
  * GraphQL schema for the Note type and associated operations.
@@ -15,13 +15,13 @@ const NoteSchema = gql`
   }
 
   input NoteInput {
-    noteName: String!
+    noteName: String
     audioLocation: String
     dateCreated: String
     transcription: String
     tags: [String!]
     noteDescription: String
-    projectId: ID!
+    projectId: ID
   }
 
   extend type Query {
