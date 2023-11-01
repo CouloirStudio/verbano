@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
-import { ProjectType } from '@/app/graphql/resolvers/types';
+import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
 import styles from './noteTree.module.scss';
 import { useTheme } from '@mui/material/styles';
 import { getItemStyle } from './utilityFunctions';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
+import TextField from '@mui/material/TextField';
+import { useMutation } from '@apollo/client';
+import UpdateNote from '@/app/graphql/mutations/UpdateNote';
 
 interface RenderNoteTreeProps {
   project: ProjectType | null;
@@ -17,6 +20,17 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   project,
   handleContextMenu,
 }) => {
+  const [updateNote, { data }] = useMutation(UpdateNote);
+
+  useEffect(() => {
+    if (project?.notes) {
+      const sortedNotes = [...project.notes].sort(
+        (a, b) => a.position - b.position,
+      );
+      setLocalNotes(sortedNotes);
+    }
+  }, [project]);
+
   const theme = useTheme();
   console.log(theme);
   const context = useProjectContext();
@@ -26,6 +40,67 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
     ? [...project.notes].sort((a, b) => a.position - b.position)
     : [];
 
+  const [localNotes, setLocalNotes] = useState(sortedNotes);
+
+  const handleClick = (note: NoteType) => {
+    if (context.selectedNote?.id !== note.id) {
+      setEditingId(null);
+      setEditingValue('');
+    }
+
+    context.setSelectedNote(note);
+  };
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState<string>('');
+
+  const handleDoubleClick = (noteId: string, noteName: string) => {
+    setEditingId(noteId);
+    setEditingValue(noteName);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingValue(event.target.value);
+  };
+
+  const handleSubmitEditing = async () => {
+    if (editingId && editingValue !== null) {
+      const newNotes = localNotes.map((note) =>
+        note.note.id === editingId
+          ? { ...note, note: { ...note.note, noteName: editingValue } }
+          : note,
+      );
+
+      setLocalNotes(newNotes);
+      setEditingId(null);
+
+      try {
+        await updateNote({
+          variables: {
+            id: editingId,
+            input: {
+              noteName: editingValue,
+            },
+          },
+          // No need for optimisticResponse here since we've already updated the local state
+        });
+      } catch (e) {
+        console.error('Error updating note:', e);
+        // Optionally, revert the local change if the update fails
+      }
+    }
+  };
+
+  const handleInputBlur = () => {
+    handleSubmitEditing();
+  };
+
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmitEditing();
+    }
+  };
+
   return (
     <Droppable droppableId="notes">
       {(provided, snapshot) => (
@@ -34,7 +109,7 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
           ref={provided.innerRef}
           {...provided.droppableProps}
         >
-          {sortedNotes.map((projectNote, index) => (
+          {localNotes.map((projectNote, index) => (
             <Draggable
               key={projectNote.note.id}
               draggableId={projectNote.note.id}
@@ -58,9 +133,27 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
                     snapshot.draggingOverWith === projectNote.note.id,
                     theme,
                   )}
-                  onClick={() => context.setSelectedNote(projectNote.note)}
+                  onClick={() => handleClick(projectNote.note)}
+                  onDoubleClick={() =>
+                    handleDoubleClick(
+                      projectNote.note.id,
+                      projectNote.note.noteName,
+                    )
+                  }
                 >
-                  <Typography>{projectNote.note.noteName}</Typography>
+                  {editingId === projectNote.note.id ? (
+                    <TextField
+                      variant={'standard'}
+                      type="text"
+                      value={editingValue}
+                      onChange={handleInputChange}
+                      onBlur={handleInputBlur}
+                      onKeyDown={handleInputKeyDown}
+                      autoFocus
+                    />
+                  ) : (
+                    <Typography>{projectNote.note.noteName}</Typography>
+                  )}
                 </Box>
               )}
             </Draggable>
