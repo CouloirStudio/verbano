@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  memo,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -9,7 +15,7 @@ import { useTheme } from '@mui/material/styles';
 import { getItemStyle } from './utilityFunctions';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { useMutation } from '@apollo/client';
-import UpdateNote from '@/app/graphql/mutations/UpdateNote';
+import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
 
 interface NoteTreeItemProps {
@@ -23,19 +29,20 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
   index,
   handleContextMenu,
 }) => {
+  const { id, noteName } = note;
   const theme = useTheme();
   const context = useProjectContext();
   const [updateNote] = useMutation(UpdateNote);
 
   // State for editing the note name
-  const [noteName, setNoteName] = useState(note.noteName);
+  const [name, setName] = useState(noteName);
 
   // Function to handle click events on the note item
-  const handleClick = () => {
-    if (context.selectedNote?.id !== note.id) {
+  const handleClick = useCallback(() => {
+    if (context.selectedNote?.id !== id) {
       context.setSelectedNote(note);
     }
-  };
+  }, [id, name, context]);
 
   // Custom hook to manage double click editing
   const {
@@ -54,11 +61,11 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
     if (context.selectedNote?.id !== note.id && isEditing) {
       exitEditing();
     }
-  }, [context.selectedNote, isEditing, note.id]);
+  }, [context.selectedNote, isEditing, note.id, exitEditing]);
 
   // Function to submit the updated note name
   const submitUpdate = async (newValue: string): Promise<void> => {
-    setNoteName(newValue);
+    setName(newValue);
     try {
       await updateNote({
         variables: {
@@ -99,7 +106,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
               autoFocus
             />
           ) : (
-            <Typography>{noteName}</Typography>
+            <Typography>{name}</Typography>
           )}
         </Box>
       )}
@@ -107,4 +114,15 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
   );
 };
 
-export default NoteTreeItem;
+function areEqual(
+  prevProps: PropsWithChildren<NoteTreeItemProps>,
+  nextProps: PropsWithChildren<NoteTreeItemProps>,
+) {
+  return (
+    prevProps.note.id === nextProps.note.id &&
+    prevProps.note.noteName === nextProps.note.noteName &&
+    prevProps.index === nextProps.index
+  );
+}
+
+export default memo(NoteTreeItem, areEqual);
