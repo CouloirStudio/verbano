@@ -1,10 +1,4 @@
-import React, {
-  memo,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { memo, PropsWithChildren, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -17,11 +11,15 @@ import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { useMutation } from '@apollo/client';
 import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
+import { useNoteListContext } from '@/app/contexts/NoteListContext';
+import useNoteSelection from '@/app/hooks/useNoteSelection';
 
 interface NoteTreeItemProps {
   note: NoteType;
   index: number;
   handleContextMenu: (event: React.MouseEvent, noteId: string) => void;
+  active: boolean;
+  selected: boolean;
 }
 
 const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
@@ -29,20 +27,24 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
   index,
   handleContextMenu,
 }) => {
+  // Destructure note props
   const { id, noteName } = note;
   const theme = useTheme();
+  const { selectedNotes, setSelectedNotes } = useNoteListContext();
+
+  const selectedStyle = {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+  };
+
   const context = useProjectContext();
   const [updateNote] = useMutation(UpdateNote);
 
   // State for editing the note name
   const [name, setName] = useState(noteName);
 
-  // Function to handle click events on the note item
-  const handleClick = useCallback(() => {
-    if (context.selectedNote?.id !== id) {
-      context.setSelectedNote(note);
-    }
-  }, [id, name, context]);
+  // Hook to handle multi-select functionality for notes
+  const { handleClick, isSelected } = useNoteSelection(id);
 
   // Custom hook to manage double click editing
   const {
@@ -89,9 +91,15 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className={`${styles.note} ${
-            context.selectedNote?.id === note.id ? styles.selected : ''
+            context.selectedNote?.id === note.id ? styles.active : ''
           }`}
-          style={getItemStyle(provided.draggableProps.style, false, theme)}
+          style={{
+            ...getItemStyle(provided.draggableProps.style, false, theme),
+            ...(selectedNotes.includes(note.id) &&
+            context.selectedNote?.id !== note.id
+              ? selectedStyle
+              : {}),
+          }}
           onClick={handleClick}
           onDoubleClick={handleDoubleClick}
         >

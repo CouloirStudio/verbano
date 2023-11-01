@@ -5,27 +5,22 @@ import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
 import styles from './noteTree.module.scss';
 import { useTheme } from '@mui/material/styles';
 import NoteTreeItem from '@/app/components/Notes/NoteTree/NoteTreeItem';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useNoteListContext } from '@/app/contexts/NoteListContext';
 
 interface RenderNoteTreeProps {
   project: ProjectType | null;
   handleContextMenu: (event: React.MouseEvent, noteId: string) => void;
-  selectedNotes: string[];
-  setSelectedNotes: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   project,
   handleContextMenu,
-  selectedNotes,
-  setSelectedNotes,
 }) => {
   const theme = useTheme();
   const [localNotes, setLocalNotes] = useState<ProjectNoteType[]>([]);
-
-  const selectedStyle = {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-  };
+  const { selectedNote, setSelectedNote } = useProjectContext();
+  const { selectedNotes, setSelectedNotes } = useNoteListContext();
 
   useEffect(() => {
     if (project?.notes) {
@@ -52,7 +47,7 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
       // Set the clicked note as the active note in context
       const activeNote = project?.notes.find((n) => n.note.id === noteId)?.note;
       if (activeNote) {
-        context.setSelectedNote(activeNote);
+        setSelectedNote(activeNote);
       }
     }
   };
@@ -71,6 +66,8 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
                 key={note.note.id}
                 note={note.note}
                 index={index}
+                active={selectedNote?.id === note.note.id}
+                selected={selectedNotes.includes(note.note.id)}
                 handleContextMenu={handleContextMenu}
               />
             ))
