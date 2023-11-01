@@ -26,14 +26,18 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
   const theme = useTheme();
   const context = useProjectContext();
   const [updateNote] = useMutation(UpdateNote);
+
+  // State for editing the note name
   const [noteName, setNoteName] = useState(note.noteName);
 
+  // Function to handle click events on the note item
   const handleClick = () => {
     if (context.selectedNote?.id !== note.id) {
       context.setSelectedNote(note);
     }
   };
 
+  // Custom hook to manage double click editing
   const {
     isEditing,
     value,
@@ -45,12 +49,14 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
     exitEditing,
   } = useDoubleClickEdit(note.noteName);
 
+  // Cancel editing if the selected note changes
   useEffect(() => {
     if (context.selectedNote?.id !== note.id && isEditing) {
       exitEditing();
     }
   }, [context.selectedNote, isEditing, note.id]);
 
+  // Function to submit the updated note name
   const submitUpdate = async (newValue: string): Promise<void> => {
     setNoteName(newValue);
     try {
