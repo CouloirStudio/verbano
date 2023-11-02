@@ -10,6 +10,7 @@ import {IoClose} from 'react-icons/io5';
 /**
  * The header for the NoteTree component
  * @param selectedNotes - The currently selected notes string[]
+ * @param clearSelectedNotes - A function to clear the selected notes
  * @constructor
  */
 function NoteTreeHeader({
