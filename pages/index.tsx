@@ -10,7 +10,7 @@ import { useTheme } from '@mui/material/styles';
 export default function Home() {
   const { selectedNote } = useProjectContext();
   const theme = useTheme();
-
+  console.log(selectedNote?.transcription);
   return (
     <div
       className={styles.container}
@@ -40,7 +40,7 @@ export default function Home() {
                 Words: {selectedNote.transcription.toString().split(' ').length}
               </Typography>
               <Typography variant="subtitle1">
-                Characters: {selectedNote.transcription.toString().length}
+                Characters: {JSON.parse(selectedNote.transcription).text.length}
               </Typography>
             </>
           )}
