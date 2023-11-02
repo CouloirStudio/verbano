@@ -1,12 +1,6 @@
-import { Note } from '../../models/Note';
-import {
-  AddNoteArgs,
-  DeleteNoteArgs,
-  GetNoteArgs,
-  ResolverContext,
-  UpdateNoteArgs,
-} from './types';
-import { Project } from '../../models/Project';
+import {Note} from '../../models/Note';
+import {AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs,} from './types';
+import {Project} from '../../models/Project';
 
 /**
  * Resolvers for querying notes from the database.
@@ -115,6 +109,11 @@ export const NoteMutations = {
     args: UpdateNoteArgs,
     _context: ResolverContext,
   ) {
+    // check if note name is empty
+    if (args.input.noteName.trim() === '') {
+      throw new Error('Note name cannot be empty');
+    }
+
     return Note.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 
