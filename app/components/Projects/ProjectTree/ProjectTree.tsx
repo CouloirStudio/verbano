@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import Box from '@mui/material/Box';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -18,7 +18,7 @@ import { ProjectNoteType, ProjectType } from '../../../graphql/resolvers/types';
 import { Droppable } from '@hello-pangea/dnd';
 import { useMutation } from '@apollo/client';
 import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
-import DeleteProject from '@/app/graphql/mutations/DeleteProject';
+import DeleteProject from '@/app/graphql/mutations/DeleteProject.graphql';
 
 interface CustomTreeContextType {
   project?: ProjectType;
@@ -153,7 +153,8 @@ const renderProjectTree = (projects: ProjectType[], handleContextMenu: any) => {
 };
 
 function ProjectTree() {
-  const context = useProjectContext();
+  const { refetchData, setSelectedProject, setSelectedNote, projects } =
+    useProjectContext();
 
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -179,6 +180,14 @@ function ProjectTree() {
 
   const handleDelete = async () => {
     try {
+      //remove the project from the list of projects
+      projects?.splice(
+        projects.findIndex((project) => project.id === rightClickedProjectId),
+        1,
+      );
+      setSelectedProject(null);
+      setSelectedNote(null);
+
       const response = await deleteProject({
         variables: { id: rightClickedProjectId },
       });
@@ -188,11 +197,16 @@ function ProjectTree() {
       }
 
       handleClose();
-      context.refetchData();
+      refetchData();
     } catch (err: any) {
       console.error('Error while deleting the project:', err.message);
     }
   };
+
+  useEffect(() => {
+    // render project tree when projects list changes
+    renderProjectTree(projects, handleContextMenu);
+  }, [projects]);
 
   return (
     <Box className={styles.projectList}>
@@ -202,7 +216,7 @@ function ProjectTree() {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {renderProjectTree(context.projects, handleContextMenu)}
+        {renderProjectTree(projects, handleContextMenu)}
       </TreeView>
 
       <ContextMenuComponent
