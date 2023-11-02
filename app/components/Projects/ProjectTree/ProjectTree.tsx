@@ -18,7 +18,7 @@ import { ProjectNoteType, ProjectType } from '../../../graphql/resolvers/types';
 import { Droppable } from '@hello-pangea/dnd';
 import { useMutation } from '@apollo/client';
 import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
-import DeleteProject from '@/app/graphql/mutations/DeleteProject';
+import DeleteProject from '@/app/graphql/mutations/DeleteProject.graphql';
 
 interface CustomTreeContextType {
   project?: ProjectType;
@@ -153,7 +153,8 @@ const renderProjectTree = (projects: ProjectType[], handleContextMenu: any) => {
 };
 
 function ProjectTree() {
-  const context = useProjectContext();
+  const { refetchData, setSelectedProject, setSelectedNote, projects } =
+    useProjectContext();
 
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -187,8 +188,10 @@ function ProjectTree() {
         console.error('Failed to delete the project.');
       }
 
+      setSelectedProject(null);
+      setSelectedNote(null);
       handleClose();
-      context.refetchData();
+      refetchData();
     } catch (err: any) {
       console.error('Error while deleting the project:', err.message);
     }
@@ -202,7 +205,7 @@ function ProjectTree() {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {renderProjectTree(context.projects, handleContextMenu)}
+        {renderProjectTree(projects, handleContextMenu)}
       </TreeView>
 
       <ContextMenuComponent

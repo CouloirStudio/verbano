@@ -8,7 +8,7 @@ import {NoteType, ProjectType} from '@/app/graphql/resolvers/types';
  */
 type ProjectContextType = {
   selectedNote: NoteType | null;
-  setSelectedNote: (note: NoteType | undefined) => void;
+  setSelectedNote: (note: NoteType | null) => void;
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
   selectedProject: ProjectType | null;
