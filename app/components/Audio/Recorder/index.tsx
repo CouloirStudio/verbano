@@ -2,11 +2,18 @@ import React from 'react';
 import styles from './recorder.module.scss';
 import RecordButton from './RecordButton';
 import useAudioManager from '../../../hooks/useAudioManager';
+import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
 
 type RecorderProps = {
   refreshNoteDetails: () => void;
+  selectedNote: NoteType | null;
+  selectedProject: ProjectType | null;
 };
-const Recorder: React.FC<RecorderProps> = ({ refreshNoteDetails }) => {
+const Recorder: React.FC<RecorderProps> = ({
+  refreshNoteDetails,
+  selectedNote,
+  selectedProject,
+}) => {
   const { startNewRecording, stopAndUploadRecording, recordingState } =
     useAudioManager();
 
@@ -15,7 +22,7 @@ const Recorder: React.FC<RecorderProps> = ({ refreshNoteDetails }) => {
       if (recordingState === 'idle') {
         await startNewRecording();
       } else if (recordingState === 'recording') {
-        await stopAndUploadRecording();
+        await stopAndUploadRecording(selectedProject, selectedNote);
         refreshNoteDetails();
       }
     } catch (error) {
