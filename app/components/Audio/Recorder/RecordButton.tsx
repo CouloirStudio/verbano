@@ -13,7 +13,6 @@ const RecordButton: React.FC<RecordButtonProps> = ({
   toggleRecording,
 }) => (
   <button
-    id={'recorderButton'}
     onClick={toggleRecording}
     className={`${styles.recorderButton} ${
       isRecording ? styles.recording : ''

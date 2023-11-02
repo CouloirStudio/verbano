@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useErrorModalContext } from '../contexts/ErrorModalContext';
-import { AudioRecorder } from '../api/recorder';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { uploadAudio } from '@/app/api/audio';
+import { useState } from "react";
+import { useErrorModalContext } from "../contexts/ErrorModalContext";
+import { AudioRecorder } from "../api/recorder";
+import { uploadAudio } from "@/app/api/audio";
+import { NoteType, ProjectType } from "@/app/graphql/resolvers/types";
 
 /**
  * Custom hook to manage the audio recording and uploading functionalities.
@@ -12,7 +12,6 @@ const useAudioManager = () => {
   const mediaRecorder = AudioRecorder.getRecorder();
   const BASE_URL = 'http://localhost:3000';
   const { setErrorMessage, setIsError } = useErrorModalContext();
-  const { selectedProject, selectedNote } = useProjectContext(); // Retrieve selectedProject from context
 
   const [recordingState, setRecordingState] = useState<
     'idle' | 'recording' | 'processing'
@@ -53,7 +52,10 @@ const useAudioManager = () => {
   /**
    * Stops the ongoing recording and uploads the recorded audio.
    */
-  const stopAndUploadRecording = async () => {
+  const stopAndUploadRecording = async (
+    selectedProject: ProjectType | null,
+    selectedNote: NoteType | null,
+  ) => {
     setRecordingState('processing');
     try {
       const blob = await mediaRecorder.stopRecording();
