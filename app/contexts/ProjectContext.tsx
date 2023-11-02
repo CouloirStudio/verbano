@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {useQuery} from '@apollo/client';
 import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes.graphql';
-import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
+import {NoteType, ProjectType} from '@/app/graphql/resolvers/types';
 
 /**
  * Defines the shape of the ProjectContext.
  */
 type ProjectContextType = {
   selectedNote: NoteType | null;
-  setSelectedNote: (note: NoteType) => void;
+  setSelectedNote: (note: NoteType | undefined) => void;
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
   selectedProject: ProjectType | null;
