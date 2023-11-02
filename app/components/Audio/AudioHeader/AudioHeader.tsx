@@ -13,7 +13,7 @@ import { useTheme } from "@mui/material/styles";
  * @constructor
  */
 const AudioHeader = () => {
-  const { selectedNote } = useProjectContext();
+  const { selectedNote, selectedProject } = useProjectContext();
   const { refreshNoteDetails } = useNoteContext();
   const [hasRecording, setHasRecording] = useState(false);
   const theme = useTheme();
@@ -32,7 +32,11 @@ const AudioHeader = () => {
       }}
     >
       {!hasRecording ? (
-        <Recorder refreshNoteDetails={refreshNoteDetails} />
+        <Recorder
+          refreshNoteDetails={refreshNoteDetails}
+          selectedNote={selectedNote}
+          selectedProject={selectedProject}
+        />
       ) : (
         <Playback baseUrl="http://localhost:3000" selectedNote={selectedNote} />
       )}
