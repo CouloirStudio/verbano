@@ -180,6 +180,14 @@ function ProjectTree() {
 
   const handleDelete = async () => {
     try {
+      //remove the project from the list of projects
+      projects?.splice(
+        projects.findIndex((project) => project.id === rightClickedProjectId),
+        1,
+      );
+      setSelectedProject(null);
+      setSelectedNote(null);
+
       const response = await deleteProject({
         variables: { id: rightClickedProjectId },
       });
@@ -188,14 +196,6 @@ function ProjectTree() {
         console.error('Failed to delete the project.');
       }
 
-      //remove the project from the list of projects
-      projects?.splice(
-        projects.findIndex((project) => project.id === rightClickedProjectId),
-        1,
-      );
-
-      setSelectedProject(null);
-      setSelectedNote(null);
       handleClose();
       refetchData();
     } catch (err: any) {
