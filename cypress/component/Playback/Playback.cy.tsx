@@ -2,20 +2,25 @@ import React from 'react';
 import Playback from '@/app/components/Audio/Playback/Playback';
 import { ErrorModalContextProvider } from '@/app/contexts/ErrorModalContext';
 import ErrorModal from '@/app/components/Modals/ErrorModal';
+import { NoteType } from '@/app/graphql/resolvers/types';
 
 describe('<Playback />', () => {
   beforeEach(() => {
+    const exampleNote: NoteType = {
+      id: '1',
+      audioLocation: 'audio-files/audiosample.wav',
+      dateCreated: new Date(),
+      transcription: 'This is a sample transcription',
+      tags: ['tag1', 'tag2'],
+      projectId: 'project1',
+      noteName: 'Sample Note',
+      noteDescription: 'This is a sample note description',
+    };
+
     cy.mount(
       <ErrorModalContextProvider>
         <ErrorModal />
-        <Playback
-          audioUrl="audio-files/1696394886454.wav"
-          baseUrl="http://localhost:3000"
-        />
-        <Playback
-          audioUrl="audio-files/1697487143891.wav"
-          baseUrl="http://localhost:3000"
-        />
+        <Playback baseUrl="http://localhost:3000" selectedNote={exampleNote} />
       </ErrorModalContextProvider>,
     );
 
@@ -34,47 +39,47 @@ describe('<Playback />', () => {
 
   it('Has initial state of idle', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.get('button').first().contains('Play');
-    cy.get('button').eq(1).contains('Play');
+    cy.get('img').invoke('attr', 'alt').should('eq', 'Play');
   });
 
   it('Updates state to Playing when clicked once', () => {
     cy.wait(1000);
-    cy.get('button').first().click();
+    cy.get('button').click();
     cy.wait('@getAudio');
-    cy.get('button').first().contains('Pause');
-    cy.get('button').eq(1).contains('Play');
+    cy.get('img').invoke('attr', 'alt').should('eq', 'Pause');
   });
 
   it('Updates state to Paused when clicked once', () => {
-    cy.get('button').first().click();
+    cy.get('button').click();
     cy.wait('@getAudio');
     cy.wait(1000);
-    cy.get('button').first().click();
-    cy.get('button').first().contains('Resume');
-    cy.get('button').eq(1).contains('Play');
+    cy.get('button').click();
+    cy.get('img').invoke('attr', 'alt').should('eq', 'Resume');
   });
 
   it('Updates state to idle when recording is finished.', () => {
     cy.get('button').first().click();
     cy.wait(2000);
-    cy.get('button').first().contains('Play');
+    cy.get('img').invoke('attr', 'alt').should('eq', 'Play');
   });
 });
 
 describe('Playback Error Handling', () => {
   beforeEach(() => {
+    const exampleNote: NoteType = {
+      id: '1',
+      audioLocation: 'path/to/audiofile.mp3',
+      dateCreated: new Date(),
+      transcription: 'This is a sample transcription',
+      tags: ['tag1', 'tag2'],
+      projectId: 'project1',
+      noteName: 'Sample Note',
+      noteDescription: 'This is a sample note description',
+    };
     cy.mount(
       <ErrorModalContextProvider>
         <ErrorModal />
-        <Playback
-          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
-          baseUrl="http://localhost:3000"
-        />
-        <Playback
-          audioUrl="s3://verbano-dev-audio/audio-files/1696394886454.wav"
-          baseUrl="http://localhost:3000"
-        />
+        <Playback baseUrl="http://localhost:3000" selectedNote={exampleNote} />
       </ErrorModalContextProvider>,
     );
   });
