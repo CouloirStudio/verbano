@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import Box from '@mui/material/Box';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -188,6 +188,12 @@ function ProjectTree() {
         console.error('Failed to delete the project.');
       }
 
+      //remove the project from the list of projects
+      projects?.splice(
+        projects.findIndex((project) => project.id === rightClickedProjectId),
+        1,
+      );
+
       setSelectedProject(null);
       setSelectedNote(null);
       handleClose();
@@ -196,6 +202,11 @@ function ProjectTree() {
       console.error('Error while deleting the project:', err.message);
     }
   };
+
+  useEffect(() => {
+    // render project tree when projects list changes
+    renderProjectTree(projects, handleContextMenu);
+  }, [projects]);
 
   return (
     <Box className={styles.projectList}>
