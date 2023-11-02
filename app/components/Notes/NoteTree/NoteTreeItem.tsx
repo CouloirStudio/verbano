@@ -65,7 +65,16 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
 
   // Function to submit the updated note name
   const submitUpdate = async (newValue: string): Promise<void> => {
-    setName(newValue);
+    if (newValue === note.noteName) {
+      setName(newValue);
+      return;
+    }
+    if (newValue.trim() === '') {
+      setName(note.noteName);
+      return;
+    }
+
+    setName(newValue.trim());
     try {
       await updateNote({
         variables: {
@@ -76,6 +85,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
         },
       });
     } catch (e) {
+      setName(note.noteName);
       console.error('Error updating note:', e);
     }
   };
