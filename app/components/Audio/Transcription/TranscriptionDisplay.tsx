@@ -1,17 +1,17 @@
-import styles from './transcription.module.scss';
-import { useProjectContext } from '../../../contexts/ProjectContext';
-import GetTranscription from '@/app/graphql/queries/GetTranscription';
-import Box from '@mui/material/Box';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import React, { useEffect } from 'react';
-import { useLazyQuery } from '@apollo/client';
-import { useNoteContext } from '@/app/contexts/NoteContext';
-import Display from '@/app/components/UI/Display';
-import ScrollView from '@/app/components/UI/ScrollView';
+import styles from "./transcription.module.scss";
+import { useProjectContext } from "../../../contexts/ProjectContext";
+import GetTranscription from "@/app/graphql/queries/GetTranscription";
+import Box from "@mui/material/Box";
+import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
+import React, { useEffect } from "react";
+import { useLazyQuery } from "@apollo/client";
+import { useNoteContext } from "@/app/contexts/NoteContext";
+import Display from "@/app/components/UI/Display";
+import ScrollView from "@/app/components/UI/ScrollView";
+import Footer from "@/app/components/Layout/Footer";
 
 /**
  * A functional component to display a transcription.
- * @param Id
  * @constructor
  */
 const TranscriptionDisplay: React.FC = () => {
@@ -59,6 +59,7 @@ const TranscriptionDisplay: React.FC = () => {
       <ScrollView className={styles.scrollView}>
         <Display content={transcription} title={selectedNote?.noteName} />
       </ScrollView>
+      <Footer footerText={transcription} />
     </Box>
   );
 };
