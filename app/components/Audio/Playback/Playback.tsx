@@ -4,15 +4,16 @@ import usePlaybackManager, {
   PlaybackState,
 } from '@/app/hooks/usePlaybackManager';
 import PlaybackButton from './PlaybackButton';
-import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { NoteType } from '@/app/graphql/resolvers/types';
 
 interface PlaybackProps {
   // audioUrl: string;
   baseUrl: string;
+  selectedNote: NoteType | null;
 }
 
-const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
+const Playback: React.FC<PlaybackProps> = ({ baseUrl, selectedNote }) => {
   const {
     startPlayback,
     pausePlayback,
@@ -22,7 +23,6 @@ const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
     updateStateFromPlayer,
   } = usePlaybackManager();
   const { setIsError, setErrorMessage } = useErrorModalContext();
-  const { selectedNote } = useProjectContext();
 
   useEffect(() => {
     // On render, if the selected note has changed, the component state will be idle.
