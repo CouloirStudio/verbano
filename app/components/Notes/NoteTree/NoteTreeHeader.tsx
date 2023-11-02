@@ -3,9 +3,9 @@ import CreateNoteButton from '@/app/components/Notes/NoteTree/CreateNoteButton';
 import SearchBar from './SearchBar';
 import styles from './noteTree.module.scss';
 import Typography from '@mui/material/Typography';
-import {IconButton, Tooltip} from '@mui/material';
 import {AiOutlineMore} from 'react-icons/ai';
 import {IoClose} from 'react-icons/io5';
+import TooltipIconButton from '@/app/components/UI/TooltipIconButton';
 
 /**
  * The header for the NoteTree component
@@ -26,21 +26,15 @@ function NoteTreeHeader({
     <div className={styles.noteTreeHeader}>
       {selectedNotes.length > 1 ? (
         <>
-          <Tooltip title={'Cancel Selection'}>
-            <IconButton
-              className={styles.closeButton}
-              onClick={clearSelectedNotes}
-            >
-              <IoClose />
-            </IconButton>
-          </Tooltip>
+          <TooltipIconButton
+            className={styles.closeButton}
+            title={'Cancel Selection'}
+            icon={<IoClose />}
+            onClick={clearSelectedNotes}
+          />
 
           <Typography>{selectedNotes.length} notes selected</Typography>
-          <Tooltip title={'More...'}>
-            <IconButton>
-              <AiOutlineMore />
-            </IconButton>
-          </Tooltip>
+          <TooltipIconButton title={'More...'} icon={<AiOutlineMore />} />
         </>
       ) : (
         <>
