@@ -96,6 +96,7 @@ const LoginPage = () => {
                     error={isError}
                     clearError={clearError}
                     icon={undefined}
+                    disabled={false}
                   />
                 </div>
 
@@ -110,6 +111,7 @@ const LoginPage = () => {
                     error={isError}
                     clearError={clearError}
                     icon={undefined}
+                    disabled={false}
                   />
                 </div>
 

@@ -78,6 +78,7 @@ const RegisterPage = () => {
               error={isError}
               clearError={clearError}
               icon={undefined}
+              disabled={false}
             />
           </div>
           {/* LastNameField */}
@@ -91,6 +92,7 @@ const RegisterPage = () => {
               error={isError}
               clearError={clearError}
               icon={undefined}
+              disabled={false}
             />
           </div>
 
@@ -104,6 +106,8 @@ const RegisterPage = () => {
               type={'email'}
               error={isError}
               clearError={clearError}
+              icon={undefined}
+              disabled={false}
             />
           </div>
 
@@ -118,6 +122,7 @@ const RegisterPage = () => {
               error={isError}
               clearError={clearError}
               icon={undefined}
+              disabled={false}
             />
           </div>
           {isError ? <p>Invalid Credentials</p> : null}
