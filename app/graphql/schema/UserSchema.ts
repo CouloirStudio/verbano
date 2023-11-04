@@ -23,6 +23,7 @@ const typeDefs = gql`
 
   type Query {
     currentUser: User
+    checkCurrentPassword(email: String! password: String!): Boolean
   }
 
   type AuthPayload {
