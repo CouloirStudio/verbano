@@ -3,9 +3,14 @@ import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineLock } from 'react-icons/ai';
 
 interface PasswordInputProps {
+  currentPassword: string;
+  newPassword: string;
+  onPasswordChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  isSecondFieldEnabled: boolean;
+  //onNewPasswordChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  disabled: boolean;
   value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  text: string;
+  label: string;
 }
 
 /**
@@ -30,30 +35,30 @@ interface PasswordInputProps {
  *
  */
 const UpdatePasswordField: React.FC<PasswordInputProps> = ({
-  value,
-  onChange,
-  text,
+  currentPassword,
+  newPassword,
+  onPasswordChange,
+  isSecondFieldEnabled,
+  disabled,
+  label,
+  value
 }) => {
   const [error, setError] = useState<string | null>(null);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // Basic password validation example
-    if (e.target.value.length < 8) {
-      setError('Password should be at least 8 characters long.');
-    } else {
-      setError(null);
-    }
-
-    onChange(e);
-  };
-
   return (
-    <div>
-      <InputField label={text} icon={<AiOutlineLock />}>
-        <input type="password" value={value} onChange={handleInputChange} />
-      </InputField>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+    <>
+      <InputField
+        value={value}
+        onChange={onPasswordChange}
+        isRequired={true}
+        label={label}
+        type={'password'}
+        icon={<AiOutlineLock />}
+        error={false}
+        clearError={() => {}}
+        disabled={disabled}
+      />
+    </>
   );
 };
 
