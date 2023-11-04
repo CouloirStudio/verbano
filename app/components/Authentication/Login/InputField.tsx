@@ -12,6 +12,7 @@ interface InputFieldProps {
   icon: ReactNode;
   error: boolean;
   clearError: () => void;
+  disabled: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -23,6 +24,7 @@ const InputField: React.FC<InputFieldProps> = ({
   icon,
   error,
   clearError,
+  disabled,
 }) => {
   const customOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e); // Call the provided onChange
@@ -41,6 +43,7 @@ const InputField: React.FC<InputFieldProps> = ({
           required={isRequired}
           label={label}
           type={type}
+          disabled={disabled}
           error
           id="outlined-error-helper-text"
         />
@@ -53,6 +56,7 @@ const InputField: React.FC<InputFieldProps> = ({
           required={isRequired}
           label={label}
           type={type}
+          disabled={disabled}
         />
       )}
     </Box>
