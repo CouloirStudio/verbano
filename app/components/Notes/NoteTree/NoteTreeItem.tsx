@@ -50,20 +50,6 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
       }
     }, [selectedNote, isEditing, id, exitEditing]);
 
-    const submitUpdate = useCallback(
-      async (newValue: string): Promise<void> => {
-        setName(newValue);
-        try {
-          await updateNote({
-            variables: { id, input: { noteName: newValue } },
-          });
-        } catch (e) {
-          console.error('Error updating note:', e);
-        }
-      },
-      [id, updateNote],
-    );
-
     const selectedStyle = useMemo(
       () => ({
         backgroundColor: theme.palette.primary.main,
@@ -81,6 +67,32 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
       }),
       [selectedNotes, selectedNote, id, theme, selectedStyle],
     );
+  // Function to submit the updated note name
+  const submitUpdate = async (newValue: string): Promise<void> => {
+    if (newValue === note.noteName) {
+      setName(newValue);
+      return;
+    }
+    if (newValue.trim() === '') {
+      setName(note.noteName);
+      return;
+    }
+
+    setName(newValue.trim());
+    try {
+      await updateNote({
+        variables: {
+          id: note.id,
+          input: {
+            noteName: newValue,
+          },
+        },
+      });
+    } catch (e) {
+      setName(note.noteName);
+      console.error('Error updating note:', e);
+    }
+  };
 
     const handleContextMenuEvent = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => handleContextMenu(e, id),

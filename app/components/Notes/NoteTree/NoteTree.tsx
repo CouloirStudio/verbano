@@ -31,17 +31,8 @@ function NoteTree() {
 
       {activeTab === 0 && (
         <>
-          <NoteTreeHeader
-            selectedNotes={selectedNotes}
-            clearSelectedNotes={clearSelectedNotes}
-          />
-
-          <RenderNoteTree
-            project={context.selectedProject}
-            handleContextMenu={handleContextMenu}
-            selectedNotes={selectedNotes}
-            setSelectedNotes={setSelectedNotes}
-          />
+          <NoteTreeHeader />
+          <RenderNoteTree handleContextMenu={handleContextMenu} />
         </>
       )}
 
