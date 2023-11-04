@@ -1,68 +1,72 @@
-import React, {
-  memo,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { Draggable } from '@hello-pangea/dnd';
-import { NoteType } from '@/app/graphql/resolvers/types';
-import styles from './noteTree.module.scss';
 import { useTheme } from '@mui/material/styles';
-import { getItemStyle } from './utilityFunctions';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { useMutation } from '@apollo/client';
 import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
+import styles from './noteTree.module.scss';
+import { NoteType } from '@/app/graphql/resolvers/types';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useNoteListContext } from '@/app/contexts/NoteListContext';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
+import useNoteSelection from '@/app/hooks/useNoteSelection';
+import { getItemStyle } from '@/app/components/Notes/NoteTree/utilityFunctions';
 
 interface NoteTreeItemProps {
   note: NoteType;
   index: number;
-  handleContextMenu: (event: React.MouseEvent, noteId: string) => void;
+  handleContextMenu: (
+    event: React.MouseEvent<HTMLDivElement>,
+    noteId: string,
+  ) => void;
 }
 
-const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
-  note,
-  index,
-  handleContextMenu,
-}) => {
-  const { id, noteName } = note;
-  const theme = useTheme();
-  const context = useProjectContext();
-  const [updateNote] = useMutation(UpdateNote);
+const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
+  ({ note, index, handleContextMenu }) => {
+    const theme = useTheme();
+    const { id, noteName } = note;
+    const { selectedNote } = useProjectContext();
+    const [updateNote] = useMutation(UpdateNote);
+    const [name, setName] = useState<string>(noteName);
+    const { selectedNotes } = useNoteListContext();
+    const { handleClick, isSelected } = useNoteSelection(id);
 
-  // State for editing the note name
-  const [name, setName] = useState(noteName);
+    const {
+      isEditing,
+      value,
+      handleChange,
+      handleSubmit,
+      handleDoubleClick,
+      handleBlur,
+      handleKeyDown,
+      exitEditing,
+    } = useDoubleClickEdit(noteName);
 
-  // Function to handle click events on the note item
-  const handleClick = useCallback(() => {
-    if (context.selectedNote?.id !== id) {
-      context.setSelectedNote(note);
-    }
-  }, [id, name, context]);
+    useEffect(() => {
+      if (selectedNote?.id !== id && isEditing) {
+        exitEditing();
+      }
+    }, [selectedNote, isEditing, id, exitEditing]);
 
-  // Custom hook to manage double click editing
-  const {
-    isEditing,
-    value,
-    handleChange,
-    handleSubmit,
-    handleDoubleClick,
-    handleBlur,
-    handleKeyDown,
-    exitEditing,
-  } = useDoubleClickEdit(note.noteName);
+    const selectedStyle = useMemo(
+      () => ({
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+      }),
+      [theme.palette.primary],
+    );
 
-  // Cancel editing if the selected note changes
-  useEffect(() => {
-    if (context.selectedNote?.id !== note.id && isEditing) {
-      exitEditing();
-    }
-  }, [context.selectedNote, isEditing, note.id, exitEditing]);
-
+    const style = useMemo(
+      () => ({
+        ...getItemStyle(null, false, theme),
+        ...(selectedNotes.includes(id) && selectedNote?.id !== id
+          ? selectedStyle
+          : {}),
+      }),
+      [selectedNotes, selectedNote, id, theme, selectedStyle],
+    );
   // Function to submit the updated note name
   const submitUpdate = async (newValue: string): Promise<void> => {
     if (newValue === note.noteName) {
@@ -90,49 +94,48 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = ({
     }
   };
 
-  return (
-    <Draggable draggableId={note.id} index={index}>
-      {(provided) => (
-        <Box
-          onContextMenu={(e) => handleContextMenu(e, note.id)}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className={`${styles.note} ${
-            context.selectedNote?.id === note.id ? styles.selected : ''
-          }`}
-          style={getItemStyle(provided.draggableProps.style, false, theme)}
-          onClick={handleClick}
-          onDoubleClick={handleDoubleClick}
-        >
-          {isEditing ? (
-            <TextField
-              variant={'standard'}
-              type="text"
-              value={value}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
-              autoFocus
-            />
-          ) : (
-            <Typography>{name}</Typography>
-          )}
-        </Box>
-      )}
-    </Draggable>
-  );
-};
+    const handleContextMenuEvent = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => handleContextMenu(e, id),
+      [handleContextMenu, id],
+    );
 
-function areEqual(
-  prevProps: PropsWithChildren<NoteTreeItemProps>,
-  nextProps: PropsWithChildren<NoteTreeItemProps>,
-) {
-  return (
+    return (
+      <Draggable draggableId={id} index={index}>
+        {(provided) => (
+          <Box
+            onContextMenu={handleContextMenuEvent}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            className={`${styles.note} ${
+              selectedNote?.id === id ? styles.active : ''
+            }`}
+            style={style}
+            onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
+          >
+            {isEditing ? (
+              <TextField
+                variant="standard"
+                type="text"
+                value={value}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
+                autoFocus
+              />
+            ) : (
+              <Typography>{name}</Typography>
+            )}
+          </Box>
+        )}
+      </Draggable>
+    );
+  },
+  (prevProps, nextProps) =>
     prevProps.note.id === nextProps.note.id &&
     prevProps.note.noteName === nextProps.note.noteName &&
-    prevProps.index === nextProps.index
-  );
-}
+    prevProps.index === nextProps.index,
+);
 
-export default memo(NoteTreeItem, areEqual);
+export default NoteTreeItem;
