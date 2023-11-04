@@ -16,6 +16,7 @@
 
   .note {
 
+
     transition: background-color 0.1s ease-in-out, transform 0.3s ease-in-out;
     font-size: 14px;
     height: 50px;
@@ -34,7 +35,10 @@
       border: 1px solid #68BCCA;
       border-right-width: 5px;
     }
-    
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .reportList {
