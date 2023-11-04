@@ -51,6 +51,7 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
           onChange={onFirstNameChange}
           type={'text'}
           value={firstName}
+          disabled={false}
         />
       </div>
       <div data-cy="last-name">
@@ -63,6 +64,7 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
           onChange={onLastNameChange}
           type={'text'}
           value={lastName}
+          disabled={false}
         />
       </div>
     </>

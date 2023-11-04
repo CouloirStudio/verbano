@@ -36,6 +36,7 @@ const UpdateEmailField: React.FC<EmailInputProps> = ({ value, onChange }) => {
       onChange={onChange}
       type={'email'}
       value={value}
+      disabled={false}
     />
   );
 };

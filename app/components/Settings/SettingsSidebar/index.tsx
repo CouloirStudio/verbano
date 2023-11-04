@@ -44,6 +44,7 @@ export const SettingsSidebar: React.FC = () => {
     'Back to Home',
     'Profile',
     'Logout',
+    'Password'
   ];
 
   /**
