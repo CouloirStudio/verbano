@@ -1,15 +1,9 @@
-import Link from 'next/link';
-import { NextRouter, useRouter } from 'next/router';
-import React, { ReactNode } from 'react';
-import {
-  AiOutlineHome,
-  AiOutlineLogout,
-  AiOutlineProfile,
-  AiOutlineUser,
-} from 'react-icons/ai';
-import styles from './settingsSidebar.module.scss';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import { useUser } from '@/app/contexts/UserContext';
+import Link from "next/link";
+import React, { ReactNode } from "react";
+import { AiOutlineHome, AiOutlineLogout, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import styles from "./settingsSidebar.module.scss";
+import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
+import { useUser } from "@/app/contexts/UserContext";
 
 /**
  * `SettingsSidebar` is a React functional component that provides a sidebar for user settings.
@@ -28,7 +22,6 @@ import { useUser } from '@/app/contexts/UserContext';
  * ```
  */
 export const SettingsSidebar: React.FC = () => {
-  const route: NextRouter = useRouter();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const currentUser = useUser();
 

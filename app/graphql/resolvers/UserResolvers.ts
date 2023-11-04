@@ -118,6 +118,7 @@ export const UserMutations = {
       }
     }
   },
+
   updateEmail: async (
     _: any,
     { email, newEmail }: { email: string; newEmail: string },

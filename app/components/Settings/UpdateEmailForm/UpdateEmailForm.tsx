@@ -25,19 +25,21 @@ interface EmailInputProps {
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
-const UpdateEmailField: React.FC<EmailInputProps> = ({ value, onChange }) => {
+const UpdateEmailForm: React.FC<EmailInputProps> = ({ value, onChange }) => {
   return (
-    <InputField
-      label="Update Email"
-      icon={<AiOutlineMail />}
-      clearError={() => {}}
-      error={false}
-      isRequired={false}
-      onChange={onChange}
-      type={'email'}
-      value={value}
-    />
+    <form>
+      <InputField
+        label="Update Email"
+        icon={<AiOutlineMail />}
+        clearError={() => {}}
+        error={false}
+        isRequired={true}
+        onChange={onChange}
+        type={'email'}
+        value={value}
+      />
+    </form>
   );
 };
 
-export default UpdateEmailField;
+export default UpdateEmailForm;

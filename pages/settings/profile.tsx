@@ -1,19 +1,17 @@
-import Typography from '@mui/material/Typography';
-import React, { useState, useEffect } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import Typography from "@mui/material/Typography";
+import React, { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 
-import styles from '../../styles/globalSettings.module.scss';
-import classes from '../../styles/globalSettings.module.scss';
-import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import UpdateEmailField from '@/app/components/Settings/UpdateEmailField/index';
-import UpdateFullName from '@/app/components/Settings/UpdateFullNameField';
-import { SettingsSidebar } from '@/app/components/Settings/SettingsSidebar';
-import UpdatePasswordField from '@/app/components/Settings/UpdatePasswordField';
-import UpdateName from '@/app/graphql/mutations/UpdateName';
-import UpdateEmail from '@/app/graphql/mutations/UpdateEmail';
-import UpdatePassword from '@/app/graphql/mutations/UpdatePassword';
-import CurrentUserData from './interface/CurrentUserData';
+import styles from "../../styles/globalSettings.module.scss";
+import classes from "../../styles/globalSettings.module.scss";
+import GetCurrentUser from "@/app/graphql/queries/GetCurrentUser";
+import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
+import UpdateEmailField from "@/app/components/Settings/UpdateEmailField/index";
+import UpdateFullName from "@/app/components/Settings/UpdateFullNameField/UpdateNameForm";
+import { SettingsSidebar } from "@/app/components/Settings/SettingsSidebar";
+import UpdateName from "@/app/graphql/mutations/UpdateName";
+import UpdateEmail from "@/app/graphql/mutations/UpdateEmail";
+import CurrentUserData from "./interface/CurrentUserData";
 
 /**
  * `Profile` is a React functional component that represents a user's profile settings page.
