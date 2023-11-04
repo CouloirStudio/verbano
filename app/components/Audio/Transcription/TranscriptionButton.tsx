@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import { transcribe } from '@/app/api/transcription';
+import React, {useEffect, useRef} from 'react';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
+import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
+import {transcribe} from '@/app/api/transcription';
 import IconButton from '@mui/material/IconButton';
-import { useNoteContext } from '@/app/contexts/NoteContext';
-import { Tooltip, useTheme } from '@mui/material';
+import {useNoteContext} from '@/app/contexts/NoteContext';
+import {Tooltip, useTheme} from '@mui/material';
+import client from '@/app/config/apolloClient';
+import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
 
 /**
  * A button that grabs the selected note and transcribes the audio. .
@@ -49,10 +51,23 @@ const TranscriptionButton = () => {
             if (selectedNote.id !== currentNoteId) {
               return;
             }
-
             // Set transcription in the NoteContext so that the display updates
             // this works
-            setTranscription(transcription.text);
+
+            //update the transcription context
+            setTranscription(JSON.stringify(transcription, null, 2));
+
+            //update the apollo cache with the new transcription
+            client.refetchQueries({
+              include: [
+                {
+                  query: GetTranscription,
+                  variables: {
+                    id: selectedNote.id,
+                  },
+                },
+              ],
+            });
           });
         } catch (err: any) {
           setErrorMessage(err.message);

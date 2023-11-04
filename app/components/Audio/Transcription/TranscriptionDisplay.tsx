@@ -30,7 +30,7 @@ const TranscriptionDisplay: React.FC = () => {
 
     getTranscript({ variables: { id: selectedNote.id } });
 
-    if (!loading && !error && data?.getTranscription) {
+    if (data && data.getTranscription) {
       try {
         const transcriptionData: TranscriptionSegmentData[] = JSON.parse(
           data.getTranscription,
@@ -42,6 +42,8 @@ const TranscriptionDisplay: React.FC = () => {
           error instanceof Error ? error.message : 'An unknown error occurred.',
         );
       }
+    } else {
+      setTranscription('');
     }
   }, [
     selectedNote?.id,
@@ -54,6 +56,10 @@ const TranscriptionDisplay: React.FC = () => {
     setTranscription,
   ]);
 
+  useEffect(() => {
+    console.log('transcription', transcription);
+  }, [transcription]);
+
   // Parse and render transcription segments
   const renderTranscription = (transcriptionJson: string) => {
     try {
@@ -63,11 +69,11 @@ const TranscriptionDisplay: React.FC = () => {
         <TranscriptionSegment key={index} segment={segment} />
       ));
     } catch (e) {
-      // Handle parsing error
-      setIsError(true);
-      setErrorMessage('Failed to parse transcription.');
       return (
-        <Typography variant="body2">Failed to load transcription.</Typography>
+        <Typography variant="body2">
+          Failed to load Replicate format. Try retranscribing. Current data:{' '}
+          {transcriptionJson}
+        </Typography>
       );
     }
   };

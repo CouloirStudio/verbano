@@ -8,7 +8,6 @@ import { useTheme } from '@mui/material/styles';
 export default function Home() {
   const { selectedNote } = useProjectContext();
   const theme = useTheme();
-  console.log(selectedNote?.transcription);
   return (
     <div
       className={styles.container}
