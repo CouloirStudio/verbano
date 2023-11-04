@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineMail } from 'react-icons/ai';
+import { Button } from '@mui/material';
 
 interface EmailInputProps {
   value: string;
@@ -38,6 +39,9 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ value, onChange }) => {
         type={'email'}
         value={value}
       />
+      <Button variant="contained" color="primary" type="submit">
+        Update Email
+      </Button>
     </form>
   );
 };

@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineUser } from 'react-icons/ai';
+import { Button } from '@mui/material';
 
 interface FullNameInputProps {
   firstName: string;
@@ -40,32 +41,31 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
   onLastNameChange,
 }) => {
   return (
-    <>
-      <div data-cy="first-name">
-        <InputField
-          label="Update First Name"
-          icon={<AiOutlineUser />}
-          clearError={() => {}}
-          error={false}
-          isRequired={false}
-          onChange={onFirstNameChange}
-          type={'text'}
-          value={firstName}
-        />
-      </div>
-      <div data-cy="last-name">
-        <InputField
-          label="Update Last Name"
-          icon={<AiOutlineUser />}
-          clearError={() => {}}
-          error={false}
-          isRequired={false}
-          onChange={onLastNameChange}
-          type={'text'}
-          value={lastName}
-        />
-      </div>
-    </>
+    <form>
+      <InputField
+        label="Update First Name"
+        icon={<AiOutlineUser />}
+        clearError={() => {}}
+        error={false}
+        isRequired={false}
+        onChange={onFirstNameChange}
+        type={'text'}
+        value={firstName}
+      />
+      <InputField
+        label="Update Last Name"
+        icon={<AiOutlineUser />}
+        clearError={() => {}}
+        error={false}
+        isRequired={false}
+        onChange={onLastNameChange}
+        type={'text'}
+        value={lastName}
+      />
+      <Button variant="contained" color="primary" type="submit">
+        Update Name
+      </Button>
+    </form>
   );
 };
 

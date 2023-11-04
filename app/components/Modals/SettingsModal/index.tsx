@@ -1,36 +1,40 @@
 import React from 'react';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import
+import UpdatePasswordForm from '@/app/components/Settings/UpdatePasswordForm/UpdatePasswordForm';
+import UpdateEmailForm from '@/app/components/Settings/UpdateEmailForm/UpdateEmailForm';
+import UpdateNameForm from '@/app/components/Settings/UpdateNameForm/UpdateNameForm';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import { DialogContent } from '@mui/material';
+import DialogTitle from '@mui/material/DialogTitle';
 
 interface ModalComponentProps {
   open: boolean;
-  onClose: () => void;
+  handleClose: () => void;
 }
 
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-
-export default function ModalComponent({ open, onClose }: ModalComponentProps) {
+export default function ModalComponent({
+  open,
+  handleClose,
+}: ModalComponentProps) {
+  const [scroll] = React.useState<DialogProps['scroll']>('paper');
   return (
-    <Modal
+    <Dialog
       open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      onClose={handleClose}
+      scroll={scroll}
+      aria-labelledby="scroll-dialog-title"
+      aria-describedby="scroll-dialog-description"
     >
-      <Box sx={modalStyle}>
-
-      </Box>
-    </Modal>
+      <DialogTitle id="scroll-dialog-title">Settings</DialogTitle>
+      <DialogContent>
+        <UpdateEmailForm value={''} onChange={() => {}} />
+        <UpdateNameForm
+          firstName={''}
+          lastName={''}
+          onFirstNameChange={() => {}}
+          onLastNameChange={() => {}}
+        />
+        <UpdatePasswordForm value={''} onChange={() => {}} />
+      </DialogContent>
+    </Dialog>
   );
 }

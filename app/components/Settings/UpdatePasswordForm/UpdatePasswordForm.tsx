@@ -1,11 +1,11 @@
 import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineLock } from 'react-icons/ai';
+import { Button } from '@mui/material';
 
 interface PasswordInputProps {
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  text: string;
 }
 
 /**
@@ -29,9 +29,9 @@ interface PasswordInputProps {
  */
 const UpdatePasswordField: React.FC<PasswordInputProps> = ({ onChange }) => {
   return (
-    <div>
+    <form>
       <InputField
-        label={'Update Password'}
+        label={'Old Password'}
         icon={<AiOutlineLock />}
         clearError={() => {}}
         error={false}
@@ -40,7 +40,33 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({ onChange }) => {
         type={'password'}
         value={''}
       />
-    </div>
+
+      <InputField
+        label={'New Password'}
+        icon={<AiOutlineLock />}
+        clearError={() => {}}
+        error={false}
+        isRequired={false}
+        onChange={onChange}
+        type={'password'}
+        value={''}
+      />
+
+      <InputField
+        label={'Confirm New Password'}
+        icon={<AiOutlineLock />}
+        clearError={() => {}}
+        error={false}
+        isRequired={false}
+        onChange={onChange}
+        type={'password'}
+        value={''}
+      />
+
+      <Button variant="contained" color="primary" type="submit">
+        Update Password
+      </Button>
+    </form>
   );
 };
 
