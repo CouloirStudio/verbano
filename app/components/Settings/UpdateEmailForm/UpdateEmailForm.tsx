@@ -34,6 +34,8 @@ interface EmailInputProps {
 const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
   const [isError, setIsError] = useState(false);
   const [email, setEmail] = useState('');
+  // Temporary state for handling feedback
+  const [success, setSuccess] = useState('');
   const { updateEmail } = useSettingsManager();
   const clearError = () => {
     setIsError(false);
@@ -48,7 +50,8 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
     e.preventDefault();
 
     try {
-      await updateEmail(email);
+      // This is the bare minimum of feedback, and is only temporary.
+      setSuccess(await updateEmail(email));
     } catch (error) {
       setIsError(true);
       console.error('Error updating email', error);
@@ -67,6 +70,7 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
       </AccordionSummary>
       <AccordionDetails>
         <form onSubmit={handleSubmit}>
+          <p>{success}</p>
           <div data-cy="email">
             <InputField
               label="Update Email"

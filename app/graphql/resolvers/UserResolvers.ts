@@ -95,6 +95,9 @@ export const UserMutations = {
     if (args.input.email.trim() === '') {
       throw new Error('Email Cannot Be Empty');
     }
-    await User.findByIdAndUpdate(args.id, args.input, { new: true });
+    const updated = await User.findByIdAndUpdate(args.id, args.input, {
+      new: true,
+    });
+    return !!updated;
   },
 };
