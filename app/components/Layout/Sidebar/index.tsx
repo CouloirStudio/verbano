@@ -87,6 +87,18 @@ const Sidebar: React.FC = () => {
   const handleDragEnd = async (result: DropResult) => {
     const { draggableId, destination, source } = result;
 
+    console.log('result', result);
+
+    if (
+      source.droppableId === 'notes' &&
+      destination?.droppableId === 'notes'
+    ) {
+    } else if (
+      source.droppableId === 'notes' &&
+      destination?.droppableId === 'projects'
+    ) {
+    }
+
     try {
       await getNote({
         variables: { id: draggableId },

@@ -33,7 +33,7 @@ function ProjectTree() {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        <Droppable droppableId={'projects'} type={'projects'}>
+        <Droppable droppableId={'projects'}>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {renderProjectTree(projects)}

@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import styles from '@/app/components/Projects/ProjectTree/projectTree.module.scss';
 import Typography from '@mui/material/Typography';
 import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
-import { Draggable, Droppable } from '@hello-pangea/dnd';
+import { Draggable } from '@hello-pangea/dnd';
 import React, { memo, useEffect, useState } from 'react';
 import DeleteProject from '@/app/graphql/mutations/DeleteProject.graphql';
 import { useMutation } from '@apollo/client';
@@ -92,67 +92,56 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
 
     return (
       <>
-        <Droppable droppableId={`project-${project.id}`} key={project.id}>
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-              <Draggable
+        <Draggable key={project.id} draggableId={project.id} index={index}>
+          {(provided2) => (
+            <div
+              ref={provided2.innerRef}
+              {...provided2.draggableProps}
+              {...provided2.dragHandleProps}
+            >
+              <CustomTreeItem
                 key={project.id}
-                draggableId={project.id}
-                index={index}
-              >
-                {(provided2) => (
-                  <div
-                    ref={provided2.innerRef}
-                    {...provided2.draggableProps}
-                    {...provided2.dragHandleProps}
+                nodeId={project.id.toString()}
+                project={project}
+                label={
+                  <Box
+                    onContextMenu={handleContextMenu}
+                    className={styles.project}
+                    onDoubleClick={handleDoubleClick}
                   >
-                    <CustomTreeItem
-                      key={project.id}
-                      nodeId={project.id.toString()}
-                      project={project}
-                      label={
-                        <Box
-                          onContextMenu={handleContextMenu}
-                          className={styles.project}
-                          onDoubleClick={handleDoubleClick}
-                        >
-                          {isEditing ? (
-                            <TextField
-                              variant="standard"
-                              type="text"
-                              value={value}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
-                              autoFocus
-                            />
-                          ) : (
-                            <Typography>{project.projectName}</Typography>
-                          )}
-                          <Typography
-                            variant="subtitle1"
-                            className={styles.projectNoteCount}
-                          >
-                            {project.notes.length}
-                          </Typography>
-                        </Box>
-                      }
+                    {isEditing ? (
+                      <TextField
+                        variant="standard"
+                        type="text"
+                        value={value}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
+                        autoFocus
+                      />
+                    ) : (
+                      <Typography>{project.projectName}</Typography>
+                    )}
+                    <Typography
+                      variant="subtitle1"
+                      className={styles.projectNoteCount}
                     >
-                      {project.notes.map((projectNote: ProjectNoteType) => (
-                        <CustomTreeItem
-                          key={projectNote.note.id}
-                          nodeId={projectNote.note.id.toString()}
-                          label={projectNote.note.noteName}
-                        />
-                      ))}
-                      {provided.placeholder}
-                    </CustomTreeItem>
-                  </div>
-                )}
-              </Draggable>
+                      {project.notes.length}
+                    </Typography>
+                  </Box>
+                }
+              >
+                {project.notes.map((projectNote: ProjectNoteType) => (
+                  <CustomTreeItem
+                    key={projectNote.note.id}
+                    nodeId={projectNote.note.id.toString()}
+                    label={projectNote.note.noteName}
+                  />
+                ))}
+              </CustomTreeItem>
             </div>
           )}
-        </Droppable>
+        </Draggable>
         <ContextMenuComponent
           contextMenu={contextMenu}
           handleClose={handleClose}

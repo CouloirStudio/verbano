@@ -102,32 +102,38 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
     return (
       <Draggable key={note.id} draggableId={note.id} index={index}>
         {(provided) => (
-          <Box
-            onContextMenu={handleContextMenuEvent}
+          <div
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className={`${styles.note} ${
-              selectedNote?.id === id ? styles.active : ''
-            }`}
-            style={style}
-            onClick={handleClick}
-            onDoubleClick={handleDoubleClick}
           >
-            {isEditing ? (
-              <TextField
-                variant="standard"
-                type="text"
-                value={value}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
-                autoFocus
-              />
-            ) : (
-              <Typography>{name}</Typography>
-            )}
-          </Box>
+            <Box
+              onContextMenu={handleContextMenuEvent}
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              className={`${styles.note} ${
+                selectedNote?.id === id ? styles.active : ''
+              }`}
+              style={style}
+              onClick={handleClick}
+              onDoubleClick={handleDoubleClick}
+            >
+              {isEditing ? (
+                <TextField
+                  variant="standard"
+                  type="text"
+                  value={value}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
+                  autoFocus
+                />
+              ) : (
+                <Typography>{name}</Typography>
+              )}
+            </Box>
+          </div>
         )}
       </Draggable>
     );
