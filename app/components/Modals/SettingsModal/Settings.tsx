@@ -68,11 +68,7 @@ export default function Settings() {
       </Tabs>
       <TabPanel value={value} index={0}>
         <UpdateEmailForm currentUser={currentUser} />
-        <UpdateNameForm
-          currentUser={currentUser}
-          onFirstNameChange={() => {}}
-          onLastNameChange={() => {}}
-        />
+        <UpdateNameForm currentUser={currentUser} />
         <UpdatePasswordForm currentUser={currentUser} onChange={() => {}} />
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>

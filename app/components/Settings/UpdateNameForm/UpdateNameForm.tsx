@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineUser } from 'react-icons/ai';
 import { Button } from '@mui/material';
@@ -8,11 +8,10 @@ import Typography from '@mui/material/Typography';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import { IUser } from '@/app/models/User';
+import useSettingsManager from '@/app/hooks/useSettingsManager';
 
 interface FullNameInputProps {
   currentUser: Partial<IUser>;
-  onFirstNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onLastNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -23,8 +22,6 @@ interface FullNameInputProps {
  *
  * @param props - The component's props.
  * @param props.currentUser - The current user of the Application
- * @param props.onFirstNameChange - A function to handle changes to the first name input field.
- * @param props.onLastNameChange - A function to handle changes to the last name input field.
  *
  * @example
  * ```tsx
@@ -38,12 +35,13 @@ interface FullNameInputProps {
  *
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  */
-const UpdateNameForm: React.FC<FullNameInputProps> = ({
-  currentUser,
-  onFirstNameChange,
-  onLastNameChange,
-}) => {
+const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
+  const [firstName, setFirstName] = useState(currentUser?.firstName);
+  const [lastName, setLastName] = useState(currentUser?.lastName);
+  // Temporary state for handling feedback
+  const [success, setSuccess] = useState('');
   const [isError, setIsError] = useState(false);
+  const { updateName } = useSettingsManager();
   const clearError = () => {
     setIsError(false);
   };
@@ -53,6 +51,17 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({
     return 'Current User Unavailable';
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      // This is the bare minimum of feedback, and is only temporary.
+      setSuccess(await updateName(firstName, lastName));
+    } catch (error) {
+      setIsError(true);
+      console.error('Error updating email', error);
+    }
+  };
   const getLast = (): string => {
     if (currentUser.lastName !== undefined) return currentUser.lastName;
     return 'Current User Unavailable';
@@ -71,16 +80,17 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <form>
+        <form onSubmit={handleSubmit}>
+          <p>{success}</p>
           <InputField
             label="Update First Name"
             icon={<AiOutlineUser />}
             clearError={clearError}
             error={isError}
             isRequired={true}
-            onChange={onFirstNameChange}
+            onChange={(e) => setFirstName(e.target.value)}
             type={'text'}
-            value={getFirst()}
+            value={firstName}
           />
           <InputField
             label="Update Last Name"
@@ -88,9 +98,9 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({
             clearError={clearError}
             error={isError}
             isRequired={false}
-            onChange={onLastNameChange}
+            onChange={(e) => setLastName(e.target.value)}
             type={'text'}
-            value={getLast()}
+            value={lastName}
           />
           <Button variant="contained" color="primary" type="submit">
             Update Name

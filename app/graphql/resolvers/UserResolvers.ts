@@ -91,10 +91,6 @@ export const UserMutations = {
     args: UpdateUserArgs,
     _context: ResolverContext,
   ) {
-    // check if anything is empty
-    if (args.input.email.trim() === '') {
-      throw new Error('Email Cannot Be Empty');
-    }
     const updated = await User.findByIdAndUpdate(args.id, args.input, {
       new: true,
     });

@@ -33,7 +33,7 @@ interface EmailInputProps {
  */
 const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
   const [isError, setIsError] = useState(false);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(currentUser?.email);
   // Temporary state for handling feedback
   const [success, setSuccess] = useState('');
   const { updateEmail } = useSettingsManager();
