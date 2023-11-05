@@ -67,7 +67,7 @@ export default function Settings() {
         <Tab label="Billing" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <UpdateEmailForm currentUser={currentUser} onChange={() => {}} />
+        <UpdateEmailForm currentUser={currentUser} />
         <UpdateNameForm
           currentUser={currentUser}
           onFirstNameChange={() => {}}

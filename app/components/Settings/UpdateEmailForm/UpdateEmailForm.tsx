@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineMail } from 'react-icons/ai';
 import { Button } from '@mui/material';
@@ -8,10 +8,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import { IUser } from '@/app/models/User';
+import useSettingsManager from '@/app/hooks/useSettingsManager';
 
 interface EmailInputProps {
   currentUser: Partial<IUser>;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -22,7 +22,6 @@ interface EmailInputProps {
  *
  * @param props - The component's props.
  * @param props.currentUser - The current user of the application
- * @param props.onChange - A function to handle changes to the email input field.
  *
  * @example
  * ```tsx
@@ -32,12 +31,10 @@ interface EmailInputProps {
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
-const UpdateEmailForm: React.FC<EmailInputProps> = ({
-  currentUser,
-  onChange,
-}) => {
+const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
   const [isError, setIsError] = useState(false);
-
+  const [email, setEmail] = useState('');
+  const { updateEmail } = useSettingsManager();
   const clearError = () => {
     setIsError(false);
   };
@@ -46,6 +43,18 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({
     if (currentUser.email !== undefined) return currentUser.email;
     return 'Current User Unavailable';
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await updateEmail(email);
+    } catch (error) {
+      setIsError(true);
+      console.error('Error updating email', error);
+    }
+  };
+
   return (
     <Accordion>
       <AccordionSummary
@@ -57,17 +66,19 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({
         <Typography sx={{ color: 'text.secondary' }}>{getEmail()}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <form>
-          <InputField
-            label="Update Email"
-            icon={<AiOutlineMail />}
-            clearError={clearError}
-            error={isError}
-            isRequired={true}
-            onChange={onChange}
-            type={'email'}
-            value={getEmail()}
-          />
+        <form onSubmit={handleSubmit}>
+          <div data-cy="email">
+            <InputField
+              label="Update Email"
+              icon={<AiOutlineMail />}
+              clearError={clearError}
+              error={isError}
+              isRequired={true}
+              onChange={(e) => setEmail(e.target.value)}
+              type={'email'}
+              value={email}
+            />
+          </div>
           <Button variant="contained" color="primary" type="submit">
             Update Email
           </Button>
