@@ -5,6 +5,9 @@ import UpdateNameForm from '@/app/components/Settings/UpdateNameForm/UpdateNameF
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import { DialogContent } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+
+import Button from '@mui/material/Button';
 
 interface ModalComponentProps {
   open: boolean;
@@ -16,6 +19,7 @@ export default function ModalComponent({
   handleClose,
 }: ModalComponentProps) {
   const [scroll] = React.useState<DialogProps['scroll']>('paper');
+
   return (
     <Dialog
       open={open}
@@ -35,6 +39,9 @@ export default function ModalComponent({
         />
         <UpdatePasswordForm value={''} onChange={() => {}} />
       </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Close</Button>
+      </DialogActions>
     </Dialog>
   );
 }

@@ -2,6 +2,11 @@ import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineUser } from 'react-icons/ai';
 import { Button } from '@mui/material';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import EditIcon from '@mui/icons-material/Edit';
+import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 interface FullNameInputProps {
   firstName: string;
@@ -41,31 +46,42 @@ const UpdateFullName: React.FC<FullNameInputProps> = ({
   onLastNameChange,
 }) => {
   return (
-    <form>
-      <InputField
-        label="Update First Name"
-        icon={<AiOutlineUser />}
-        clearError={() => {}}
-        error={false}
-        isRequired={false}
-        onChange={onFirstNameChange}
-        type={'text'}
-        value={firstName}
-      />
-      <InputField
-        label="Update Last Name"
-        icon={<AiOutlineUser />}
-        clearError={() => {}}
-        error={false}
-        isRequired={false}
-        onChange={onLastNameChange}
-        type={'text'}
-        value={lastName}
-      />
-      <Button variant="contained" color="primary" type="submit">
-        Update Name
-      </Button>
-    </form>
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<EditIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography>Name</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <form>
+          <InputField
+            label="Update First Name"
+            icon={<AiOutlineUser />}
+            clearError={() => {}}
+            error={false}
+            isRequired={false}
+            onChange={onFirstNameChange}
+            type={'text'}
+            value={firstName}
+          />
+          <InputField
+            label="Update Last Name"
+            icon={<AiOutlineUser />}
+            clearError={() => {}}
+            error={false}
+            isRequired={false}
+            onChange={onLastNameChange}
+            type={'text'}
+            value={lastName}
+          />
+          <Button variant="contained" color="primary" type="submit">
+            Update Name
+          </Button>
+        </form>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

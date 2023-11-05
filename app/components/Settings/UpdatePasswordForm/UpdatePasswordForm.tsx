@@ -2,6 +2,11 @@ import React, { ChangeEvent } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineLock } from 'react-icons/ai';
 import { Button } from '@mui/material';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import EditIcon from '@mui/icons-material/Edit';
+import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 interface PasswordInputProps {
   value: string;
@@ -29,44 +34,55 @@ interface PasswordInputProps {
  */
 const UpdatePasswordField: React.FC<PasswordInputProps> = ({ onChange }) => {
   return (
-    <form>
-      <InputField
-        label={'Old Password'}
-        icon={<AiOutlineLock />}
-        clearError={() => {}}
-        error={false}
-        isRequired={false}
-        onChange={onChange}
-        type={'password'}
-        value={''}
-      />
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<EditIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography>Password</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <form>
+          <InputField
+            label={'Old Password'}
+            icon={<AiOutlineLock />}
+            clearError={() => {}}
+            error={false}
+            isRequired={false}
+            onChange={onChange}
+            type={'password'}
+            value={''}
+          />
 
-      <InputField
-        label={'New Password'}
-        icon={<AiOutlineLock />}
-        clearError={() => {}}
-        error={false}
-        isRequired={false}
-        onChange={onChange}
-        type={'password'}
-        value={''}
-      />
+          <InputField
+            label={'New Password'}
+            icon={<AiOutlineLock />}
+            clearError={() => {}}
+            error={false}
+            isRequired={false}
+            onChange={onChange}
+            type={'password'}
+            value={''}
+          />
 
-      <InputField
-        label={'Confirm New Password'}
-        icon={<AiOutlineLock />}
-        clearError={() => {}}
-        error={false}
-        isRequired={false}
-        onChange={onChange}
-        type={'password'}
-        value={''}
-      />
+          <InputField
+            label={'Confirm New Password'}
+            icon={<AiOutlineLock />}
+            clearError={() => {}}
+            error={false}
+            isRequired={false}
+            onChange={onChange}
+            type={'password'}
+            value={''}
+          />
 
-      <Button variant="contained" color="primary" type="submit">
-        Update Password
-      </Button>
-    </form>
+          <Button variant="contained" color="primary" type="submit">
+            Update Password
+          </Button>
+        </form>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
