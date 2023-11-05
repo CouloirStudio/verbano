@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineMail } from 'react-icons/ai';
 import { Button } from '@mui/material';
@@ -7,9 +7,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import EditIcon from '@mui/icons-material/Edit';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
+import { IUser } from '@/app/models/User';
 
 interface EmailInputProps {
-  value: string;
+  currentUser: Partial<IUser>;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -20,7 +21,7 @@ interface EmailInputProps {
  * This component is designed for use in forms where a user can update their email address.
  *
  * @param props - The component's props.
- * @param props.value - The current value of the email input field.
+ * @param props.currentUser - The current user of the application
  * @param props.onChange - A function to handle changes to the email input field.
  *
  * @example
@@ -31,7 +32,20 @@ interface EmailInputProps {
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
-const UpdateEmailForm: React.FC<EmailInputProps> = ({ value, onChange }) => {
+const UpdateEmailForm: React.FC<EmailInputProps> = ({
+  currentUser,
+  onChange,
+}) => {
+  const [isError, setIsError] = useState(false);
+
+  const clearError = () => {
+    setIsError(false);
+  };
+
+  const getEmail = (): string => {
+    if (currentUser.email !== undefined) return currentUser.email;
+    return 'Current User Unavailable';
+  };
   return (
     <Accordion>
       <AccordionSummary
@@ -39,19 +53,20 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ value, onChange }) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography>Email</Typography>
+        <Typography sx={{ width: '33%', flexShrink: 0 }}>Email</Typography>
+        <Typography sx={{ color: 'text.secondary' }}>{getEmail()}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <form>
           <InputField
             label="Update Email"
             icon={<AiOutlineMail />}
-            clearError={() => {}}
-            error={false}
+            clearError={clearError}
+            error={isError}
             isRequired={true}
             onChange={onChange}
             type={'email'}
-            value={value}
+            value={getEmail()}
           />
           <Button variant="contained" color="primary" type="submit">
             Update Email

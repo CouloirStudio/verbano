@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineLock } from 'react-icons/ai';
 import { Button } from '@mui/material';
@@ -7,9 +7,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import { IUser } from '@/app/models/User';
 
 interface PasswordInputProps {
-  value: string;
+  currentUser: Partial<IUser>;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -32,7 +33,15 @@ interface PasswordInputProps {
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
-const UpdatePasswordField: React.FC<PasswordInputProps> = ({ onChange }) => {
+const UpdatePasswordField: React.FC<PasswordInputProps> = ({
+  currentUser,
+  onChange,
+}) => {
+  const [isError, setIsError] = useState(false);
+  const clearError = () => {
+    setIsError(false);
+  };
+
   return (
     <Accordion>
       <AccordionSummary
@@ -47,9 +56,9 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({ onChange }) => {
           <InputField
             label={'Old Password'}
             icon={<AiOutlineLock />}
-            clearError={() => {}}
-            error={false}
-            isRequired={false}
+            clearError={clearError}
+            error={isError}
+            isRequired={true}
             onChange={onChange}
             type={'password'}
             value={''}
