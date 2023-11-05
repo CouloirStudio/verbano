@@ -1,10 +1,9 @@
 import React, { ReactNode } from 'react';
-import styles from './login.module.scss';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 
 interface InputFieldProps {
-  value: string;
+  value: string | undefined;
   onChange: (e: any) => void;
   isRequired: boolean;
   label: string;

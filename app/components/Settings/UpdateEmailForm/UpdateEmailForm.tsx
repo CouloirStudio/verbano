@@ -81,7 +81,7 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
               isRequired={true}
               onChange={(e) => setEmail(e.target.value)}
               type={'email'}
-              value={getEmail()}
+              value={email}
             />
           </div>
           <Button variant="contained" color="primary" type="submit">

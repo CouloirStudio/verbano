@@ -90,7 +90,7 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
             isRequired={true}
             onChange={(e) => setFirstName(e.target.value)}
             type={'text'}
-            value={getFirst()}
+            value={firstName}
           />
           <InputField
             label="Update Last Name"
@@ -100,7 +100,7 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
             isRequired={false}
             onChange={(e) => setLastName(e.target.value)}
             type={'text'}
-            value={getLast()}
+            value={lastName}
           />
           <Button variant="contained" color="primary" type="submit">
             Update Name
