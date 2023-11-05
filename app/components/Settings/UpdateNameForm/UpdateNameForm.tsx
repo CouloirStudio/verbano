@@ -15,7 +15,7 @@ interface FullNameInputProps {
 }
 
 /**
- * `UpdateFullName` is a React functional component that provides input fields for updating a user's first name and last name with customizable labels.
+ * `UpdateNameForm` is a React functional component that provides input fields for updating a user's first name and last name with customizable labels.
  *
  * @remarks
  * This component is designed for use in forms where a user can update their full name.
@@ -23,21 +23,15 @@ interface FullNameInputProps {
  * @param props - The component's props.
  * @param props.currentUser - The current user of the Application
  *
- * @example
- * ```tsx
- * <UpdateFullName
- *   firstName={firstNameValue}
- *   lastName={lastNameValue}
- *   onFirstNameChange={handleFirstNameChange}
- *   onLastNameChange={handleLastNameChange}
- * />
- * ```
- *
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  */
 const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
+  // State for handling value of first name field
   const [firstName, setFirstName] = useState(currentUser?.firstName);
+
+  // state for handling value of last name field
   const [lastName, setLastName] = useState(currentUser?.lastName);
+
   // Temporary state for handling feedback
   const [success, setSuccess] = useState('');
   const [isError, setIsError] = useState(false);
@@ -46,25 +40,31 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
     setIsError(false);
   };
 
+  // Function for null-checking the first name of the current user
   const getFirst = (): string => {
     if (currentUser.firstName !== undefined) return currentUser.firstName;
     return 'Current User Unavailable';
   };
 
+  // Function for null-checking the last name of the current user
+  const getLast = (): string => {
+    if (currentUser.lastName !== undefined) return currentUser.lastName;
+    return 'Current User Unavailable';
+  };
+
+  // Function for submitting the form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       // This is the bare minimum of feedback, and is only temporary.
-      setSuccess(await updateName(firstName, lastName));
+      // Also updates the user.
+      if (firstName !== undefined && lastName !== undefined)
+        setSuccess(await updateName(firstName, lastName));
     } catch (error) {
       setIsError(true);
       console.error('Error updating email', error);
     }
-  };
-  const getLast = (): string => {
-    if (currentUser.lastName !== undefined) return currentUser.lastName;
-    return 'Current User Unavailable';
   };
 
   return (
@@ -90,7 +90,7 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
             isRequired={true}
             onChange={(e) => setFirstName(e.target.value)}
             type={'text'}
-            value={firstName}
+            value={getFirst()}
           />
           <InputField
             label="Update Last Name"
@@ -100,7 +100,7 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
             isRequired={false}
             onChange={(e) => setLastName(e.target.value)}
             type={'text'}
-            value={lastName}
+            value={getLast()}
           />
           <Button variant="contained" color="primary" type="submit">
             Update Name

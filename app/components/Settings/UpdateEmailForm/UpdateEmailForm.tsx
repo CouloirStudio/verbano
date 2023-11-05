@@ -15,43 +15,44 @@ interface EmailInputProps {
 }
 
 /**
- * `UpdateEmailField` is a React functional component that provides an input field for updating a user's email address.
+ * `UpdateEmailField` is a React functional component that provides a form for updating a user's email address.
  *
  * @remarks
- * This component is designed for use in forms where a user can update their email address.
+ * This component is designed for use in settings where a user can update their email address.
  *
  * @param props - The component's props.
  * @param props.currentUser - The current user of the application
- *
- * @example
- * ```tsx
- * <UpdateEmailField value={emailValue} onChange={handleEmailChange} />
- * ```
  *
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
 const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
+  // state for handling error
   const [isError, setIsError] = useState(false);
+  // State for handling value of input field
   const [email, setEmail] = useState(currentUser?.email);
   // Temporary state for handling feedback
   const [success, setSuccess] = useState('');
+
   const { updateEmail } = useSettingsManager();
   const clearError = () => {
     setIsError(false);
   };
 
+  // function for null-checking the currentuser.email value.
   const getEmail = (): string => {
     if (currentUser.email !== undefined) return currentUser.email;
     return 'Current User Unavailable';
   };
 
+  // Function for submitting the form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // This is the bare minimum of feedback, and is only temporary.
-      setSuccess(await updateEmail(email));
+      // This covers the bare minimum of feedback, and is only temporary.
+      // Also calls the function to update the email.
+      if (email !== undefined) setSuccess(await updateEmail(email));
     } catch (error) {
       setIsError(true);
       console.error('Error updating email', error);
@@ -80,7 +81,7 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
               isRequired={true}
               onChange={(e) => setEmail(e.target.value)}
               type={'email'}
-              value={email}
+              value={getEmail()}
             />
           </div>
           <Button variant="contained" color="primary" type="submit">

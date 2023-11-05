@@ -2,9 +2,9 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import UpdateEmailForm from '@/app/components/Settings/UpdateEmailForm/UpdateEmailForm';
-import UpdateNameForm from '@/app/components/Settings/UpdateNameForm/UpdateNameForm';
-import UpdatePasswordForm from '@/app/components/Settings/UpdatePasswordForm/UpdatePasswordForm';
+import { UpdateEmailForm } from '@/app/components/Settings/UpdateEmailForm';
+import { UpdateNameForm } from '@/app/components/Settings/UpdateNameForm';
+import { UpdatePasswordForm } from '@/app/components/Settings/UpdatePasswordForm';
 import { useUser } from '@/app/contexts/UserContext';
 import styles from './settings.module.scss';
 
@@ -14,6 +14,11 @@ interface TabPanelProps {
   value: number;
 }
 
+/**
+ * a component that represents tab panel
+ * @param props props for the tab panel
+ * @constructor
+ */
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -31,6 +36,10 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+/**
+ * Function for providing props to the MUI tab
+ * @param index The index of the tab
+ */
 function a11yProps(index: number) {
   return {
     id: `vertical-tab-${index}`,
@@ -38,7 +47,11 @@ function a11yProps(index: number) {
   };
 }
 
-export default function Settings() {
+/**
+ *  A 'Settings' component which houses the respective forms inside MUI tabs.
+ * @constructor
+ */
+function Settings() {
   const [value, setValue] = React.useState(0);
   const currentUser = useUser();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -76,3 +89,5 @@ export default function Settings() {
     </Box>
   );
 }
+
+export default Settings;
