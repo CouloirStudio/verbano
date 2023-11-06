@@ -3,7 +3,7 @@ import styles from './sidebar.module.scss';
 import {useProjectContext} from '@/app/contexts/ProjectContext';
 import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
-import {DragDropContext, DropResult} from '@hello-pangea/dnd';
+import {DragDropContext, DragStart, DragUpdate, DropResult,} from '@hello-pangea/dnd';
 import {useLazyQuery, useMutation} from '@apollo/client';
 import GetNote from '@/app/graphql/queries/GetNote';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder';
@@ -11,6 +11,7 @@ import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject';
 import {NoteType, ProjectNoteType} from '@/app/graphql/resolvers/types';
 import {useTheme} from '@mui/material/styles';
 import {NoteListContextProvider} from '@/app/contexts/NoteListContext';
+import {useDraggingContext} from '@/app/contexts/DraggingContext';
 
 /**
  * Extends the basic NoteType with a position property.
@@ -73,6 +74,7 @@ function reorderPositions(notesArray: ExtendedNoteType[]): void {
 const Sidebar: React.FC = () => {
   const { projects, selectedProject, setSelectedProject, refetchData } =
     useProjectContext();
+  const { setDraggingItemType } = useDraggingContext();
 
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
@@ -83,6 +85,19 @@ const Sidebar: React.FC = () => {
   const textColour = theme.custom?.text ?? '';
 
   if (!projects) return <p>Loading...</p>;
+
+  const handleDragStart = (result: DragStart) => {
+    // Determine the item type from the result and set it in the context
+    const itemType = result.draggableId.includes('note') ? 'note' : 'project';
+    setDraggingItemType(itemType);
+    console.log('result', itemType);
+  };
+
+  const handleDragUpdate = (result: DragUpdate) => {
+    if (result.combine) {
+      console.log('combining', result);
+    }
+  };
 
   const handleDragEnd = async (result: DropResult) => {
     const { draggableId, destination, source } = result;
@@ -163,7 +178,11 @@ const Sidebar: React.FC = () => {
       className={styles.sidebar}
       style={{ backgroundColor: sidebarBg, color: textColour }}
     >
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+        onDragUpdate={handleDragUpdate}
+      >
         <ProjectTree />
         <NoteListContextProvider>
           <NoteTree />

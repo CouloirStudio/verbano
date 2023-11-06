@@ -2,6 +2,7 @@ import React from 'react';
 import Header from '@/app/components/Layout/Header';
 import Sidebar from '@/app/components/Layout/Sidebar';
 import styles from './layout.module.scss';
+import { DraggingProvider } from '@/app/contexts/DraggingContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,7 +13,9 @@ function Layout({ children }: LayoutProps) {
     <div className={styles.layoutContainer}>
       <Header />
       <div className={styles.contentArea}>
-        <Sidebar />
+        <DraggingProvider>
+          <Sidebar />
+        </DraggingProvider>
         <main className={styles.mainArea}>{children}</main>
       </div>
     </div>

@@ -100,22 +100,24 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
     );
 
     return (
-      <Draggable key={note.id} draggableId={note.id} index={index}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
+      <Draggable
+        key={'note-' + note.id}
+        draggableId={'note-' + note.id}
+        index={index}
+      >
+        {(provided) => {
+          console.log('provided.innerRef', provided.innerRef);
+
+          return (
             <Box
-              onContextMenu={handleContextMenuEvent}
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
+              onContextMenu={handleContextMenuEvent}
               className={`${styles.note} ${
                 selectedNote?.id === id ? styles.active : ''
               }`}
-              style={style}
+              style={{ ...provided.draggableProps.style, ...style }}
               onClick={handleClick}
               onDoubleClick={handleDoubleClick}
             >
@@ -133,8 +135,8 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
                 <Typography>{name}</Typography>
               )}
             </Box>
-          </div>
-        )}
+          );
+        }}
       </Draggable>
     );
   },

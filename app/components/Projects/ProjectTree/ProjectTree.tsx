@@ -9,6 +9,7 @@ import { useProjectContext } from '../../../contexts/ProjectContext';
 import { ProjectType } from '../../../graphql/resolvers/types';
 import ProjectTreeItem from '@/app/components/Projects/ProjectTree/ProjectTreeItem';
 import { Droppable } from '@hello-pangea/dnd';
+import { useDraggingContext } from '@/app/contexts/DraggingContext';
 
 const renderProjectTree = (projects: ProjectType[]) => {
   return projects.map((project: ProjectType, index) => (
@@ -20,10 +21,12 @@ function ProjectTree() {
   const { refetchData, setSelectedProject, setSelectedNote, projects } =
     useProjectContext();
 
+  const { draggingItemType } = useDraggingContext();
+
   useEffect(() => {
     // render project tree when projects list changes
     renderProjectTree(projects);
-  }, [projects]);
+  }, [projects, draggingItemType]);
 
   return (
     <Box className={styles.projectList}>
@@ -33,11 +36,15 @@ function ProjectTree() {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        <Droppable droppableId={'projects'}>
+        <Droppable
+          droppableId={'projects'}
+          isCombineEnabled={draggingItemType === 'note'}
+        >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {renderProjectTree(projects)}
-              {provided.placeholder}
+              {draggingItemType === 'project' && provided.placeholder}
+              {draggingItemType}
             </div>
           )}
         </Droppable>

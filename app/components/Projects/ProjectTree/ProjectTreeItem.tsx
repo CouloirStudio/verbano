@@ -11,6 +11,7 @@ import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
 import TextField from '@mui/material/TextField';
+import { useDraggingContext } from '@/app/contexts/DraggingContext';
 
 interface ProjectTreeItemProps {
   project: ProjectType;
@@ -31,6 +32,14 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
       setSelectedProject,
       setSelectedNote,
     } = useProjectContext();
+
+    const { draggingItemType } = useDraggingContext();
+
+    const style = {
+      // Apply transform only if draggingItemType is 'project'
+      transform:
+        draggingItemType === 'project' ? 'translate(etc, etc)' : 'none',
+    };
 
     const {
       isEditing,
@@ -92,55 +101,78 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
 
     return (
       <>
-        <Draggable key={project.id} draggableId={project.id} index={index}>
-          {(provided2) => (
-            <div
-              ref={provided2.innerRef}
-              {...provided2.draggableProps}
-              {...provided2.dragHandleProps}
-            >
-              <CustomTreeItem
-                key={project.id}
-                nodeId={project.id.toString()}
-                project={project}
-                label={
-                  <Box
-                    onContextMenu={handleContextMenu}
-                    className={styles.project}
-                    onDoubleClick={handleDoubleClick}
-                  >
-                    {isEditing ? (
-                      <TextField
-                        variant="standard"
-                        type="text"
-                        value={value}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
-                        autoFocus
-                      />
-                    ) : (
-                      <Typography>{project.projectName}</Typography>
-                    )}
-                    <Typography
-                      variant="subtitle1"
-                      className={styles.projectNoteCount}
-                    >
-                      {project.notes.length}
-                    </Typography>
-                  </Box>
-                }
+        <Draggable
+          key={'project-' + project.id}
+          draggableId={'project-' + project.id}
+          index={index}
+        >
+          {(provided2) => {
+            let customStyle = {};
+
+            // Check if the dragging item type is 'note' and apply transform: none
+            if (draggingItemType === 'note') {
+              customStyle = {
+                ...provided2.draggableProps.style,
+                // Assuming you can't override this due to React not supporting !important
+                // If that's the case, you would need to find an alternative approach
+                transform: 'none',
+              };
+            } else {
+              customStyle = {
+                ...provided2.draggableProps.style,
+              };
+            }
+
+            return (
+              <div
+                ref={provided2.innerRef}
+                {...provided2.draggableProps}
+                {...provided2.dragHandleProps}
+                style={customStyle}
               >
-                {project.notes.map((projectNote: ProjectNoteType) => (
-                  <CustomTreeItem
-                    key={projectNote.note.id}
-                    nodeId={projectNote.note.id.toString()}
-                    label={projectNote.note.noteName}
-                  />
-                ))}
-              </CustomTreeItem>
-            </div>
-          )}
+                <CustomTreeItem
+                  key={project.id}
+                  nodeId={project.id.toString()}
+                  project={project}
+                  label={
+                    <Box
+                      onContextMenu={handleContextMenu}
+                      className={styles.project}
+                      onDoubleClick={handleDoubleClick}
+                    >
+                      {isEditing ? (
+                        <TextField
+                          variant="standard"
+                          type="text"
+                          value={value}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
+                          autoFocus
+                        />
+                      ) : (
+                        <Typography>{project.projectName}</Typography>
+                      )}
+                      <Typography
+                        variant="subtitle1"
+                        className={styles.projectNoteCount}
+                      >
+                        {project.notes.length}
+                      </Typography>
+                    </Box>
+                  }
+                >
+                  {project.notes.map((projectNote: ProjectNoteType) => (
+                    <CustomTreeItem
+                      key={projectNote.note.id}
+                      nodeId={projectNote.note.id.toString()}
+                      label={projectNote.note.noteName}
+                    />
+                  ))}
+                </CustomTreeItem>
+              </div>
+            );
+          }}
         </Draggable>
         <ContextMenuComponent
           contextMenu={contextMenu}
