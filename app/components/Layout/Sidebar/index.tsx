@@ -74,7 +74,7 @@ function reorderPositions(notesArray: ExtendedNoteType[]): void {
 const Sidebar: React.FC = () => {
   const { projects, selectedProject, setSelectedProject, refetchData } =
     useProjectContext();
-  const { setDraggingItemType } = useDraggingContext();
+  const { setDraggingItemType, draggingItemType } = useDraggingContext();
 
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
@@ -94,6 +94,9 @@ const Sidebar: React.FC = () => {
   };
 
   const handleDragUpdate = (result: DragUpdate) => {
+    if (draggingItemType === 'note') {
+      console.log('dragging note', result);
+    }
     if (result.combine) {
       console.log('combining', result);
     }
@@ -112,6 +115,16 @@ const Sidebar: React.FC = () => {
       source.droppableId === 'notes' &&
       destination?.droppableId === 'projects'
     ) {
+      if (destination?.index === projects.length) {
+        result.destination = {
+          ...destination,
+          index: destination.index - 1,
+        };
+
+        console.log('under last project');
+
+        console.log('result', result);
+      }
     }
 
     try {

@@ -28,7 +28,7 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   }, [projects, selectedProject]);
 
   return (
-    <Droppable droppableId="notes">
+    <Droppable droppableId="notes" type={'note'}>
       {(provided) => (
         <Box
           className={styles.noteList}

@@ -39,12 +39,12 @@ function ProjectTree() {
         <Droppable
           droppableId={'projects'}
           isCombineEnabled={draggingItemType === 'note'}
+          type={'project'}
         >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {renderProjectTree(projects)}
               {draggingItemType === 'project' && provided.placeholder}
-              {draggingItemType}
             </div>
           )}
         </Droppable>

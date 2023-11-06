@@ -106,8 +106,6 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
         index={index}
       >
         {(provided) => {
-          console.log('provided.innerRef', provided.innerRef);
-
           return (
             <Box
               ref={provided.innerRef}

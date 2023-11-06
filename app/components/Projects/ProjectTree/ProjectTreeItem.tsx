@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import styles from '@/app/components/Projects/ProjectTree/projectTree.module.scss';
 import Typography from '@mui/material/Typography';
 import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
-import { Draggable } from '@hello-pangea/dnd';
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 import React, { memo, useEffect, useState } from 'react';
 import DeleteProject from '@/app/graphql/mutations/DeleteProject.graphql';
 import { useMutation } from '@apollo/client';
@@ -106,28 +106,26 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
           draggableId={'project-' + project.id}
           index={index}
         >
-          {(provided2) => {
+          {(draggableProvided) => {
             let customStyle = {};
 
             // Check if the dragging item type is 'note' and apply transform: none
             if (draggingItemType === 'note') {
               customStyle = {
-                ...provided2.draggableProps.style,
-                // Assuming you can't override this due to React not supporting !important
-                // If that's the case, you would need to find an alternative approach
+                ...draggableProvided.draggableProps.style,
                 transform: 'none',
               };
             } else {
               customStyle = {
-                ...provided2.draggableProps.style,
+                ...draggableProvided.draggableProps.style,
               };
             }
 
             return (
               <div
-                ref={provided2.innerRef}
-                {...provided2.draggableProps}
-                {...provided2.dragHandleProps}
+                ref={draggableProvided.innerRef}
+                {...draggableProvided.draggableProps}
+                {...draggableProvided.dragHandleProps}
                 style={customStyle}
               >
                 <CustomTreeItem
@@ -162,13 +160,26 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
                     </Box>
                   }
                 >
-                  {project.notes.map((projectNote: ProjectNoteType) => (
-                    <CustomTreeItem
-                      key={projectNote.note.id}
-                      nodeId={projectNote.note.id.toString()}
-                      label={projectNote.note.noteName}
-                    />
-                  ))}
+                  <Droppable
+                    droppableId={'project-' + project.id + '-notes'}
+                    type={'note'}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={styles.noteList}
+                      >
+                        {project.notes.map((projectNote: ProjectNoteType) => (
+                          <CustomTreeItem
+                            key={projectNote.note.id}
+                            nodeId={projectNote.note.id.toString()}
+                            label={projectNote.note.noteName}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </Droppable>
                 </CustomTreeItem>
               </div>
             );
