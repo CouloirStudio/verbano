@@ -1,6 +1,6 @@
 import { User } from '../../models/User';
 import { hashPassword } from '../../config/passport';
-import verifyPassword from './verifyPassword';
+import { ResolverContext, UpdateUserArgs } from '@/app/graphql/resolvers/types';
 
 export const UserQueries = {
   async currentUser(parent: any, args: any, context: any) {
@@ -85,112 +85,15 @@ export const UserMutations = {
       });
     });
   },
-  updateFullName: async (
-    _: any,
-    {
-      email,
-      firstName,
-      lastName,
-    }: { email: string; firstName: string; lastName: string },
-  ) => {
-    try {
-      // Check if a user with the provided email exists
-      const user = await User.findOne({ email });
 
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      // Update the user's firstName and lastName
-      user.firstName = firstName;
-      user.lastName = lastName;
-
-      // Save the updated user to the database
-      // Return the updated user object
-      return await user.save();
-    } catch (error) {
-      // Use a type guard to check if 'error' is an instance of 'Error'
-      if (error instanceof Error) {
-        throw new Error(`Failed to update full name: ${error.message}`);
-      } else {
-        // Handle other cases where 'error' is not an instance of 'Error'
-        throw new Error('An unknown error occurred');
-      }
-    }
-  },
-  updateEmail: async (
-    _: any,
-    { email, newEmail }: { email: string; newEmail: string },
-  ) => {
-    try {
-      // Find the user with the provided current email
-      const user = await User.findOne({ email });
-
-      // If the user does not exist, throw an error
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      // Update the user's email
-      user.email = newEmail;
-
-      // Save the updated user to the database
-      await user.save();
-
-      // Return the updated user object
-      return user;
-    } catch (error) {
-      // Handle errors and throw appropriate error messages
-      if (error instanceof Error) {
-        throw new Error(`Failed to update email: ${error.message}`);
-      } else {
-        throw new Error('An unknown error occurred');
-      }
-    }
-  },
-  updatePassword: async (
-    _: any,
-    {
-      password,
-      newPassword,
-      email,
-    }: {
-      password: string;
-      newPassword: string;
-      email: string;
-    },
-    context: any,
-  ) => {
-    try {
-      // Get the authenticated user
-      const user = await User.findOne({ email });
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      // Verify the current password
-      const isPasswordValid = await verifyPassword(password, user.password);
-
-      if (!isPasswordValid) {
-        throw new Error('Current password is incorrect');
-      }
-
-      // Hash the new password
-      // Update the user's password
-      user.password = await hashPassword(newPassword);
-
-      // Save the updated user to the database
-      await user.save();
-
-      // Return a success message or a boolean indicating success
-      return user;
-    } catch (error) {
-      // Handle errors and throw appropriate error messages
-      if (error instanceof Error) {
-        throw new Error(`Failed to update password: ${error.message}`);
-      } else {
-        throw new Error('An unknown error occurred');
-      }
-    }
+  async updateUser(
+    _: unknown,
+    args: UpdateUserArgs,
+    _context: ResolverContext,
+  ) {
+    const updated = await User.findByIdAndUpdate(args.id, args.input, {
+      new: true,
+    });
+    return !!updated;
   },
 };
