@@ -19,8 +19,9 @@ const ProjectSchema = gql`
 
   type ProjectSummary {
     summary: Summary
+    position: Int
   }
-  
+
   type PositionedProject {
     project: Project
     position: Int

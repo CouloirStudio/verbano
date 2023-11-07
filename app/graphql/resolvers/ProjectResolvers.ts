@@ -1,8 +1,9 @@
-import { INote, Note } from '../../models/Note';
-import { IProject, Project } from '../../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../../models/User';
-import { ResolverContext } from '@/app/graphql/resolvers/types';
+import {INote, Note} from '../../models/Note';
+import {IProject, Project} from '../../models/Project';
+import {ApolloError} from 'apollo-server-express';
+import {User} from '../../models/User';
+import {ResolverContext} from '@/app/graphql/resolvers/types';
+import {ISummary} from '@/app/models/Summary';
 
 /**
  * Resolvers for querying projects from the database.
@@ -23,7 +24,7 @@ export const ProjectQueries = {
     // Find user by ID from context
     const user = await User.findById(userContext.id).populate({
       path: 'projects.project',
-      populate: { path: 'notes.note' },
+      populate: [{ path: 'notes.note' }, { path: 'summaries.summary' }],
     });
     if (!user) {
       throw new Error('User not found.');

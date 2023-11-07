@@ -13,15 +13,15 @@ query GetProjectsAndNotes {
                     tags
                 }
                 position
-                        summaries {
-            summary {
-                id
-                summaryName
-                dateCreated
-                content
             }
-            position
-        }
+            summaries {
+                summary {
+                    id
+                    summaryName
+                    dateCreated
+                    content
+                }
+                position
             }
         }
         position
