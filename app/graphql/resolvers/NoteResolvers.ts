@@ -139,13 +139,18 @@ export const NoteMutations = {
       console.error(
         `No associated project found for note with ID ${note._id}.`,
       );
-      return null;
+      throw new Error('No associated project found for note.');
     }
 
     const oldProject = await Project.findById(projectId);
     if (!oldProject) {
       console.error(`No project found with ID ${projectId}.`);
       return null;
+    }
+
+    if (oldProject.id.toString() === args.projectId) {
+      console.log('Note is already in the target project.');
+      return note;
     }
 
     const newPosition = project.notes.length; // Add it to the end of the list

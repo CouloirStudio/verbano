@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import {gql} from 'apollo-server-express';
 
 /**
  * GraphQL schema for the Project type and associated operations.
@@ -17,7 +17,7 @@ const ProjectSchema = gql`
   }
 
   input ProjectInput {
-    projectName: String!
+    projectName: String
     notes: [NoteInput!]
     projectDescription: String
   }
@@ -30,6 +30,7 @@ const ProjectSchema = gql`
   extend type Mutation {
     addProject(input: ProjectInput!): Project!
     deleteProject(id: ID!): Boolean!
+    updateProject(id: ID!, input: ProjectInput!): Project!
   }
 `;
 

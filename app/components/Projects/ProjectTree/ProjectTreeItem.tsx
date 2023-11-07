@@ -6,6 +6,7 @@ import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
 import React, { memo, useEffect, useState } from 'react';
 import DeleteProject from '@/app/graphql/mutations/DeleteProject.graphql';
+import UpdateProject from '@/app/graphql/mutations/UpdateProject.graphql';
 import { useMutation } from '@apollo/client';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
@@ -25,6 +26,9 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
       mouseY: number;
     } | null>(null);
     const [deleteProject] = useMutation(DeleteProject);
+    const [updateProject] = useMutation(UpdateProject);
+    const [name, setName] = useState<string>(project.projectName);
+
     const {
       projects,
       refetchData,
@@ -53,7 +57,29 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
     } = useDoubleClickEdit(project.projectName);
 
     const submitUpdate = async (newValue: string): Promise<void> => {
-      console.log('submitUpdate', newValue);
+      if (newValue === project.projectName) {
+        setName(newValue);
+        return;
+      }
+      if (newValue.trim() === '') {
+        setName(project.projectName);
+        return;
+      }
+
+      setName(newValue.trim());
+      try {
+        await updateProject({
+          variables: {
+            id: project.id,
+            input: {
+              projectName: newValue,
+            },
+          },
+        });
+      } catch (e) {
+        setName(project.projectName);
+        console.error('Error updating note:', e);
+      }
     };
 
     useEffect(() => {

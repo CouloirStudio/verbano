@@ -9,6 +9,8 @@ import {
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
+import { useMutation } from '@apollo/client';
+import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
 
 interface CustomTreeContextType {
   project?: ProjectType;
@@ -32,6 +34,7 @@ const CustomContent = React.forwardRef(function CustomContent(
   } = props;
 
   const { project } = React.useContext(CustomTreeContext);
+  const [updateNote] = useMutation(UpdateNote);
 
   const {
     disabled,

@@ -1,7 +1,7 @@
-import { INote, Note } from '../../models/Note';
-import { IProject, Project } from '../../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../../models/User';
+import {INote, Note} from '../../models/Note';
+import {IProject, Project} from '../../models/Project';
+import {ApolloError} from 'apollo-server-express';
+import {User} from '../../models/User';
 
 /**
  * Resolvers for querying projects from the database.
@@ -134,6 +134,30 @@ export const ProjectMutations = {
       console.error('Error deleting project:', error);
       return false;
     }
+  },
+
+  async updateProject(
+    _: unknown,
+    args: {
+      id: string;
+      input: { projectName: string; projectDescription?: string };
+    },
+    context: any,
+  ) {
+    if (!context.getUser()) {
+      throw new Error('User not authenticated.');
+    }
+
+    const project = await Project.findById(args.id);
+    if (!project) {
+      throw new Error('Project not found.');
+    }
+
+    if (args.input.projectName.trim() == '') {
+      throw new Error('Project name cannot be empty.');
+    }
+
+    return Project.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 };
 
