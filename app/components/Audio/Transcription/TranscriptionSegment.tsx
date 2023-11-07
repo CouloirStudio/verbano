@@ -2,7 +2,7 @@ import React from 'react';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import {IoPersonOutline} from 'react-icons/io5';
+import { IoPersonOutline } from 'react-icons/io5';
 import useFormatTimestamp from '@/app/hooks/useFormatTimestamp'; // Import the hook
 import styles from './transcription.module.scss';
 
