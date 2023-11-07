@@ -63,14 +63,21 @@ export type NoteType = {
   noteDescription?: string;
 };
 
-export type ProjectNoteType = {
-  note: NoteType;
-  position: number;
-};
-
 export type ProjectType = {
   id: string;
   projectName: string;
   projectDescription?: string;
   notes: ProjectNoteType[];
+};
+
+export type ProjectNoteType = {
+  note: NoteType;
+} & HasPosition;
+
+export type PositionedProjectType = {
+  project: ProjectType;
+} & HasPosition;
+
+type HasPosition = {
+  position: number;
 };

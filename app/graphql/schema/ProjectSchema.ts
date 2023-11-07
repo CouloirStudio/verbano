@@ -16,20 +16,27 @@ const ProjectSchema = gql`
     position: Int
   }
 
+  type PositionedProject {
+    project: Project
+    position: Int
+  }
+
   input ProjectInput {
-    projectName: String!
+    projectName: String
     notes: [NoteInput!]
     projectDescription: String
   }
 
   extend type Query {
-    listProjects: [Project!]!
+    listProjects: [PositionedProject]!
     getProject(id: ID!): Project
   }
 
   extend type Mutation {
     addProject(input: ProjectInput!): Project!
     deleteProject(id: ID!): Boolean!
+    updateProject(id: ID!, input: ProjectInput!): Project!
+    moveProjectOrder(projectId: ID!, order: Int!): Project!
   }
 `;
 

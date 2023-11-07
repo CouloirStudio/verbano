@@ -100,35 +100,41 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
     );
 
     return (
-      <Draggable draggableId={id} index={index}>
-        {(provided) => (
-          <Box
-            onContextMenu={handleContextMenuEvent}
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            className={`${styles.note} ${
-              selectedNote?.id === id ? styles.active : ''
-            }`}
-            style={style}
-            onClick={handleClick}
-            onDoubleClick={handleDoubleClick}
-          >
-            {isEditing ? (
-              <TextField
-                variant="standard"
-                type="text"
-                value={value}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
-                autoFocus
-              />
-            ) : (
-              <Typography>{name}</Typography>
-            )}
-          </Box>
-        )}
+      <Draggable
+        key={'note-' + note.id}
+        draggableId={'note-' + note.id}
+        index={index}
+      >
+        {(provided) => {
+          return (
+            <Box
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              onContextMenu={handleContextMenuEvent}
+              className={`${styles.note} ${
+                selectedNote?.id === id ? styles.active : ''
+              }`}
+              style={{ ...provided.draggableProps.style, ...style }}
+              onClick={handleClick}
+              onDoubleClick={handleDoubleClick}
+            >
+              {isEditing ? (
+                <TextField
+                  variant="standard"
+                  type="text"
+                  value={value}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
+                  autoFocus
+                />
+              ) : (
+                <Typography>{name}</Typography>
+              )}
+            </Box>
+          );
+        }}
       </Draggable>
     );
   },

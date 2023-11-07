@@ -8,7 +8,7 @@ export interface IUser extends Document {
   refreshToken?: string;
   dateJoined?: Date;
   settings?: typeof Schema.Types.ObjectId;
-  projectIds?: (typeof Schema.Types.ObjectId)[];
+  projects?: { project: typeof Schema.Types.ObjectId; position: number }[];
   googleId?: string;
 }
 
@@ -43,10 +43,10 @@ const UserSchema = new Schema<IUser>({
     type: Schema.Types.ObjectId,
     ref: 'Settings',
   },
-  projectIds: [
+  projects: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Project',
+      project: { type: Schema.Types.ObjectId, ref: 'Project' },
+      position: { type: Number },
     },
   ],
   googleId: {

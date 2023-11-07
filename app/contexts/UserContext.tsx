@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext } from 'react';
-import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser.graphql';
 import { IUser } from '@/app/models/User';
 import { useQuery } from '@apollo/react-hooks';
 

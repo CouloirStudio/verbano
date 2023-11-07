@@ -1,0 +1,6 @@
+mutation MoveProjectOrder($projectId: ID!, $order: Int!) {
+    moveProjectOrder(projectId: $projectId, order: $order) {
+        id
+        projectName
+    }
+}
