@@ -1,13 +1,13 @@
 import React from 'react';
 import styles from './sidebar.module.scss';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
-import {DragDropContext} from '@hello-pangea/dnd';
-import {NoteType, ProjectNoteType} from '@/app/graphql/resolvers/types';
-import {useTheme} from '@mui/material/styles';
-import {NoteListContextProvider} from '@/app/contexts/NoteListContext';
-import {useDragAndDrop} from '@/app/hooks/useDragAndDrop';
+import { DragDropContext } from '@hello-pangea/dnd';
+import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
+import { useTheme } from '@mui/material/styles';
+import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
+import { useDragAndDrop } from '@/app/hooks/useDragAndDrop';
 
 /**
  * Extends the basic NoteType with a position property.

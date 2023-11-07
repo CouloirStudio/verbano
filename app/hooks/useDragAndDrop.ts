@@ -1,12 +1,12 @@
-import {useLazyQuery, useMutation} from '@apollo/client';
-import {useCallback} from 'react';
-import {DropResult} from '@hello-pangea/dnd';
-import {ExtendedNoteType, ProjectType} from '@/app/types'; // Import your type definitions here
+import { useLazyQuery, useMutation } from '@apollo/client';
+import { useCallback } from 'react';
+import { DropResult } from '@hello-pangea/dnd';
+import { ExtendedNoteType, ProjectType } from '@/app/types'; // Import your type definitions here
 import GetNote from '@/app/graphql/queries/GetNote.graphql';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
 import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
-import {ProjectNoteType} from '@/app/graphql/resolvers/types';
+import { ProjectNoteType } from '@/app/graphql/resolvers/types';
 
 /**
  * Interface representing the parameters required for the useDragAndDrop hook.

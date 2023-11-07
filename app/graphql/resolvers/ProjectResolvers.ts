@@ -1,8 +1,8 @@
-import {INote, Note} from '../../models/Note';
-import {IProject, Project} from '../../models/Project';
-import {ApolloError} from 'apollo-server-express';
-import {User} from '../../models/User';
-import {ResolverContext} from '@/app/graphql/resolvers/types';
+import { INote, Note } from '../../models/Note';
+import { IProject, Project } from '../../models/Project';
+import { ApolloError } from 'apollo-server-express';
+import { User } from '../../models/User';
+import { ResolverContext } from '@/app/graphql/resolvers/types';
 
 /**
  * Resolvers for querying projects from the database.
