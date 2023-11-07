@@ -26,10 +26,7 @@ class OpenAIService {
   }
 
   public async transcribeAudio(audio: Blob): Promise<Transcription | string> {
-    console.log(audio);
     const file = await toFile(audio, 'audio.wav');
-
-    console.log('File', file);
 
     try {
       return await this.openai.audio.transcriptions.create({

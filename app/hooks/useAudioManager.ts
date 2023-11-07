@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useRecorderContext } from '../contexts/RecorderContext';
 import { useErrorModalContext } from '../contexts/ErrorModalContext';
 import { AudioRecorder } from '../api/recorder';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { uploadAudio } from '@/app/api/audio';
+import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
 
 /**
  * Custom hook to manage the audio recording and uploading functionalities.
@@ -11,10 +11,7 @@ import { useProjectContext } from '@/app/contexts/ProjectContext';
 const useAudioManager = () => {
   const mediaRecorder = AudioRecorder.getRecorder();
   const BASE_URL = 'http://localhost:3000';
-  const { setAudioBlob } = useRecorderContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
-  const { selectedProject, selectedNote, handleAudioUpload } =
-    useProjectContext(); // Retrieve selectedProject from context
 
   const [recordingState, setRecordingState] = useState<
     'idle' | 'recording' | 'processing'
@@ -55,12 +52,14 @@ const useAudioManager = () => {
   /**
    * Stops the ongoing recording and uploads the recorded audio.
    */
-  const stopAndUploadRecording = async () => {
+  const stopAndUploadRecording = async (
+    selectedProject: ProjectType | null,
+    selectedNote: NoteType | null,
+  ) => {
     setRecordingState('processing');
     try {
       const blob = await mediaRecorder.stopRecording();
-      const data = await handleAudioUpload(blob);
-      setAudioBlob(blob);
+      await uploadAudio(blob, BASE_URL, selectedProject, selectedNote);
       mediaRecorder.cleanup();
       setRecordingState('idle');
     } catch (error) {

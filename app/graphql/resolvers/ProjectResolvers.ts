@@ -13,10 +13,24 @@ export const ProjectQueries = {
    * @throws ApolloError - Throws an error if no projects are found.
    * @returns An array of projects.
    */
-  async listProjects(): Promise<IProject[]> {
-    const projects = await Project.find()
-      .populate('notes.note')
-      .populate('summaries.summary');
+  async listProjects(
+    _: unknown,
+    __: unknown,
+    context: any,
+  ): Promise<IProject[]> {
+    if (!context.getUser()) {
+      throw new Error('User not authenticated.');
+    }
+
+    const user = await User.findById(context.getUser()._id);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    const projectIds = user.projectIds;
+
+    const projects = await Project.find({
+      _id: { $in: projectIds },
+    }).populate('notes.note');
 
     projects.forEach((project) => {
       project.notes = project.notes.filter((noteRef) => noteRef.note);

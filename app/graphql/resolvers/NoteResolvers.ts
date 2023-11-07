@@ -115,6 +115,11 @@ export const NoteMutations = {
     args: UpdateNoteArgs,
     _context: ResolverContext,
   ) {
+    // check if note name is empty
+    if (args.input.noteName.trim() === '') {
+      throw new Error('Note name cannot be empty');
+    }
+
     return Note.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 

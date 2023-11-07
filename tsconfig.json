@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,11 +14,7 @@
     "jsx": "preserve",
     "incremental": true,
     "types": ["jest", "node", "@testing-library/jest-dom"],
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./*"]
     }
@@ -27,7 +24,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "mui-theme-augmentation.d.ts"
+    "mui-theme-augmentation.d.ts",
+    "**/*.d.ts",
+    "**/*.graphql"
   ],
   "exclude": ["node_modules"]
 }

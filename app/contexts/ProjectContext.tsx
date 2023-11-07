@@ -1,21 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
-import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes';
-import { NoteType, ProjectType } from '../graphql/resolvers/types';
-import { uploadAudio } from '../api/audio';
-import client from '../config/apolloClient';
+import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes.graphql';
+import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
 
 /**
  * Defines the shape of the ProjectContext.
  */
 type ProjectContextType = {
   selectedNote: NoteType | null;
-  setSelectedNote: (note: NoteType) => void;
+  setSelectedNote: (note: NoteType | null) => void;
   projects: ProjectType[];
   setProjects: (projects: ProjectType[]) => void;
   selectedProject: ProjectType | null;
   setSelectedProject: (project: ProjectType | null) => void;
-  handleAudioUpload: (audioFile: Blob) => Promise<void>;
   refetchData: () => void;
 };
 
@@ -99,26 +96,6 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     }
   }, [data, selectedProject]);
 
-  async function handleAudioUpload(audioFile: Blob) {
-    try {
-      const response = await uploadAudio(
-        audioFile,
-        'http://localhost:3000',
-        selectedProject,
-        selectedNote,
-      );
-
-      const { data: updatedData } = await client.readQuery({
-        query: GetProjectsAndNotes,
-      });
-      if (updatedData && updatedData.listProjects) {
-        setProjects(updatedData.listProjects);
-      }
-    } catch (error) {
-      console.error('Error during audio upload:', error);
-    }
-  }
-
   return (
     <ProjectContext.Provider
       value={{
@@ -128,7 +105,6 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         setProjects,
         selectedProject,
         setSelectedProject,
-        handleAudioUpload,
         refetchData: refetchData,
       }}
     >

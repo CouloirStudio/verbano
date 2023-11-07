@@ -8,14 +8,19 @@ import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
 import RenderNoteTree from './RenderNoteTree';
 import NoteTabs from './NoteTabs';
 import { useNoteContextMenu } from '@/app/hooks/useNoteContextMenu';
+import { useNoteListContext } from '@/app/contexts/NoteListContext';
 
 function NoteTree() {
   const [activeTab, setActiveTab] = useState(0);
+
   const theme = useTheme();
   const context = useProjectContext();
 
   const { contextMenu, handleContextMenu, handleClose, handleDelete } =
     useNoteContextMenu();
+
+  const { selectedNotes, setSelectedNotes, clearSelectedNotes } =
+    useNoteListContext();
 
   return (
     <Box
@@ -26,11 +31,11 @@ function NoteTree() {
 
       {activeTab === 0 && (
         <>
-          <NoteTreeHeader />
-          <RenderNoteTree
-            project={context.selectedProject}
-            handleContextMenu={handleContextMenu}
+          <NoteTreeHeader
+            clearSelectedNotes={clearSelectedNotes}
+            selectedNotes={selectedNotes}
           />
+          <RenderNoteTree handleContextMenu={handleContextMenu} />
         </>
       )}
 

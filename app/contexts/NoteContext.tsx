@@ -33,7 +33,7 @@ export const NoteContextProvider: React.FC<NoteContextProviderProps> = ({
   const [transcription, setTranscription] =
     useState<string>('No Transcription');
   const [summary, setSummary] = useState<string>('No Summary');
-  const [refresh, setRefresh] = useState(0);
+  const [, setRefresh] = useState(0);
 
   const refreshNoteDetails = () => {
     setRefresh((prev) => prev + 1);

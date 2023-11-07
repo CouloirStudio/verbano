@@ -18,18 +18,25 @@ function CreateProjectButton() {
 
   // Handle the button click
   const handleButtonClick = async () => {
+    const notesWithContainsName = context.selectedProject?.notes?.filter(
+      (note) => note.note.noteName.includes('New Note'),
+    );
+    // Create a new note, and if multiple "New Note" notes exist, append a number between braces- New Note (#)
+    const newNoteName =
+      notesWithContainsName && notesWithContainsName?.length > 0
+        ? `New Note (${notesWithContainsName.length})`
+        : 'New Note';
+
     try {
       const response = await addNote({
         variables: {
           input: {
-            noteName: 'New Note',
+            noteName: newNoteName,
             tags: [],
             projectId: context.selectedProject?.id,
           },
         },
       });
-
-      console.log('response:', response);
       context.refetchData();
     } catch (e) {
       console.error('Failed to create project:', e);

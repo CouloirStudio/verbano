@@ -1,64 +1,105 @@
-import styles from './transcription.module.scss';
-import { useProjectContext } from '../../../contexts/ProjectContext';
-import GetTranscription from '@/app/graphql/queries/GetTranscription';
-import Box from '@mui/material/Box';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import React, { useEffect } from 'react';
-import { useLazyQuery } from '@apollo/client';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import styles from './transcription.module.scss';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import { useNoteContext } from '@/app/contexts/NoteContext';
-import Display from '@/app/components/UI/Display';
 import ScrollView from '@/app/components/UI/ScrollView';
+import Footer from '@/app/components/Layout/Footer';
+import { useLazyQuery } from '@apollo/client';
+import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
+import TranscriptionSegment from './TranscriptionSegment';
+
+class TranscriptionParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TranscriptionParseError';
+  }
+}
+
+interface TranscriptionSegmentData {
+  start: number;
+  text: string;
+}
 
 /**
- * A functional component to display a transcription.
- * @param Id
- * @constructor
+ * `TranscriptionDisplay` is a component that renders the transcription of a selected note.
+ * It fetches the transcription data via a GraphQL query and displays it segment by segment.
  */
 const TranscriptionDisplay: React.FC = () => {
   const { selectedNote } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const { transcription, setTranscription } = useNoteContext();
+  const [getTranscript, { data, loading, error }] = useLazyQuery<{
+    getTranscription: string;
+  }>(GetTranscription);
 
-  // Use GraphQL to get the transcription
-  const [getTranscript, { data }] = useLazyQuery(GetTranscription);
-
-  // Perform these actions when the component is rendered
   useEffect(() => {
-    // Check for existing transcription
-
     if (!selectedNote?.id) return;
 
     getTranscript({ variables: { id: selectedNote.id } });
 
     if (data && data.getTranscription) {
       try {
-        const transcriptionData = JSON.parse(data.getTranscription);
-        setTranscription(transcriptionData.text); // Update the transcription in the context
-      } catch (error) {
+        const transcriptionData: TranscriptionSegmentData[] = JSON.parse(
+          data.getTranscription,
+        );
+        setTranscription(JSON.stringify(transcriptionData, null, 2));
+      } catch (error: unknown) {
         setIsError(true);
-        if (typeof error === 'object' && error !== null && 'message' in error) {
-          setErrorMessage(`${(error as Error).message}`);
-        } else {
-          setErrorMessage(`An unknown error occurred.`);
+        let errorMessage = 'An unknown error occurred.';
+        if (error instanceof TranscriptionParseError) {
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          errorMessage = 'An unexpected error occurred: ' + error.message;
         }
+        setErrorMessage(errorMessage);
       }
     } else {
       setTranscription('');
     }
   }, [
-    data,
-    setTranscription,
-    setIsError,
-    setErrorMessage,
     selectedNote?.id,
     getTranscript,
+    loading,
+    error,
+    data,
+    setIsError,
+    setErrorMessage,
+    setTranscription,
   ]);
+
+  useEffect(() => {}, [transcription]);
+
+  // Parse and render transcription segments
+  const renderTranscription = (transcriptionJson: string) => {
+    try {
+      const segments: TranscriptionSegmentData[] =
+        JSON.parse(transcriptionJson);
+      return segments.map((segment, index) => (
+        <TranscriptionSegment key={index} segment={segment} />
+      ));
+    } catch (e) {
+      return (
+        <Typography variant="body2">
+          Failed to load Replicate format. Try retranscribing. Current data:{' '}
+          {transcriptionJson}
+        </Typography>
+      );
+    }
+  };
 
   return (
     <Box className={styles.transcription}>
       <ScrollView className={styles.scrollView}>
-        <Display content={transcription} title={selectedNote?.noteName} />
+        {transcription ? renderTranscription(transcription) : null}
       </ScrollView>
+      <Footer
+        footerText={
+          transcription ? ` ${transcription}` : 'No transcription available'
+        }
+      />
     </Box>
   );
 };

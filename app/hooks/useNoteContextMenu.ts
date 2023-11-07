@@ -4,7 +4,7 @@ import DeleteNote from '@/app/graphql/mutations/DeleteNote';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 export const useNoteContextMenu = () => {
-  const context = useProjectContext();
+  const { refetchData, setSelectedNote } = useProjectContext();
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
@@ -33,14 +33,13 @@ export const useNoteContextMenu = () => {
         variables: { id: rightClickedNoteId },
       });
 
-      if (response.data.deleteNote) {
-        console.log('Note successfully deleted!');
-      } else {
+      if (!response.data.deleteNote) {
         console.error('Failed to delete the note.');
       }
 
       handleClose();
-      context.refetchData();
+      setSelectedNote(null);
+      refetchData();
     } catch (err: any) {
       console.error('Error while deleting the note:', err.message);
     }

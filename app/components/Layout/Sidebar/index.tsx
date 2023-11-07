@@ -10,6 +10,7 @@ import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject';
 import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
 import { useTheme } from '@mui/material/styles';
+import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
 
 /**
  * Extends the basic NoteType with a position property.
@@ -152,7 +153,9 @@ const Sidebar: React.FC = () => {
     >
       <DragDropContext onDragEnd={handleDragEnd}>
         <ProjectTree />
-        <NoteTree />
+        <NoteListContextProvider>
+          <NoteTree />
+        </NoteListContextProvider>
       </DragDropContext>
     </div>
   );

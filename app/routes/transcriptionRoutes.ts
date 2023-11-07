@@ -1,7 +1,7 @@
 import express from 'express';
 import { generatePresignedUrl } from '../services/AWSService';
-import OpenAIService from '../services/OpenAIService';
 import { Note } from '../models';
+import ReplicateService from '@/app/services/ReplicateService';
 
 const router = express.Router();
 
@@ -13,7 +13,6 @@ router.post('/transcribe', async (req, res) => {
     const data = req.body;
     const key = data.key;
     const noteID = data.id;
-    console.log(noteID);
 
     if (!key) {
       return res
@@ -23,11 +22,9 @@ router.post('/transcribe', async (req, res) => {
 
     // Generate a pre-signed URL for the audio file
     const url = await generatePresignedUrl(key);
-    // Get audio from AWSS3 bucket using signed URL
-    const audioBlob = await fetch(url).then((r) => r.blob());
-    const openAI = new OpenAIService();
-    // Transcribe audio
-    const transcription = await openAI.transcribeAudio(audioBlob);
+    const replicateService = new ReplicateService();
+    // Transcribe audio using the ReplicateService
+    const transcription = await replicateService.transcribeAudio(url);
 
     // Get and update note with transcription
     const note = await Note.findById(noteID);

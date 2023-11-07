@@ -1,19 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './playback.module.scss';
-import usePlaybackManager from '@/app/hooks/usePlaybackManager';
+import usePlaybackManager, {
+  PlaybackState,
+} from '@/app/hooks/usePlaybackManager';
 import PlaybackButton from './PlaybackButton';
-import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { NoteType } from '@/app/graphql/resolvers/types';
 
 interface PlaybackProps {
   // audioUrl: string;
   baseUrl: string;
+  selectedNote: NoteType | null;
 }
 
-const Playback: React.FC<PlaybackProps> = ({ baseUrl }) => {
-  const { startPlayback, pausePlayback, playbackState } = usePlaybackManager();
+const Playback: React.FC<PlaybackProps> = ({ baseUrl, selectedNote }) => {
+  const {
+    startPlayback,
+    pausePlayback,
+    playbackState,
+    setPlaybackState,
+    currentAudioSourceRef,
+    updateStateFromPlayer,
+  } = usePlaybackManager();
   const { setIsError, setErrorMessage } = useErrorModalContext();
-  const { selectedNote } = useProjectContext();
+
+  useEffect(() => {
+    // On render, if the selected note has changed, the component state will be idle.
+    if (selectedNote?.audioLocation != currentAudioSourceRef.current) {
+      setPlaybackState(PlaybackState.IDLE);
+    } else {
+      // Make the component state match the current audio player.
+      updateStateFromPlayer();
+    }
+  }, [currentAudioSourceRef, selectedNote, setPlaybackState]);
 
   const togglePlayback = async () => {
     try {
