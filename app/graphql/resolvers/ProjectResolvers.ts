@@ -1,8 +1,8 @@
-import { INote, Note } from '../../models/Note';
-import { IProject, Project } from '../../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../../models/User';
-import { ResolverContext } from '@/app/graphql/resolvers/types';
+import {INote, Note} from '../../models/Note';
+import {IProject, Project} from '../../models/Project';
+import {ApolloError} from 'apollo-server-express';
+import {User} from '../../models/User';
+import {ResolverContext} from '@/app/graphql/resolvers/types';
 
 /**
  * Resolvers for querying projects from the database.
@@ -114,7 +114,27 @@ export const ProjectMutations = {
       throw new Error('User not authenticated.');
     }
 
-    //delete all notes in project
+    const user = await User.findById(context.getUser().id);
+
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    if (!user.projects) {
+      throw new Error('User has no projects.');
+    }
+
+    // Delete project from user by filtering out the project with the matching id
+    const updatedProjects = user.projects.filter(
+      (projectEntry) => projectEntry.project.toString() !== args.id,
+    );
+
+    user.projects = updatedProjects;
+
+    // Save the user after removing the project
+    await user.save();
+
+    // Delete all notes in project
     const project = await Project.findById(args.id);
     if (!project) {
       throw new Error('Project not found.');
