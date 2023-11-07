@@ -104,7 +104,9 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
       try {
         //remove the project from the list of projects
         projects?.splice(
-          projects.findIndex((projectLoop) => projectLoop.id === project.id),
+          projects.findIndex(
+            (projectLoop) => projectLoop.project.id === project.id,
+          ),
           1,
         );
         setSelectedProject(null);

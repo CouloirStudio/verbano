@@ -74,3 +74,8 @@ export type ProjectType = {
   projectDescription?: string;
   notes: ProjectNoteType[];
 };
+
+export type PositionedProjectType = {
+  project: ProjectType;
+  position: number;
+};
