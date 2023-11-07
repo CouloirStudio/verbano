@@ -1,8 +1,8 @@
-import {INote, Note} from '../../models/Note';
-import {ISummary} from '../../models/Summary';
-import {IProject, Project} from '../../models/Project';
-import {ApolloError} from 'apollo-server-express';
-import {User} from '../../models/User';
+import { INote, Note } from '../../models/Note';
+import { IProject, Project } from '../../models/Project';
+import { ApolloError } from 'apollo-server-express';
+import { User } from '../../models/User';
+import { ResolverContext } from '@/app/graphql/resolvers/types';
 
 /**
  * Resolvers for querying projects from the database.
@@ -13,39 +13,30 @@ export const ProjectQueries = {
    * @throws ApolloError - Throws an error if no projects are found.
    * @returns An array of projects.
    */
-  async listProjects(
-    _: unknown,
-    __: unknown,
-    context: any,
-  ): Promise<IProject[]> {
-    if (!context.getUser()) {
+  async listProjects(_: any, __: any, context: { getUser: () => any }) {
+    // Authenticate user
+    const userContext = context.getUser();
+    if (!userContext) {
       throw new Error('User not authenticated.');
     }
 
-    const user = await User.findById(context.getUser()._id);
+    // Find user by ID from context
+    const user = await User.findById(userContext.id).populate({
+      path: 'projects.project',
+      populate: { path: 'notes.note' },
+    });
     if (!user) {
       throw new Error('User not found.');
     }
-    const projectIds = user.projectIds;
 
-    const projects = await Project.find({
-      _id: { $in: projectIds },
-    }).populate('notes.note');
-
-    projects.forEach((project) => {
-      project.notes = project.notes.filter((noteRef) => noteRef.note);
-      project.summaries = project.summaries.filter(
-        (summaryRef) => summaryRef.summary,
-      );
-    });
-
-    if (!projects || projects.length === 0) {
-      throw new ApolloError('No projects found.');
+    // Check if user has projects
+    if (!user.projects || user.projects.length === 0) {
+      throw new Error('User has no projects.');
     }
 
-    return projects;
+    // return [project: id, position: number]
+    return user.projects.sort((a, b) => a.position - b.position);
   },
-
   async getProject(_: unknown, args: { id: string }): Promise<IProject> {
     const project = await Project.findById(args.id);
     if (!project) {
@@ -97,14 +88,17 @@ export const ProjectMutations = {
       project.notes.push({ note: savedDefaultNote._id, position: 0 });
       await project.save();
 
-      if (!user.projectIds) {
-        user.projectIds = [];
+      if (!user.projects) {
+        user.projects = [];
       }
 
       const objProject = project.toObject();
       objProject.id = objProject._id.toString();
 
-      user.projectIds.push(objProject.id);
+      user.projects.push({
+        project: objProject.id,
+        position: user.projects.length,
+      });
       user.save();
 
       delete objProject._id;
@@ -138,6 +132,85 @@ export const ProjectMutations = {
       console.error('Error deleting project:', error);
       return false;
     }
+  },
+
+  async updateProject(
+    _: unknown,
+    args: {
+      id: string;
+      input: { projectName: string; projectDescription?: string };
+    },
+    context: any,
+  ) {
+    if (!context.getUser()) {
+      throw new Error('User not authenticated.');
+    }
+
+    const project = await Project.findById(args.id);
+    if (!project) {
+      throw new Error('Project not found.');
+    }
+
+    if (args.input.projectName.trim() == '') {
+      throw new Error('Project name cannot be empty.');
+    }
+
+    return Project.findByIdAndUpdate(args.id, args.input, { new: true });
+  },
+
+  async moveProjectOrder(
+    _: any,
+    args: { projectId: string; order: number },
+    _context: ResolverContext,
+  ) {
+    const project = await Project.findById(args.projectId);
+    if (!project) {
+      console.error(`No project found with ID ${args.projectId}.`);
+      return null;
+    }
+
+    const user = await User.findOne({ 'projects.project': project._id });
+    if (!user) {
+      console.error(`No user found containing project ID ${args.projectId}.`);
+      return null;
+    }
+
+    if (!user.projects) {
+      console.error(`User does not have any projects.`);
+      return null;
+    }
+
+    const projectPositionObject = user.projects.find(
+      (p) => p.project.toString() === project._id.toString(),
+    );
+
+    if (!projectPositionObject) {
+      console.error(`Project not found in user's projects array.`);
+      return null;
+    }
+
+    const index = user.projects.indexOf(projectPositionObject);
+
+    // Remove the project from its current position
+    if (index > -1) {
+      user.projects.splice(index, 1);
+    }
+
+    const newPosition = {
+      project: project._id,
+      position: args.order,
+    };
+    user.projects.splice(args.order, 0, newPosition);
+
+    // Adjust positions of other projects
+    for (let i = 0; i < user.projects.length; i++) {
+      user.projects[i].position = i;
+    }
+
+    user.markModified('projects');
+    await user.save();
+
+    return project;
   },
 };
 

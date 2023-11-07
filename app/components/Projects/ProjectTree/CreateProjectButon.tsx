@@ -19,7 +19,7 @@ function CreateProjectButton() {
   // Handle the button click
   const handleButtonClick = async () => {
     const projectsWithContainsName = context.projects?.filter((project) =>
-      project.projectName.includes('New Project'),
+      project.project.projectName.includes('New Project'),
     );
     // Create a new project, and if multiple "New Project" projects exist, append a number between braces- New Project (#)
     const newProjectName =

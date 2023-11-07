@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes.graphql';
-import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
+import {
+  NoteType,
+  PositionedProjectType,
+  ProjectType,
+} from '@/app/graphql/resolvers/types';
 
 /**
  * Defines the shape of the ProjectContext.
@@ -9,8 +13,8 @@ import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
 type ProjectContextType = {
   selectedNote: NoteType | null;
   setSelectedNote: (note: NoteType | null) => void;
-  projects: ProjectType[];
-  setProjects: (projects: ProjectType[]) => void;
+  projects: PositionedProjectType[];
+  setProjects: (projects: PositionedProjectType[]) => void;
   selectedProject: ProjectType | null;
   setSelectedProject: (project: ProjectType | null) => void;
   refetchData: () => void;
@@ -43,14 +47,14 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
   const [selectedNote, setSelectedNote] = useState<NoteType | null>(null);
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [projects, setProjects] = useState<PositionedProjectType[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectType | null>(
     null,
   );
 
-  const { data, error, refetch } = useQuery<{ listProjects: ProjectType[] }>(
-    GetProjectsAndNotes,
-  );
+  const { data, error, refetch } = useQuery<{
+    listProjects: PositionedProjectType[];
+  }>(GetProjectsAndNotes);
 
   async function refetchData() {
     try {
@@ -71,26 +75,26 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
 
       if (selectedProject) {
         const updatedSelectedProject = data.listProjects.find(
-          (project) => project.id === selectedProject.id,
+          (project) => project.project.id === selectedProject.id,
         );
 
         if (
           JSON.stringify(updatedSelectedProject) !==
           JSON.stringify(selectedProject)
         ) {
-          setSelectedProject(updatedSelectedProject || null);
+          setSelectedProject(updatedSelectedProject?.project || null);
         }
       }
 
       if (selectedNote) {
         const updatedSelectedNote = data.listProjects
-          .find((project) => project.id === selectedProject?.id)
-          ?.notes.find((note) => note.note.id === selectedNote.id);
+          .flatMap((project) => project.project.notes)
+          .find((notePosition) => notePosition.note.id === selectedNote.id);
 
         if (
           JSON.stringify(updatedSelectedNote) !== JSON.stringify(selectedNote)
         ) {
-          if (updatedSelectedNote) setSelectedNote(updatedSelectedNote.note);
+          setSelectedNote(updatedSelectedNote?.note || null);
         }
       }
     }

@@ -72,11 +72,6 @@ export type SummaryType = {
   noteIds: string[];
 };
 
-export type ProjectNoteType = {
-  note: NoteType;
-  position: number;
-};
-
 export type ProjectSummaryType = {
   summary: SummaryType;
   position: number;
@@ -88,4 +83,16 @@ export type ProjectType = {
   projectDescription?: string;
   notes: ProjectNoteType[];
   summaries: ProjectSummaryType[];
+};
+
+export type ProjectNoteType = {
+  note: NoteType;
+} & HasPosition;
+
+export type PositionedProjectType = {
+  project: ProjectType;
+} & HasPosition;
+
+type HasPosition = {
+  position: number;
 };

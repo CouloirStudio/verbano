@@ -11,13 +11,11 @@
 .noteList {
   display: flex;
   width: 100%;
-  gap: 12px;
   flex-direction: column;
 
   .note {
 
 
-    transition: background-color 0.1s ease-in-out, transform 0.3s ease-in-out;
     font-size: 14px;
     height: 50px;
     border-radius: 15px;
@@ -26,6 +24,7 @@
     text-transform: none;
     text-align: left;
     justify-content: left;
+    margin-bottom: 12px;
 
     p {
       overflow: clip;

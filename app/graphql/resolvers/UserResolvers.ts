@@ -1,6 +1,8 @@
 import { User } from '../../models/User';
 import { hashPassword } from '../../config/passport';
 import { ResolverContext, UpdateUserArgs } from '@/app/graphql/resolvers/types';
+import { Project } from '@/app/models';
+import { ApolloError } from 'apollo-server-express';
 
 export const UserQueries = {
   async currentUser(parent: any, args: any, context: any) {
@@ -95,5 +97,23 @@ export const UserMutations = {
       new: true,
     });
     return !!updated;
+  },
+};
+
+export const UserType = {
+  async projects(user: { id: string; projectIds: string[] }) {
+    const projects = await Project.find({
+      _id: { $in: user.projectIds },
+    }).populate('notes.note');
+
+    projects.forEach((project) => {
+      project.notes = project.notes.filter((noteRef) => noteRef.note);
+    });
+
+    if (!projects || projects.length === 0) {
+      throw new ApolloError('No projects found.');
+    }
+
+    return projects;
   },
 };
