@@ -1,6 +1,12 @@
-import {Note} from '../../models/Note';
-import {AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs,} from './types';
-import {Project} from '../../models/Project';
+import { Note } from '../../models/Note';
+import {
+  AddNoteArgs,
+  DeleteNoteArgs,
+  GetNoteArgs,
+  ResolverContext,
+  UpdateNoteArgs,
+} from './types';
+import { Project } from '../../models/Project';
 
 /**
  * Resolvers for querying notes from the database.

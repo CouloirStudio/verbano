@@ -1,17 +1,16 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import styles from './sidebar.module.scss';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
-import {DragDropContext, DragStart, DropResult} from '@hello-pangea/dnd';
-import {useLazyQuery, useMutation} from '@apollo/client';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import GetNote from '@/app/graphql/queries/GetNote';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject';
-import {NoteType, ProjectNoteType} from '@/app/graphql/resolvers/types';
-import {useTheme} from '@mui/material/styles';
-import {useNoteListContext} from '@/app/contexts/NoteListContext';
-import {useDraggingContext} from '@/app/contexts/DraggingContext';
+import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
+import { useTheme } from '@mui/material/styles';
+import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
 
 /**
  * Extends the basic NoteType with a position property.
@@ -60,12 +59,11 @@ function extendedNotesToProjectNotes(
 
 /**
  * Updates the position of each note based on its index in the array.
- * @param projectNotesArray - An array of project notes.
+ * @param notesArray - An array of extended notes.
  */
-function reorderPositions(projectNotesArray: ProjectNoteType[]): void {
-  projectNotesArray.forEach((projectNote, index) => {
-    // Update the position property of the note within each ProjectNoteType
-    projectNote.position = index;
+function reorderPositions(notesArray: ExtendedNoteType[]): void {
+  notesArray.forEach((note, index) => {
+    note.position = index;
   });
 }
 
@@ -73,15 +71,8 @@ function reorderPositions(projectNotesArray: ProjectNoteType[]): void {
  * The Sidebar component handles the drag-and-drop logic for notes within and between projects.
  */
 const Sidebar: React.FC = () => {
-  const {
-    projects,
-    setProjects,
-    selectedProject,
-    setSelectedProject,
-    refetchData,
-  } = useProjectContext();
-  const { setDraggingItemType, draggingItemType } = useDraggingContext();
-  const { selectedNotes } = useNoteListContext();
+  const { projects, selectedProject, setSelectedProject, refetchData } =
+    useProjectContext();
 
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
@@ -93,102 +84,78 @@ const Sidebar: React.FC = () => {
 
   if (!projects) return <p>Loading...</p>;
 
-  const handleDragStart = (result: DragStart) => {
-    // Determine the item type from the result and set it in the context
-    const itemType = result.draggableId.includes('note') ? 'note' : 'project';
-    setDraggingItemType(itemType);
-  };
-
   const handleDragEnd = async (result: DropResult) => {
-    const { destination, source, draggableId } = result;
-
-    if (!destination) return;
-
-    if (draggingItemType === 'project') {
-      return;
-    }
+    const { draggableId, destination, source } = result;
 
     try {
-      const updatedProjects = [...projects];
+      await getNote({
+        variables: { id: draggableId },
+      });
 
-      const formattedId = draggableId.split('-')[1];
-
-      // Process all selected notes
-      if (!selectedProject) {
-        throw new Error('Selected project is missing.');
+      if (!destination || !selectedProject) {
+        throw new Error(
+          'No destination specified or selected project is missing.',
+        );
       }
 
-      // The destination is in the projects note dropdown list, so we need to move the note to the project
-      if (destination.droppableId.endsWith('-notes')) {
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.index === source.index
+      ) {
+        return;
+      }
+
+      const notesCopy: ExtendedNoteType[] = projectNotesToExtendedNotes(
+        selectedProject.notes,
+      );
+
+      if (destination.droppableId !== source.droppableId) {
         const destinationProjectId = destination.droppableId.split('-')[1];
+        if (!noteData?.getNote) return;
 
         await moveNoteToProject({
           variables: {
-            noteId: formattedId,
+            noteId: draggableId,
             projectId: destinationProjectId,
           },
         });
-      } else if (destination.droppableId === 'notes') {
-        // Find the index of the project where the note is being moved
-        const projectIndex = updatedProjects.findIndex(
-          (p) => p.id === selectedProject.id,
-        );
-        if (projectIndex === -1) {
-          console.error('Project not found.');
-          return;
-        }
+      } else {
+        if (!noteData?.getNote) return;
 
-        // Clone the notes array within the project
-        const updatedNotes = [...updatedProjects[projectIndex].notes];
+        const [originalNote] = notesCopy.splice(source.index, 1);
+        const movedNote = { ...originalNote, position: destination.index };
+        notesCopy.splice(destination.index, 0, movedNote);
 
-        // Find the original index of the note
-        const originalIndex = updatedNotes.findIndex(
-          (n) => n.note.id === formattedId,
-        );
-        if (originalIndex === -1) {
-          console.error('Note not found.');
-          return;
-        }
+        reorderPositions(notesCopy);
 
-        // Remove the note from its original position and insert it at the new position
-        const [movedNote] = updatedNotes.splice(source.index, 1);
-        updatedNotes.splice(destination.index, 0, movedNote);
+        setSelectedProject({
+          ...selectedProject,
+          notes: extendedNotesToProjectNotes(notesCopy),
+        });
 
-        // Update the position property of each note based on its index in the array
-        reorderPositions(updatedNotes);
-
-        // Update the project's notes in the cloned projects array
-        updatedProjects[projectIndex].notes = updatedNotes;
-
-        // Update the projects array in the context
-        setProjects(updatedProjects);
-        // Update the selected project
-        setSelectedProject(updatedProjects[projectIndex]);
-
-        // Call the mutation to update the order in the backend
-        moveNotePosition({
+        await moveNotePosition({
           variables: {
-            noteId: formattedId,
+            noteId: draggableId,
             order: destination.index,
           },
         });
       }
-    } catch (e) {
-      console.error('Error moving note:', e);
+      refetchData();
+    } catch (error) {
+      console.error('An error occurred during drag end:', error);
     }
   };
-
-  useEffect(() => {}, [projects]);
 
   return (
     <div
       className={styles.sidebar}
       style={{ backgroundColor: sidebarBg, color: textColour }}
     >
-      <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <ProjectTree />
-
-        <NoteTree />
+        <NoteListContextProvider>
+          <NoteTree />
+        </NoteListContextProvider>
       </DragDropContext>
     </div>
   );

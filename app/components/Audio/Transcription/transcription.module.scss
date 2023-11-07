@@ -5,3 +5,12 @@
     width: 100%;
   }
 }
+
+.segment {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  margin: 12px;
+  gap: 12px;
+  max-width: 50%;
+}
