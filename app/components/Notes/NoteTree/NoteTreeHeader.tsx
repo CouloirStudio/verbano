@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import CreateNoteButton from '@/app/components/Notes/NoteTree/CreateNoteButton';
 import SearchBar from './SearchBar';
 import styles from './noteTree.module.scss';
 import Typography from '@mui/material/Typography';
-import {AiOutlineMore} from 'react-icons/ai';
-import {IoClose} from 'react-icons/io5';
+import { AiOutlineMore } from 'react-icons/ai';
+import { IoClose } from 'react-icons/io5';
 import TooltipIconButton from '@/app/components/UI/TooltipIconButton';
 
 /**

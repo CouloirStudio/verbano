@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useErrorModalContext } from "../contexts/ErrorModalContext";
-import { AudioRecorder } from "../api/recorder";
-import { uploadAudio } from "@/app/api/audio";
-import { NoteType, ProjectType } from "@/app/graphql/resolvers/types";
+import { useState } from 'react';
+import { useErrorModalContext } from '../contexts/ErrorModalContext';
+import { AudioRecorder } from '../api/recorder';
+import { uploadAudio } from '@/app/api/audio';
+import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
 
 /**
  * Custom hook to manage the audio recording and uploading functionalities.
