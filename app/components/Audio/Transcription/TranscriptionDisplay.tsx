@@ -1,22 +1,32 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import styles from './transcription.module.scss';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
-import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
-import {useNoteContext} from '@/app/contexts/NoteContext';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { useNoteContext } from '@/app/contexts/NoteContext';
 import ScrollView from '@/app/components/UI/ScrollView';
 import Footer from '@/app/components/Layout/Footer';
-import {useLazyQuery} from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
 import TranscriptionSegment from './TranscriptionSegment';
 
-// Assuming the transcription is a JSON string of an array of objects with start and text properties
+class TranscriptionParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TranscriptionParseError';
+  }
+}
+
 interface TranscriptionSegmentData {
   start: number;
   text: string;
 }
 
+/**
+ * `TranscriptionDisplay` is a component that renders the transcription of a selected note.
+ * It fetches the transcription data via a GraphQL query and displays it segment by segment.
+ */
 const TranscriptionDisplay: React.FC = () => {
   const { selectedNote } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
@@ -38,9 +48,13 @@ const TranscriptionDisplay: React.FC = () => {
         setTranscription(JSON.stringify(transcriptionData, null, 2));
       } catch (error: unknown) {
         setIsError(true);
-        setErrorMessage(
-          error instanceof Error ? error.message : 'An unknown error occurred.',
-        );
+        let errorMessage = 'An unknown error occurred.';
+        if (error instanceof TranscriptionParseError) {
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          errorMessage = 'An unexpected error occurred: ' + error.message;
+        }
+        setErrorMessage(errorMessage);
       }
     } else {
       setTranscription('');
@@ -56,9 +70,7 @@ const TranscriptionDisplay: React.FC = () => {
     setTranscription,
   ]);
 
-  useEffect(() => {
-    console.log('transcription', transcription);
-  }, [transcription]);
+  useEffect(() => {}, [transcription]);
 
   // Parse and render transcription segments
   const renderTranscription = (transcriptionJson: string) => {

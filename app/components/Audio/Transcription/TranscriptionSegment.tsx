@@ -6,7 +6,10 @@ import {IoPersonOutline} from 'react-icons/io5';
 import useFormatTimestamp from '@/app/hooks/useFormatTimestamp'; // Import the hook
 import styles from './transcription.module.scss';
 
-// Define the type for the segment prop
+/**
+ * `TranscriptionSegmentProps` defines the properties that the `TranscriptionSegment` component expects.
+ * `segment` is an object containing the `start` time of the transcription segment and the `text` of the transcription.
+ */
 interface TranscriptionSegmentProps {
   segment: {
     start: number;
@@ -14,6 +17,14 @@ interface TranscriptionSegmentProps {
   };
 }
 
+/**
+ * `TranscriptionSegment` is a React functional component that renders an individual segment of a transcription.
+ * It displays a formatted timestamp and the text of the transcription segment.
+ * The timestamp is formatted using the `useFormatTimestamp` hook.
+ *
+ * @param {TranscriptionSegmentProps} props - The props object for this component, expecting a single `segment` prop.
+ * @returns {React.ReactElement} - A React element representing the transcription segment.
+ */
 const TranscriptionSegment: React.FC<TranscriptionSegmentProps> = ({
   segment,
 }) => {
