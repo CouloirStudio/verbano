@@ -1,16 +1,17 @@
 import React from 'react';
 import styles from './sidebar.module.scss';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
 import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
-import { DragDropContext, DropResult } from '@hello-pangea/dnd';
-import { useLazyQuery, useMutation } from '@apollo/client';
-import GetNote from '@/app/graphql/queries/GetNote';
-import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder';
-import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject';
-import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
-import { useTheme } from '@mui/material/styles';
-import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
+import {DragDropContext, DropResult} from '@hello-pangea/dnd';
+import {useLazyQuery, useMutation} from '@apollo/client';
+import GetNote from '@/app/graphql/queries/GetNote.graphql';
+import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
+import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
+import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
+import {NoteType, ProjectNoteType} from '@/app/graphql/resolvers/types';
+import {useTheme} from '@mui/material/styles';
+import {NoteListContextProvider} from '@/app/contexts/NoteListContext';
 
 /**
  * Extends the basic NoteType with a position property.
@@ -19,6 +20,10 @@ import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
 interface ExtendedNoteType extends NoteType {
   position: number;
 }
+
+type HasPosition = {
+  position: number;
+};
 
 /**
  * Converts ProjectNoteType[] to ExtendedNoteType[].
@@ -58,12 +63,12 @@ function extendedNotesToProjectNotes(
 }
 
 /**
- * Updates the position of each note based on its index in the array.
- * @param notesArray - An array of extended notes.
+ * Updates the position of each item based on its index in the array.
+ * @param itemsArray - An array of items with a position property.
  */
-function reorderPositions(notesArray: ExtendedNoteType[]): void {
-  notesArray.forEach((note, index) => {
-    note.position = index;
+function reorderPositions<T extends HasPosition>(itemsArray: T[]): void {
+  itemsArray.forEach((item, index) => {
+    item.position = index;
   });
 }
 
@@ -71,12 +76,18 @@ function reorderPositions(notesArray: ExtendedNoteType[]): void {
  * The Sidebar component handles the drag-and-drop logic for notes within and between projects.
  */
 const Sidebar: React.FC = () => {
-  const { projects, selectedProject, setSelectedProject, refetchData } =
-    useProjectContext();
+  const {
+    projects,
+    selectedProject,
+    setProjects,
+    setSelectedProject,
+    refetchData,
+  } = useProjectContext();
 
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
   const [moveNotePosition] = useMutation(MoveNoteOrder);
+  const [moveProjectOrder] = useMutation(MoveProjectOrder);
 
   const theme = useTheme();
   const sidebarBg = theme.custom?.moreContrastBackground ?? '';
@@ -86,6 +97,43 @@ const Sidebar: React.FC = () => {
 
   const handleDragEnd = async (result: DropResult) => {
     const { draggableId, destination, source } = result;
+
+    if (!draggableId) return;
+
+    if (!source) return;
+
+    if (
+      draggableId.startsWith('project-') &&
+      destination?.droppableId === 'projects'
+    ) {
+      try {
+        const projectId = draggableId.split('-')[1];
+
+        //update the project position in state
+        const projectsCopy = [...projects];
+        const [originalProject] = projectsCopy.splice(source.index, 1);
+        const movedProject = {
+          ...originalProject,
+          position: destination.index,
+        };
+        projectsCopy.splice(destination.index, 0, movedProject);
+        reorderPositions(projectsCopy);
+
+        setProjects(projectsCopy);
+
+        await moveProjectOrder({
+          variables: {
+            projectId: projectId,
+            order: destination.index,
+          },
+        });
+
+        refetchData();
+      } catch (error) {
+        console.error('An error occurred during drag end:', error);
+      }
+      return;
+    }
 
     try {
       await getNote({
