@@ -1,12 +1,13 @@
-import { useLazyQuery, useMutation } from '@apollo/client';
-import { useCallback } from 'react';
-import { DropResult } from '@hello-pangea/dnd';
-import { ExtendedNoteType, ProjectType } from '@/app/types'; // Import your type definitions here
+import {useLazyQuery, useMutation} from '@apollo/client';
+import {useCallback} from 'react';
+import {DropResult} from '@hello-pangea/dnd';
+import {ExtendedNoteType, ProjectType} from '@/app/types'; // Import your type definitions here
 import GetNote from '@/app/graphql/queries/GetNote.graphql';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
 import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
-import { ProjectNoteType } from '@/app/graphql/resolvers/types';
+import {ProjectNoteType} from '@/app/graphql/resolvers/types';
+import client from '@/app/config/apolloClient';
 
 /**
  * Interface representing the parameters required for the useDragAndDrop hook.
@@ -106,6 +107,7 @@ export const useDragAndDrop = ({
 
       const formattedDraggableId = draggableId.split('-')[1];
 
+      // If the draggableId starts with 'project-', it is a project, and we need to reorder projects
       if (
         draggableId.startsWith('project-') &&
         destination?.droppableId === 'projects'
@@ -138,9 +140,12 @@ export const useDragAndDrop = ({
       }
 
       try {
-        await getNote({
+        const { data } = await client.query({
+          query: GetNote,
           variables: { id: formattedDraggableId },
         });
+
+        if (!data) return;
 
         if (!destination) {
           throw new Error(
@@ -161,7 +166,6 @@ export const useDragAndDrop = ({
 
         if (destination.droppableId !== source.droppableId) {
           const destinationProjectId = destination.droppableId.split('-')[1];
-          if (!noteData?.getNote) return;
 
           await moveNoteToProject({
             variables: {
@@ -170,8 +174,6 @@ export const useDragAndDrop = ({
             },
           });
         } else {
-          if (!noteData?.getNote) return;
-
           const [originalNote] = notesCopy.splice(source.index, 1);
           const movedNote = { ...originalNote, position: destination.index };
           notesCopy.splice(destination.index, 0, movedNote);
