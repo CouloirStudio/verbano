@@ -30,8 +30,6 @@ function ProjectTree() {
   );
 
   useEffect(() => {
-    console.log('projects', projects);
-
     if (projects) {
       const sortedProjects = [...projects].sort(
         (a, b) => a.position - b.position,

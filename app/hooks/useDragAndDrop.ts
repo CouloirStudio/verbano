@@ -5,7 +5,11 @@ import GetNote from '@/app/graphql/queries/GetNote.graphql';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
 import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
-import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
+import {
+  NoteType,
+  ProjectNoteType,
+  ProjectType,
+} from '@/app/graphql/resolvers/types';
 import client from '@/app/config/apolloClient';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 
@@ -68,23 +72,20 @@ interface HasPosition {
  * A hook that provides drag and drop functionality for projects and notes.
  * It handles the reordering of projects and notes within and across projects.
  *
- * @param params - The UseDragAndDropParams object containing projects, setProjects, selectedProject, setSelectedProject, and refetchData.
  * @returns An object with a handleDragEnd function to be called when a drag operation ends.
+ * @param setSelectedProject
  */
-export const useDragAndDrop = () => {
+export const useDragAndDrop = (
+  setSelectedProject: (project: ProjectType | null) => void,
+) => {
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
 
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
   const [moveNotePosition] = useMutation(MoveNoteOrder);
   const [moveProjectOrder] = useMutation(MoveProjectOrder);
 
-  const {
-    projects,
-    setProjects,
-    selectedProject,
-    setSelectedProject,
-    refetchData,
-  } = useProjectContext();
+  const { projects, setProjects, selectedProject, refetchData } =
+    useProjectContext();
 
   /**
    * Function to be called when a drag operation ends. It handles the logic for reordering
