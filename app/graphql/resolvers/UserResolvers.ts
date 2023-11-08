@@ -141,8 +141,7 @@ export const UserMutations = {
       );
       // check if update was a success
       if (updated) return true;
-    }
-    throw new Error('An error occurred while updating the password');
+    } else throw new Error('Old password incorrect.');
   },
 };
 

@@ -1,12 +1,20 @@
-import { useUser } from '@/app/contexts/UserContext';
-import { useMutation } from '@apollo/client';
-import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
-import UpdateUserPassword from '@/app/graphql/mutations/UpdatePassword.graphql';
+import { useUser } from "@/app/contexts/UserContext";
+import { useMutation } from "@apollo/client";
+import UpdateUser from "@/app/graphql/mutations/UpdateUser.graphql";
+import UpdateUserPassword from "@/app/graphql/mutations/UpdatePassword.graphql";
 
+/**
+ * Manager for updating user settings
+ */
 const useSettingsManager = () => {
   const currentUser = useUser();
   const [updateUser] = useMutation(UpdateUser);
   const [updateUserPassword] = useMutation(UpdateUserPassword);
+
+  /**
+   * Function for updating user email
+   * @param newEmail The new email address
+   */
   const updateEmail = async (newEmail: string) => {
     try {
       // Check to see if value has actually changed.
@@ -31,6 +39,11 @@ const useSettingsManager = () => {
     }
   };
 
+  /**
+   * Function for updating users name
+   * @param newFirst The new first name
+   * @param newLast The new last name
+   */
   const updateName = async (newFirst: string, newLast: string) => {
     // Check to make sure that current user is not undefined
     try {
@@ -77,6 +90,12 @@ const useSettingsManager = () => {
     }
   };
 
+  /**
+   * Function for updating user password
+   * @param oldPass The old user password for validation
+   * @param newPass The new user password
+   * @param newPassConfirm Confirmation of the new password
+   */
   const updatePassword = async (
     oldPass: string,
     newPass: string,
