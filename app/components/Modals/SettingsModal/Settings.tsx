@@ -82,7 +82,7 @@ function Settings() {
       <TabPanel value={value} index={0}>
         <UpdateEmailForm currentUser={currentUser} />
         <UpdateNameForm currentUser={currentUser} />
-        <UpdatePasswordForm currentUser={currentUser} onChange={() => {}} />
+        <UpdatePasswordForm />
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>
       <TabPanel value={value} index={2}></TabPanel>

@@ -25,6 +25,8 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
       onClose={handleClose}
       aria-labelledby="scroll-dialog-title"
       aria-describedby="scroll-dialog-description"
+      maxWidth={'md'}
+      fullWidth={true}
     >
       <DialogTitle id="scroll-dialog-title">Settings</DialogTitle>
       <DialogContent>

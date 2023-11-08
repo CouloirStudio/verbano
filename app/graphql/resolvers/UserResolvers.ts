@@ -1,21 +1,27 @@
 import { User } from '../../models/User';
 import { hashPassword } from '../../config/passport';
-import { ResolverContext, UpdateUserArgs } from '@/app/graphql/resolvers/types';
+import {
+  AddUserArgs,
+  ResolverContext,
+  UpdatePasswordArgs,
+  UpdateUserArgs,
+} from '@/app/graphql/resolvers/types';
 import { Project } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
+import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 
 export const UserQueries = {
-  async currentUser(parent: any, args: any, context: any) {
+  async currentUser(parent: unknown, args: unknown, context: any) {
     return context.getUser();
   },
 };
 
 export const UserMutations = {
-  async signup(
-    parent: any,
-    { firstName, lastName, email, password }: any,
-    context: any,
-  ) {
+  async signup(_: unknown, args: AddUserArgs, context: any) {
+    const password = args.input.password;
+    const email = args.input.email;
+    const firstName = args.input.firstName;
+    const lastName = args.input.lastName;
     if (!password || !email || !firstName || !lastName) {
       throw new Error('All fields are required.');
     }
@@ -93,10 +99,60 @@ export const UserMutations = {
     args: UpdateUserArgs,
     _context: ResolverContext,
   ) {
+    if (args.input.email) {
+      // check if Google account
+      const currentUser = await User.findById(args.id);
+      if (!currentUser) {
+        throw new Error('user not found');
+      }
+      if (currentUser.googleId)
+        throw new Error('Cannot update Email on google linked account');
+      // Make sure they are not changing their email to that of an existing user
+      const email = args.input.email;
+      const user = await User.findOne({ email });
+      if (user) throw new Error('Email in use.');
+    }
     const updated = await User.findByIdAndUpdate(args.id, args.input, {
       new: true,
     });
     return !!updated;
+  },
+
+  async updateUserPassword(
+    _: unknown,
+    args: UpdatePasswordArgs,
+    _context: ResolverContext,
+  ) {
+    const id = args.id;
+    // get the current user (password and all)
+    const user = await User.findById(id);
+    if (!user) {
+      throw new Error('user not found');
+    }
+
+    // check if this is a Google account
+    if (user.googleId)
+      throw new Error('Cannot update password for Google Linked account.');
+    // check if the password is different
+    if (await verifyPassword(args.input.newPass, user.password)) {
+      throw new Error('New password must be different than old password.');
+    }
+    // verify the old password
+    if (await verifyPassword(args.input.oldPass, user.password)) {
+      const password = await hashPassword(args.input.newPass);
+      // update
+      const updated = await User.findByIdAndUpdate(
+        id,
+        {
+          password: password,
+        },
+        {
+          new: true,
+        },
+      );
+      // check if update was a success
+      if (updated) return true;
+    } else throw new Error('Old password incorrect.');
   },
 };
 

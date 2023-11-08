@@ -30,21 +30,24 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signup(
-      email: String!
-      password: String!
-      firstName: String!
-      lastName: String!
-    ): AuthPayload
+    signup(input: UserInput!): AuthPayload
     login(email: String!, password: String!): AuthPayload
     logout: Boolean
     updateUser(id: ID!, input: UserInput!): Boolean
+    updateUserPassword(id: ID!, input: PasswordUpdateInput!): Boolean
   }
 
   input UserInput {
     email: String
     firstName: String
     lastName: String
+    password: String
+  }
+
+  input PasswordUpdateInput {
+    oldPass: String
+    newPass: String
+    newPassConfirm: String
   }
 `;
 
