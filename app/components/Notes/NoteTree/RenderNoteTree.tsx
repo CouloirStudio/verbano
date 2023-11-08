@@ -17,7 +17,6 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   const [localNotes, setLocalNotes] = useState<ProjectNoteType[]>([]);
 
   useEffect(() => {
-    console.log('render note tree', selectedProject);
     setLocalNotes(
       selectedProject?.notes
         ? [...selectedProject.notes].sort((a, b) => a.position - b.position)

@@ -94,7 +94,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         }
       }
     }
-  }, [data, selectedProject]);
+  }, [data]);
 
   return (
     <ProjectContext.Provider

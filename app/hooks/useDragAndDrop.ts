@@ -178,11 +178,16 @@ export const useDragAndDrop = () => {
 
           reorderPositions(notesCopy);
 
+          const updatedSelectedProject = {
+            ...selectedProject,
+            notes: extendedNotesToProjectNotes(notesCopy),
+          };
+          setSelectedProject(updatedSelectedProject);
+
           const updatedProject = {
             ...selectedProject,
             notes: extendedNotesToProjectNotes(notesCopy),
           };
-
           setProjects(
             projects.map((project) => {
               if (project.project.id === updatedProject.id) {
@@ -198,12 +203,6 @@ export const useDragAndDrop = () => {
               return project;
             }),
           );
-
-          const updatedSelectedProject = {
-            ...selectedProject,
-            notes: extendedNotesToProjectNotes(notesCopy),
-          };
-          setSelectedProject(updatedSelectedProject);
 
           await moveNotePosition({
             variables: {

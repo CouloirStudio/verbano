@@ -30,6 +30,8 @@ function ProjectTree() {
   );
 
   useEffect(() => {
+    console.log('projects', projects);
+
     if (projects) {
       const sortedProjects = [...projects].sort(
         (a, b) => a.position - b.position,
@@ -63,7 +65,7 @@ function ProjectTree() {
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {renderProjectTree(projects)}
-              {draggingItemType === 'project' && provided.placeholder}
+              {provided.placeholder}
             </div>
           )}
         </Droppable>
