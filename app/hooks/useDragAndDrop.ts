@@ -50,10 +50,11 @@ function extendedNotesToProjectNotes(
   }));
 }
 
-function reorderPositions<T extends HasPosition>(itemsArray: T[]): void {
-  itemsArray.forEach((item, index) => {
-    item.position = index;
-  });
+function reorderPositions<T extends HasPosition>(itemsArray: T[]): T[] {
+  return itemsArray.map((item, index) => ({
+    ...item,
+    position: index,
+  }));
 }
 
 /**
