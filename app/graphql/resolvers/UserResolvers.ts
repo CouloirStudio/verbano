@@ -3,6 +3,7 @@ import { hashPassword } from '../../config/passport';
 import { ResolverContext, UpdateUserArgs } from '@/app/graphql/resolvers/types';
 import { Project } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
+import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 
 export const UserQueries = {
   async currentUser(parent: any, args: any, context: any) {
@@ -97,6 +98,44 @@ export const UserMutations = {
       new: true,
     });
     return !!updated;
+  },
+
+  async updatePassword(
+    _: unknown,
+    { oldPass, newPass, id }: any,
+    _context: ResolverContext,
+  ) {
+    // verify the password
+    try {
+      // get the current user (password and all)
+      const user = await User.findOne({ id });
+
+      if (!user) {
+        return 'user not found';
+      }
+      // check if the password is different
+      if (await verifyPassword(newPass, user.password)) {
+      }
+      // verify the old password
+      if (await verifyPassword(oldPass, user.password)) {
+        // update
+        const updated = await User.findByIdAndUpdate(
+          id,
+          {
+            password: hashPassword(newPass),
+          },
+          {
+            new: true,
+          },
+        );
+        // check if update was a success
+        if (updated) return 'success';
+        else return 'fail';
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while checking the password');
+    }
   },
 };
 

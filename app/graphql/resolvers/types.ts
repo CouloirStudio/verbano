@@ -21,6 +21,13 @@ export interface UpdateUserArgs {
   };
 }
 
+export interface UpdatePasswordArgs {
+  id: string;
+  input: {
+    password: string;
+  };
+}
+
 export interface GetNoteArgs {
   id: string;
 }

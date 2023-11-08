@@ -1,18 +1,13 @@
-import React, { ChangeEvent, useState } from 'react';
-import InputField from '@/app/components/Authentication/Login/InputField';
-import { AiOutlineLock } from 'react-icons/ai';
-import { Button } from '@mui/material';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import EditIcon from '@mui/icons-material/Edit';
-import Typography from '@mui/material/Typography';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import { IUser } from '@/app/models/User';
-
-interface PasswordInputProps {
-  currentUser: Partial<IUser>;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-}
+import React, { useState } from "react";
+import InputField from "@/app/components/Authentication/Login/InputField";
+import { AiOutlineLock } from "react-icons/ai";
+import { Button } from "@mui/material";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import EditIcon from "@mui/icons-material/Edit";
+import Typography from "@mui/material/Typography";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import useSettingsManager from "@/app/hooks/useSettingsManager";
 
 /**
  * `UpdatePasswordField` is a React functional component that provides a password input field for updating a password.
@@ -22,24 +17,34 @@ interface PasswordInputProps {
  * @remarks
  * This component can be used in forms where the user is required to enter or update their password.
  *
- * @param props - The component's props.
- * @param props.onChange - A function to handle changes to the password input field.
- *
- * @example
- * ```tsx
- * <UpdatePasswordField value={passwordValue} onChange={handlePasswordChange} text="New Password" />
- * ```
- *
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
-const UpdatePasswordField: React.FC<PasswordInputProps> = ({
-  currentUser,
-  onChange,
-}) => {
+const UpdatePasswordField: React.FC = ({}) => {
+  //Temporary state for handling feedback
+  const [success, setSuccess] = useState('');
   const [isError, setIsError] = useState(false);
+  // State for handling old password field
+  const [oldPass, setOldPass] = useState('');
+  // State for handling new password field
+  const [newPass, setNewPass] = useState('');
+  // State for handling confirmation password field
+  const [newPassConfirm, setNewPassConfirm] = useState('');
+
+  const { updatePassword } = useSettingsManager();
   const clearError = () => {
     setIsError(false);
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // This is the bare minimum of feedback, and is only temporary.
+      // Also updates the user.
+      setSuccess(await updatePassword(oldPass, newPass, newPassConfirm));
+    } catch (error) {
+      setIsError(true);
+      console.error('Error updating email', error);
+    }
   };
 
   return (
@@ -52,16 +57,17 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({
         <Typography>Password</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <form>
+        <p>{success}</p>
+        <form onSubmit={handleSubmit}>
           <InputField
             label={'Old Password'}
             icon={<AiOutlineLock />}
             clearError={clearError}
             error={isError}
             isRequired={true}
-            onChange={onChange}
+            onChange={(e) => setOldPass(e.target.value)}
             type={'password'}
-            value={''}
+            value={oldPass}
           />
 
           <InputField
@@ -70,9 +76,9 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({
             clearError={() => {}}
             error={false}
             isRequired={false}
-            onChange={onChange}
+            onChange={(e) => setNewPass(e.target.value)}
             type={'password'}
-            value={''}
+            value={newPass}
           />
 
           <InputField
@@ -81,9 +87,9 @@ const UpdatePasswordField: React.FC<PasswordInputProps> = ({
             clearError={() => {}}
             error={false}
             isRequired={false}
-            onChange={onChange}
+            onChange={(e) => setNewPassConfirm(e.target.value)}
             type={'password'}
-            value={''}
+            value={newPassConfirm}
           />
 
           <Button variant="contained" color="primary" type="submit">

@@ -72,9 +72,32 @@ const useSettingsManager = () => {
     } else return 'something went wrong';
   };
 
+  const updatePassword = async (
+    oldPass: string,
+    newPass: string,
+    newPassConfirm: string,
+  ) => {
+    console.log(currentUser);
+    // confirm password length
+    if (!(newPass.split('').length >= 8))
+      return 'Password must be more than 8 characters.';
+    // confirm new password
+    else if (newPass !== newPassConfirm) return 'Passwords do not match.';
+    else {
+      // confirm old password
+      // if it does not match then return an error.
+      // confirm there was a change
+      if (newPass == oldPass)
+        return 'New password cannot be the same as old password';
+      //else  update password/ pass handling to resolver
+    }
+    return 'end of function';
+  };
+
   return {
     updateEmail,
     updateName,
+    updatePassword,
   };
 };
 
