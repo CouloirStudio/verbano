@@ -1,6 +1,10 @@
 import { User } from '../../models/User';
 import { hashPassword } from '../../config/passport';
-import { ResolverContext, UpdateUserArgs } from '@/app/graphql/resolvers/types';
+import {
+  ResolverContext,
+  UpdatePasswordArgs,
+  UpdateUserArgs,
+} from '@/app/graphql/resolvers/types';
 import { Project } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
@@ -102,39 +106,37 @@ export const UserMutations = {
 
   async updateUserPassword(
     _: unknown,
-    { oldPass, newPass, id }: any,
+    args: UpdatePasswordArgs,
     _context: ResolverContext,
   ) {
-    // verify the password
-    try {
-      // get the current user (password and all)
-      const user = await User.findOne({ id });
+    const id = args.id;
+    // get the current user (password and all)
+    const user = await User.findById(id);
 
-      if (!user) {
-        return 'user not found';
-      }
-      // check if the password is different
-      if (await verifyPassword(newPass, user.password)) {
-      }
-      // verify the old password
-      if (await verifyPassword(oldPass, user.password)) {
-        // update
-        const updated = await User.findByIdAndUpdate(
-          id,
-          {
-            password: hashPassword(newPass),
-          },
-          {
-            new: true,
-          },
-        );
-        // check if update was a success
-        if (updated) return 'success';
-      }
-    } catch (error) {
-      console.error(error);
-      throw new Error('An error occurred while checking the password');
+    if (!user) {
+      throw new Error('user not found');
     }
+    // check if the password is different
+    if (await verifyPassword(args.input.newPass, user.password)) {
+      throw new Error('New password must be different than old password.');
+    }
+    // verify the old password
+    if (await verifyPassword(args.input.oldPass, user.password)) {
+      const password = await hashPassword(args.input.newPass);
+      // update
+      const updated = await User.findByIdAndUpdate(
+        id,
+        {
+          password: password,
+        },
+        {
+          new: true,
+        },
+      );
+      // check if update was a success
+      if (updated) return true;
+    }
+    throw new Error('An error occurred while updating the password');
   },
 };
 

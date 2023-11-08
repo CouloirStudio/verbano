@@ -64,6 +64,7 @@ const useSettingsManager = () => {
               },
             });
           }
+
           // TODO: Need to trigger a refresh somehow to display new information
           return 'success, log back in for changes to take effect. ';
         }
@@ -78,7 +79,7 @@ const useSettingsManager = () => {
     oldPass: string,
     newPass: string,
     newPassConfirm: string,
-  ): Promise<string> => {
+  ) => {
     console.log(currentUser);
     // confirm password length
     if (!(newPass.split('').length >= 8))
@@ -89,7 +90,23 @@ const useSettingsManager = () => {
       if (newPass == oldPass)
         return 'New password cannot be the same as old password';
       // pass rest of validation/ update to the resolver
-      return await updateUserPassword(oldPass, newPass, currentUser.id);
+      try {
+        await updateUserPassword({
+          variables: {
+            id: currentUser.id,
+            input: {
+              oldPass: oldPass,
+              newPass: newPass,
+              newPassConfirm: newPassConfirm,
+            },
+          },
+        });
+        return 'Password changed successfully.';
+      } catch (error) {
+        console.log(error);
+        if (error instanceof Error) return 'Error: ' + ' ' + error.message;
+        else return 'password update failed.';
+      }
     }
   };
 

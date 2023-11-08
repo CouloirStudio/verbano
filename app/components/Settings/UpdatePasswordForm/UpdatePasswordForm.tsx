@@ -40,7 +40,8 @@ const UpdatePasswordForm: React.FC = ({}) => {
     try {
       // This is the bare minimum of feedback, and is only temporary.
       // Also updates the user.
-      setSuccess(await updatePassword(oldPass, newPass, newPassConfirm));
+      const result = await updatePassword(oldPass, newPass, newPassConfirm);
+      if (result !== undefined) setSuccess(result);
     } catch (error) {
       setIsError(true);
       console.error('Error updating email', error);

@@ -39,13 +39,19 @@ const typeDefs = gql`
     login(email: String!, password: String!): AuthPayload
     logout: Boolean
     updateUser(id: ID!, input: UserInput!): Boolean
-    updateUserPassword(id: ID!, oldPass: String!, newPass: String!): String
+    updateUserPassword(id: ID!, input: PasswordUpdateInput!): Boolean
   }
 
   input UserInput {
     email: String
     firstName: String
     lastName: String
+  }
+
+  input PasswordUpdateInput {
+    oldPass: String
+    newPass: String
+    newPassConfirm: String
   }
 `;
 

@@ -24,7 +24,9 @@ export interface UpdateUserArgs {
 export interface UpdatePasswordArgs {
   id: string;
   input: {
-    password: string;
+    oldPass: string;
+    newPass: string;
+    newPassConfirm: string;
   };
 }
 
