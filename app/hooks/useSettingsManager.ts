@@ -1,11 +1,12 @@
 import { useUser } from '@/app/contexts/UserContext';
 import { useMutation } from '@apollo/client';
 import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
+import UpdateUserPassword from '@/app/graphql/mutations/UpdatePassword.graphql';
 
 const useSettingsManager = () => {
   const currentUser = useUser();
   const [updateUser] = useMutation(UpdateUser);
-  const [updateUserPassword] = useMutation(updateUserPassword);
+  const [updateUserPassword] = useMutation(UpdateUserPassword);
   const updateEmail = async (newEmail: string) => {
     try {
       // Check to see if value has actually changed.
