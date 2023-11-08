@@ -33,7 +33,6 @@ const useSettingsManager = () => {
         return 'success, log back in for changes to take effect. ';
       }
     } catch (error) {
-      console.log(error);
       if (error instanceof Error) return error.message;
       else return 'email update failed.';
     }
@@ -101,7 +100,6 @@ const useSettingsManager = () => {
     newPass: string,
     newPassConfirm: string,
   ) => {
-    console.log(currentUser);
     // confirm password length
     if (!(newPass.split('').length >= 8))
       return 'Password must be more than 8 characters.';
@@ -124,7 +122,6 @@ const useSettingsManager = () => {
         });
         return 'Password changed successfully.';
       } catch (error) {
-        console.log(error);
         if (error instanceof Error) return error.message;
         else return 'password update failed.';
       }

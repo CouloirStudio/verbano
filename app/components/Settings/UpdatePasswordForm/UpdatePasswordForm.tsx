@@ -44,7 +44,6 @@ const UpdatePasswordForm: React.FC = ({}) => {
       if (result !== undefined) setSuccess(result);
     } catch (error) {
       setIsError(true);
-      console.error('Error updating email', error);
     }
   };
 
