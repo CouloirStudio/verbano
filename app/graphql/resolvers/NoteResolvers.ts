@@ -244,7 +244,19 @@ export const NoteMutations = {
     args: DeleteNoteArgs,
     _context: ResolverContext,
   ) {
-    const deleted = await Note.findByIdAndDelete(args.id);
-    return !!deleted; // Return true if a note was deleted
+    // First, find and delete the note from the 'notes' collection
+    const deletedNote = await Note.findByIdAndDelete(args.id);
+    if (!deletedNote) {
+      return false; // If no note was found and deleted, return false
+    }
+
+    // Next, find any projects that reference this note and remove the reference
+    await Project.updateMany(
+      { 'notes.note': args.id },
+      { $pull: { notes: { note: args.id } } },
+    );
+
+    // Return true if a note was found and deleted, false otherwise
+    return !!deletedNote;
   },
 };

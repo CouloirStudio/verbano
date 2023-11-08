@@ -13,7 +13,11 @@ import { useDraggingContext } from '@/app/contexts/DraggingContext';
 
 const renderProjectTree = (projects: PositionedProjectType[]) => {
   return projects.map((project: PositionedProjectType, index) => (
-    <ProjectTreeItem project={project.project} index={index} />
+    <ProjectTreeItem
+      key={project.project.id}
+      project={project.project}
+      index={index}
+    />
   ));
 };
 
@@ -59,7 +63,7 @@ function ProjectTree() {
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {renderProjectTree(projects)}
-              {draggingItemType === 'project' && provided.placeholder}
+              {provided.placeholder}
             </div>
           )}
         </Droppable>
