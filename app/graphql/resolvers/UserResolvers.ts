@@ -98,6 +98,12 @@ export const UserMutations = {
     args: UpdateUserArgs,
     _context: ResolverContext,
   ) {
+    // Make sure they are not changing their email to that of an existing user
+    if (args.input.email) {
+      const email = args.input.email;
+      const user = await User.findOne({ email });
+      if (user) throw new Error('Email in use.');
+    }
     const updated = await User.findByIdAndUpdate(args.id, args.input, {
       new: true,
     });

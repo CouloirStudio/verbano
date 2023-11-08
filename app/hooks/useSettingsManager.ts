@@ -70,7 +70,8 @@ const useSettingsManager = () => {
         }
       } catch (error) {
         console.log(error);
-        return 'something went wrong';
+        if (error instanceof Error) return error.message;
+        else return 'email update failed.';
       }
     } else return 'something went wrong';
   };
@@ -104,7 +105,7 @@ const useSettingsManager = () => {
         return 'Password changed successfully.';
       } catch (error) {
         console.log(error);
-        if (error instanceof Error) return 'Error: ' + ' ' + error.message;
+        if (error instanceof Error) return error.message;
         else return 'password update failed.';
       }
     }
