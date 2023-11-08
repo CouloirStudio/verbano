@@ -13,19 +13,17 @@ interface RenderNoteTreeProps {
 const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   handleContextMenu,
 }) => {
-  const { projects, selectedProject } = useProjectContext();
+  const { projects, selectedProject, setSelectedProject } = useProjectContext();
   const [localNotes, setLocalNotes] = useState<ProjectNoteType[]>([]);
 
   useEffect(() => {
-    if (selectedProject?.notes) {
-      const sortedNotes = [...selectedProject.notes].sort(
-        (a, b) => a.position - b.position,
-      );
-      setLocalNotes(sortedNotes);
-    } else {
-      setLocalNotes([]);
-    }
-  }, [projects, selectedProject]);
+    console.log('render note tree', selectedProject);
+    setLocalNotes(
+      selectedProject?.notes
+        ? [...selectedProject.notes].sort((a, b) => a.position - b.position)
+        : [],
+    );
+  }, [selectedProject]);
 
   return (
     <Droppable droppableId="notes" type={'note'}>

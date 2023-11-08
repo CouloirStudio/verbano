@@ -1,24 +1,18 @@
 import React from 'react';
 import styles from './sidebar.module.scss';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
 import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
-import { DragDropContext } from '@hello-pangea/dnd';
-import { useTheme } from '@mui/material/styles';
-import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
-import { useDragAndDrop } from '@/app/hooks/useDragAndDrop';
+import {DragDropContext} from '@hello-pangea/dnd';
+import {useTheme} from '@mui/material/styles';
+import {NoteListContextProvider} from '@/app/contexts/NoteListContext';
+import {useDragAndDrop} from '@/app/hooks/useDragAndDrop';
 
 /**
  * The Sidebar component handles the drag-and-drop logic for notes within and between projects.
  */
 const Sidebar: React.FC = () => {
-  const {
-    projects,
-    selectedProject,
-    setProjects,
-    setSelectedProject,
-    refetchData,
-  } = useProjectContext();
+  const { projects } = useProjectContext();
 
   const theme = useTheme();
   const sidebarBg = theme.custom?.moreContrastBackground ?? '';
@@ -26,14 +20,7 @@ const Sidebar: React.FC = () => {
 
   if (!projects) return <p>Loading...</p>;
 
-  const { handleDragEnd } = useDragAndDrop({
-    projects,
-    setProjects,
-    setSelectedProject,
-    selectedProject,
-    refetchData,
-  });
-
+  const { handleDragEnd } = useDragAndDrop();
   return (
     <div
       className={styles.sidebar}

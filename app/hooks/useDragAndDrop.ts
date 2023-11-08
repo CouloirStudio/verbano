@@ -5,24 +5,9 @@ import GetNote from '@/app/graphql/queries/GetNote.graphql';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
 import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
-import {
-  NoteType,
-  PositionedProjectType,
-  ProjectNoteType,
-  ProjectType,
-} from '@/app/graphql/resolvers/types';
+import { NoteType, ProjectNoteType } from '@/app/graphql/resolvers/types';
 import client from '@/app/config/apolloClient';
-
-/**
- * Interface representing the parameters required for the useDragAndDrop hook.
- */
-interface UseDragAndDropParams {
-  projects: PositionedProjectType[];
-  setProjects: (projects: PositionedProjectType[]) => void;
-  selectedProject: ProjectType;
-  setSelectedProject: (project: ProjectType) => void;
-  refetchData: () => void;
-}
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 interface ExtendedNoteType extends NoteType {
   position: number;
@@ -85,18 +70,20 @@ interface HasPosition {
  * @param params - The UseDragAndDropParams object containing projects, setProjects, selectedProject, setSelectedProject, and refetchData.
  * @returns An object with a handleDragEnd function to be called when a drag operation ends.
  */
-export const useDragAndDrop = ({
-  projects,
-  setProjects,
-  setSelectedProject,
-  selectedProject,
-  refetchData,
-}: UseDragAndDropParams) => {
+export const useDragAndDrop = () => {
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
 
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
   const [moveNotePosition] = useMutation(MoveNoteOrder);
   const [moveProjectOrder] = useMutation(MoveProjectOrder);
+
+  const {
+    projects,
+    setProjects,
+    selectedProject,
+    setSelectedProject,
+    refetchData,
+  } = useProjectContext();
 
   /**
    * Function to be called when a drag operation ends. It handles the logic for reordering
@@ -168,6 +155,8 @@ export const useDragAndDrop = ({
           return;
         }
 
+        if (!selectedProject) return;
+
         const notesCopy: ExtendedNoteType[] = projectNotesToExtendedNotes(
           selectedProject.notes,
         );
@@ -193,8 +182,6 @@ export const useDragAndDrop = ({
             notes: extendedNotesToProjectNotes(notesCopy),
           };
 
-          selectedProject.notes = extendedNotesToProjectNotes(notesCopy);
-
           setProjects(
             projects.map((project) => {
               if (project.project.id === updatedProject.id) {
@@ -210,6 +197,12 @@ export const useDragAndDrop = ({
               return project;
             }),
           );
+
+          const updatedSelectedProject = {
+            ...selectedProject,
+            notes: extendedNotesToProjectNotes(notesCopy),
+          };
+          setSelectedProject(updatedSelectedProject);
 
           await moveNotePosition({
             variables: {
@@ -227,6 +220,7 @@ export const useDragAndDrop = ({
       projects,
       setProjects,
       setSelectedProject,
+      selectedProject,
       refetchData,
       getNote,
       moveNoteToProject,
