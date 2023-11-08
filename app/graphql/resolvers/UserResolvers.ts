@@ -98,8 +98,15 @@ export const UserMutations = {
     args: UpdateUserArgs,
     _context: ResolverContext,
   ) {
-    // Make sure they are not changing their email to that of an existing user
     if (args.input.email) {
+      // check if Google account
+      const currentUser = await User.findById(args.id);
+      if (!currentUser) {
+        throw new Error('user not found');
+      }
+      if (currentUser.googleId)
+        throw new Error('Cannot update Email on google linked account');
+      // Make sure they are not changing their email to that of an existing user
       const email = args.input.email;
       const user = await User.findOne({ email });
       if (user) throw new Error('Email in use.');
@@ -118,10 +125,13 @@ export const UserMutations = {
     const id = args.id;
     // get the current user (password and all)
     const user = await User.findById(id);
-
     if (!user) {
       throw new Error('user not found');
     }
+
+    // check if this is a Google account
+    if (user.googleId)
+      throw new Error('Cannot update password for Google Linked account.');
     // check if the password is different
     if (await verifyPassword(args.input.newPass, user.password)) {
       throw new Error('New password must be different than old password.');
