@@ -25,17 +25,19 @@ const useSettingsManager = () => {
         return 'success, log back in for changes to take effect. ';
       }
     } catch (error) {
-      return 'something went wrong';
+      console.log(error);
+      if (error instanceof Error) return error.message;
+      else return 'email update failed.';
     }
   };
 
   const updateName = async (newFirst: string, newLast: string) => {
     // Check to make sure that current user is not undefined
-    if (
-      currentUser.lastName !== undefined &&
-      currentUser.firstName !== undefined
-    ) {
-      try {
+    try {
+      if (
+        currentUser.lastName !== undefined &&
+        currentUser.firstName !== undefined
+      ) {
         const fullName = currentUser.firstName + currentUser.lastName;
         const newFullName = newFirst + newLast;
         // Check to see if anything has changed
@@ -68,12 +70,11 @@ const useSettingsManager = () => {
           // TODO: Need to trigger a refresh somehow to display new information
           return 'success, log back in for changes to take effect. ';
         }
-      } catch (error) {
-        console.log(error);
-        if (error instanceof Error) return error.message;
-        else return 'email update failed.';
-      }
-    } else return 'something went wrong';
+      } else return 'something went wrong';
+    } catch (error) {
+      if (error instanceof Error) return error.message;
+      else return 'Name update failed.';
+    }
   };
 
   const updatePassword = async (

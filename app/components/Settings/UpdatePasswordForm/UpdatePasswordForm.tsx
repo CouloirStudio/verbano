@@ -55,7 +55,11 @@ const UpdatePasswordForm: React.FC = ({}) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography>Password</Typography>
+        <Typography sx={{ width: '33%', flexShrink: 0 }}>Password</Typography>
+        <Typography sx={{ color: 'text.secondary' }}>
+          {' '}
+          &#x2022; &#x2022; &#x2022; &#x2022; &#x2022; &#x2022;{' '}
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <p>{success}</p>
