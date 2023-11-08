@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { Droppable } from '@hello-pangea/dnd';
-import { ProjectNoteType } from '@/app/graphql/resolvers/types';
 import styles from './noteTree.module.scss';
 import NoteTreeItem from '@/app/components/Notes/NoteTree/NoteTreeItem';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { ProjectNoteType } from '@/app/graphql/resolvers/types';
 
 interface RenderNoteTreeProps {
   handleContextMenu: (event: React.MouseEvent, noteId: string) => void;
@@ -13,19 +13,17 @@ interface RenderNoteTreeProps {
 const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   handleContextMenu,
 }) => {
-  const { projects, selectedProject } = useProjectContext();
+  const { projects, selectedProject, setSelectedProject } = useProjectContext();
+
   const [localNotes, setLocalNotes] = useState<ProjectNoteType[]>([]);
 
   useEffect(() => {
-    if (selectedProject?.notes) {
-      const sortedNotes = [...selectedProject.notes].sort(
-        (a, b) => a.position - b.position,
+    if (selectedProject) {
+      setLocalNotes(
+        [...selectedProject.notes].sort((a, b) => a.position - b.position),
       );
-      setLocalNotes(sortedNotes);
-    } else {
-      setLocalNotes([]);
     }
-  }, [projects, selectedProject]);
+  }, [selectedProject]);
 
   return (
     <Droppable droppableId="notes" type={'note'}>

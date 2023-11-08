@@ -1,10 +1,20 @@
-import { useUser } from '@/app/contexts/UserContext';
-import { useMutation } from '@apollo/client';
-import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
+import { useUser } from "@/app/contexts/UserContext";
+import { useMutation } from "@apollo/client";
+import UpdateUser from "@/app/graphql/mutations/UpdateUser.graphql";
+import UpdateUserPassword from "@/app/graphql/mutations/UpdatePassword.graphql";
 
+/**
+ * Manager for updating user settings
+ */
 const useSettingsManager = () => {
   const currentUser = useUser();
   const [updateUser] = useMutation(UpdateUser);
+  const [updateUserPassword] = useMutation(UpdateUserPassword);
+
+  /**
+   * Function for updating user email
+   * @param newEmail The new email address
+   */
   const updateEmail = async (newEmail: string) => {
     try {
       // Check to see if value has actually changed.
@@ -23,17 +33,23 @@ const useSettingsManager = () => {
         return 'success, log back in for changes to take effect. ';
       }
     } catch (error) {
-      return 'something went wrong';
+      if (error instanceof Error) return error.message;
+      else return 'email update failed.';
     }
   };
 
+  /**
+   * Function for updating users name
+   * @param newFirst The new first name
+   * @param newLast The new last name
+   */
   const updateName = async (newFirst: string, newLast: string) => {
     // Check to make sure that current user is not undefined
-    if (
-      currentUser.lastName !== undefined &&
-      currentUser.firstName !== undefined
-    ) {
-      try {
+    try {
+      if (
+        currentUser.lastName !== undefined &&
+        currentUser.firstName !== undefined
+      ) {
         const fullName = currentUser.firstName + currentUser.lastName;
         const newFullName = newFirst + newLast;
         // Check to see if anything has changed
@@ -62,19 +78,60 @@ const useSettingsManager = () => {
               },
             });
           }
+
           // TODO: Need to trigger a refresh somehow to display new information
           return 'success, log back in for changes to take effect. ';
         }
+      } else return 'something went wrong';
+    } catch (error) {
+      if (error instanceof Error) return error.message;
+      else return 'Name update failed.';
+    }
+  };
+
+  /**
+   * Function for updating user password
+   * @param oldPass The old user password for validation
+   * @param newPass The new user password
+   * @param newPassConfirm Confirmation of the new password
+   */
+  const updatePassword = async (
+    oldPass: string,
+    newPass: string,
+    newPassConfirm: string,
+  ) => {
+    // confirm password length
+    if (!(newPass.split('').length >= 8))
+      return 'Password must be more than 8 characters.';
+    // confirm new password
+    else if (newPass !== newPassConfirm) return 'Passwords do not match.';
+    else {
+      if (newPass == oldPass)
+        return 'New password cannot be the same as old password';
+      // pass rest of validation/ update to the resolver
+      try {
+        await updateUserPassword({
+          variables: {
+            id: currentUser.id,
+            input: {
+              oldPass: oldPass,
+              newPass: newPass,
+              newPassConfirm: newPassConfirm,
+            },
+          },
+        });
+        return 'Password changed successfully.';
       } catch (error) {
-        console.log(error);
-        return 'something went wrong';
+        if (error instanceof Error) return error.message;
+        else return 'password update failed.';
       }
-    } else return 'something went wrong';
+    }
   };
 
   return {
     updateEmail,
     updateName,
+    updatePassword,
   };
 };
 

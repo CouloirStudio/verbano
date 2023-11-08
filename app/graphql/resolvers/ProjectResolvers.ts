@@ -115,7 +115,27 @@ export const ProjectMutations = {
       throw new Error('User not authenticated.');
     }
 
-    //delete all notes in project
+    const user = await User.findById(context.getUser().id);
+
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    if (!user.projects) {
+      throw new Error('User has no projects.');
+    }
+
+    // Delete project from user by filtering out the project with the matching id
+    const updatedProjects = user.projects.filter(
+      (projectEntry) => projectEntry.project.toString() !== args.id,
+    );
+
+    user.projects = updatedProjects;
+
+    // Save the user after removing the project
+    await user.save();
+
+    // Delete all notes in project
     const project = await Project.findById(args.id);
     if (!project) {
       throw new Error('Project not found.');

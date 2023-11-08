@@ -12,12 +12,30 @@ export type Resolver<TArgs = unknown, TResult = unknown> = (
   info: GraphQLResolveInfo,
 ) => Promise<TResult>;
 
+export interface AddUserArgs {
+  input: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  };
+}
+
 export interface UpdateUserArgs {
   id: string;
   input: {
     firstName: string;
     lastName: string;
     email: string;
+  };
+}
+
+export interface UpdatePasswordArgs {
+  id: string;
+  input: {
+    oldPass: string;
+    newPass: string;
+    newPassConfirm: string;
   };
 }
 
