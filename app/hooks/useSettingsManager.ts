@@ -5,6 +5,7 @@ import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
 const useSettingsManager = () => {
   const currentUser = useUser();
   const [updateUser] = useMutation(UpdateUser);
+  const [updateUserPassword] = useMutation(updateUserPassword);
   const updateEmail = async (newEmail: string) => {
     try {
       // Check to see if value has actually changed.
@@ -76,7 +77,7 @@ const useSettingsManager = () => {
     oldPass: string,
     newPass: string,
     newPassConfirm: string,
-  ) => {
+  ): Promise<string> => {
     console.log(currentUser);
     // confirm password length
     if (!(newPass.split('').length >= 8))
@@ -84,14 +85,11 @@ const useSettingsManager = () => {
     // confirm new password
     else if (newPass !== newPassConfirm) return 'Passwords do not match.';
     else {
-      // confirm old password
-      // if it does not match then return an error.
-      // confirm there was a change
       if (newPass == oldPass)
         return 'New password cannot be the same as old password';
-      //else  update password/ pass handling to resolver
+      // pass rest of validation/ update to the resolver
+      return await updateUserPassword(oldPass, newPass, currentUser.id);
     }
-    return 'end of function';
   };
 
   return {

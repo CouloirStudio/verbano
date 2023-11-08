@@ -100,7 +100,7 @@ export const UserMutations = {
     return !!updated;
   },
 
-  async updatePassword(
+  async updateUserPassword(
     _: unknown,
     { oldPass, newPass, id }: any,
     _context: ResolverContext,
@@ -130,7 +130,6 @@ export const UserMutations = {
         );
         // check if update was a success
         if (updated) return 'success';
-        else return 'fail';
       }
     } catch (error) {
       console.error(error);

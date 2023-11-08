@@ -20,7 +20,7 @@ import useSettingsManager from "@/app/hooks/useSettingsManager";
  * @see {@link https://react-icons.github.io/react-icons/ | react-icons} for including icons.
  *
  */
-const UpdatePasswordField: React.FC = ({}) => {
+const UpdatePasswordForm: React.FC = ({}) => {
   //Temporary state for handling feedback
   const [success, setSuccess] = useState('');
   const [isError, setIsError] = useState(false);
@@ -101,4 +101,4 @@ const UpdatePasswordField: React.FC = ({}) => {
   );
 };
 
-export default UpdatePasswordField;
+export default UpdatePasswordForm;

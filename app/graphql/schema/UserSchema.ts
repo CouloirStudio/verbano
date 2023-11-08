@@ -39,6 +39,7 @@ const typeDefs = gql`
     login(email: String!, password: String!): AuthPayload
     logout: Boolean
     updateUser(id: ID!, input: UserInput!): Boolean
+    updateUserPassword(id: ID!, oldPass: String!, newPass: String!): String
   }
 
   input UserInput {
