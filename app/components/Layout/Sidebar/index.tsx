@@ -12,13 +12,7 @@ import {useDragAndDrop} from '@/app/hooks/useDragAndDrop';
  * The Sidebar component handles the drag-and-drop logic for notes within and between projects.
  */
 const Sidebar: React.FC = () => {
-  const {
-    projects,
-    selectedProject,
-    setProjects,
-    setSelectedProject,
-    refetchData,
-  } = useProjectContext();
+  const { projects, setSelectedProject } = useProjectContext();
 
   const theme = useTheme();
   const sidebarBg = theme.custom?.moreContrastBackground ?? '';
@@ -26,14 +20,7 @@ const Sidebar: React.FC = () => {
 
   if (!projects) return <p>Loading...</p>;
 
-  const { handleDragEnd } = useDragAndDrop({
-    projects,
-    setProjects,
-    setSelectedProject,
-    selectedProject,
-    refetchData,
-  });
-
+  const { handleDragEnd } = useDragAndDrop(setSelectedProject);
   return (
     <div
       className={styles.sidebar}

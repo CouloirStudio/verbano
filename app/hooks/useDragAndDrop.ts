@@ -1,22 +1,20 @@
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { useCallback } from 'react';
 import { DropResult } from '@hello-pangea/dnd';
-import { ExtendedNoteType, ProjectType } from '@/app/types'; // Import your type definitions here
 import GetNote from '@/app/graphql/queries/GetNote.graphql';
 import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
 import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
 import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
-import { ProjectNoteType } from '@/app/graphql/resolvers/types';
+import {
+  NoteType,
+  ProjectNoteType,
+  ProjectType,
+} from '@/app/graphql/resolvers/types';
+import client from '@/app/config/apolloClient';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 
-/**
- * Interface representing the parameters required for the useDragAndDrop hook.
- */
-interface UseDragAndDropParams {
-  projects: ProjectType[];
-  setProjects: (projects: ProjectType[]) => void;
-  selectedProject: ProjectType;
-  setSelectedProject: (project: ProjectType) => void;
-  refetchData: () => void;
+interface ExtendedNoteType extends NoteType {
+  position: number;
 }
 
 /**
@@ -56,10 +54,11 @@ function extendedNotesToProjectNotes(
   }));
 }
 
-function reorderPositions<T extends HasPosition>(itemsArray: T[]): void {
-  itemsArray.forEach((item, index) => {
-    item.position = index;
-  });
+function reorderPositions<T extends HasPosition>(itemsArray: T[]): T[] {
+  return itemsArray.map((item, index) => ({
+    ...item,
+    position: index,
+  }));
 }
 
 /**
@@ -73,21 +72,20 @@ interface HasPosition {
  * A hook that provides drag and drop functionality for projects and notes.
  * It handles the reordering of projects and notes within and across projects.
  *
- * @param params - The UseDragAndDropParams object containing projects, setProjects, selectedProject, setSelectedProject, and refetchData.
  * @returns An object with a handleDragEnd function to be called when a drag operation ends.
+ * @param setSelectedProject
  */
-export const useDragAndDrop = ({
-  projects,
-  setProjects,
-  setSelectedProject,
-  selectedProject,
-  refetchData,
-}: UseDragAndDropParams) => {
+export const useDragAndDrop = (
+  setSelectedProject: (project: ProjectType | null) => void,
+) => {
   const [getNote, { data: noteData }] = useLazyQuery(GetNote);
 
   const [moveNoteToProject] = useMutation(MoveNoteToProject);
   const [moveNotePosition] = useMutation(MoveNoteOrder);
   const [moveProjectOrder] = useMutation(MoveProjectOrder);
+
+  const { projects, setProjects, selectedProject, refetchData } =
+    useProjectContext();
 
   /**
    * Function to be called when a drag operation ends. It handles the logic for reordering
@@ -106,6 +104,7 @@ export const useDragAndDrop = ({
 
       const formattedDraggableId = draggableId.split('-')[1];
 
+      // If the draggableId starts with 'project-', it is a project, and we need to reorder projects
       if (
         draggableId.startsWith('project-') &&
         destination?.droppableId === 'projects'
@@ -138,9 +137,12 @@ export const useDragAndDrop = ({
       }
 
       try {
-        await getNote({
+        const { data } = await client.query({
+          query: GetNote,
           variables: { id: formattedDraggableId },
         });
+
+        if (!data) return;
 
         if (!destination) {
           throw new Error(
@@ -155,13 +157,14 @@ export const useDragAndDrop = ({
           return;
         }
 
+        if (!selectedProject) return;
+
         const notesCopy: ExtendedNoteType[] = projectNotesToExtendedNotes(
           selectedProject.notes,
         );
 
         if (destination.droppableId !== source.droppableId) {
           const destinationProjectId = destination.droppableId.split('-')[1];
-          if (!noteData?.getNote) return;
 
           await moveNoteToProject({
             variables: {
@@ -170,25 +173,33 @@ export const useDragAndDrop = ({
             },
           });
         } else {
-          if (!noteData?.getNote) return;
-
           const [originalNote] = notesCopy.splice(source.index, 1);
           const movedNote = { ...originalNote, position: destination.index };
           notesCopy.splice(destination.index, 0, movedNote);
 
           reorderPositions(notesCopy);
 
+          const updatedSelectedProject = {
+            ...selectedProject,
+            notes: extendedNotesToProjectNotes(notesCopy),
+          };
+          setSelectedProject(updatedSelectedProject);
+
           const updatedProject = {
             ...selectedProject,
             notes: extendedNotesToProjectNotes(notesCopy),
           };
-
-          selectedProject.notes = extendedNotesToProjectNotes(notesCopy);
-
           setProjects(
             projects.map((project) => {
-              if (project.id === updatedProject.id) {
-                return updatedProject;
+              if (project.project.id === updatedProject.id) {
+                return {
+                  ...project,
+                  project: {
+                    ...project.project,
+                    notes: extendedNotesToProjectNotes(notesCopy),
+                  },
+                  position: project.position,
+                };
               }
               return project;
             }),
@@ -210,6 +221,7 @@ export const useDragAndDrop = ({
       projects,
       setProjects,
       setSelectedProject,
+      selectedProject,
       refetchData,
       getNote,
       moveNoteToProject,
