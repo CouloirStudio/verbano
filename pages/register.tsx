@@ -25,12 +25,16 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const user = {
-      email,
-      password,
-      firstName,
-      lastName,
+      input: {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+      },
     };
+    console.log(user);
 
     try {
       await signup({ variables: user });

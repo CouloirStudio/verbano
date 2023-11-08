@@ -1,6 +1,7 @@
 import { User } from '../../models/User';
 import { hashPassword } from '../../config/passport';
 import {
+  AddUserArgs,
   ResolverContext,
   UpdatePasswordArgs,
   UpdateUserArgs,
@@ -10,17 +11,17 @@ import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 
 export const UserQueries = {
-  async currentUser(parent: any, args: any, context: any) {
+  async currentUser(parent: unknown, args: unknown, context: any) {
     return context.getUser();
   },
 };
 
 export const UserMutations = {
-  async signup(
-    parent: any,
-    { firstName, lastName, email, password }: any,
-    context: any,
-  ) {
+  async signup(_: unknown, args: AddUserArgs, context: any) {
+    const password = args.input.password;
+    const email = args.input.email;
+    const firstName = args.input.firstName;
+    const lastName = args.input.lastName;
     if (!password || !email || !firstName || !lastName) {
       throw new Error('All fields are required.');
     }
