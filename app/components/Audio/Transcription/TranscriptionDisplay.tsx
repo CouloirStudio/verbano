@@ -9,7 +9,9 @@ import ScrollView from '@/app/components/UI/ScrollView';
 import Footer from '@/app/components/Layout/Footer';
 import { useLazyQuery } from '@apollo/client';
 import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
+import GetSingleSummary from '@/app/graphql/queries/GetSummary.graphql';
 import TranscriptionSegment from './TranscriptionSegment';
+import MuiMarkdown from 'mui-markdown';
 
 class TranscriptionParseError extends Error {
   constructor(message: string) {
@@ -31,14 +33,19 @@ const TranscriptionDisplay: React.FC = () => {
   const { selectedNote } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const { transcription, setTranscription } = useNoteContext();
+  const { summary, setSummary } = useNoteContext();
   const [getTranscript, { data, loading, error }] = useLazyQuery<{
     getTranscription: string;
   }>(GetTranscription);
+  const [getSummary, { data: summaryData }] = useLazyQuery<{
+    getSingleSummary: string;
+  }>(GetSingleSummary);
 
   useEffect(() => {
     if (!selectedNote?.id) return;
 
     getTranscript({ variables: { id: selectedNote.id } });
+    getSummary({ variables: { id: selectedNote.id } });
 
     if (data && data.getTranscription) {
       try {
@@ -59,12 +66,31 @@ const TranscriptionDisplay: React.FC = () => {
     } else {
       setTranscription('');
     }
+
+    if (summaryData && summaryData.getSingleSummary) {
+      try {
+        setSummary(summaryData.getSingleSummary);
+      } catch (error: unknown) {
+        setIsError(true);
+        let errorMessage = 'An unknown error occurred.';
+        if (error instanceof TranscriptionParseError) {
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          errorMessage = 'An unexpected error occurred: ' + error.message;
+        }
+        setErrorMessage(errorMessage);
+      }
+    } else {
+      setSummary('');
+    }
   }, [
     selectedNote?.id,
     getTranscript,
+    getSummary,
     loading,
     error,
     data,
+    summaryData,
     setIsError,
     setErrorMessage,
     setTranscription,
@@ -90,10 +116,20 @@ const TranscriptionDisplay: React.FC = () => {
     }
   };
 
+  const renderSummary = (summaryJson: string) => {
+    return (
+      <>
+        <Typography variant="h6">Summary</Typography>
+        <MuiMarkdown>{summaryJson}</MuiMarkdown>
+      </>
+    );
+  };
+
   return (
     <Box className={styles.transcription}>
       <ScrollView className={styles.scrollView}>
         {transcription ? renderTranscription(transcription) : null}
+        {summary ? renderSummary(summary) : null}
       </ScrollView>
       <Footer
         footerText={

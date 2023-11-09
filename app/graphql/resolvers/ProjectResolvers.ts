@@ -3,6 +3,7 @@ import { IProject, Project } from '../../models/Project';
 import { ApolloError } from 'apollo-server-express';
 import { User } from '../../models/User';
 import { ResolverContext } from '@/app/graphql/resolvers/types';
+import { ISummary } from '@/app/models/Summary';
 
 /**
  * Resolvers for querying projects from the database.
@@ -23,7 +24,7 @@ export const ProjectQueries = {
     // Find user by ID from context
     const user = await User.findById(userContext.id).populate({
       path: 'projects.project',
-      populate: { path: 'notes.note' },
+      populate: [{ path: 'notes.note' }, { path: 'summaries.summary' }],
     });
     if (!user) {
       throw new Error('User not found.');
@@ -261,6 +262,23 @@ export const ProjectType = {
         // - Or filter out the invalid notes, but this would remove them from the result
         // For now, I'm just throwing the error as in your original code
         throw new ApolloError('Unexpected note structure.');
+      }
+    });
+  },
+
+  async summaries(project: {
+    id: string;
+    summaries: { summary: ISummary; position: number }[];
+  }): Promise<{ summary: ISummary; position: number }[]> {
+    return project.summaries.map(({ summary, position }) => {
+      if (summary && typeof summary.toObject === 'function') {
+        const objSummary = summary.toObject();
+        objSummary.id = objSummary._id.toString();
+        delete objSummary._id;
+        return { summary: objSummary, position };
+      } else {
+        console.error('Unexpected summary structure:', summary);
+        throw new ApolloError('Unexpected summary structure.');
       }
     });
   },

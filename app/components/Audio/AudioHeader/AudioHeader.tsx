@@ -7,6 +7,7 @@ import { Playback } from '@/app/components/Audio/Playback';
 import { TranscriptionButton } from '@/app/components/Audio/Transcription';
 import { useNoteContext } from '@/app/contexts/NoteContext';
 import { useTheme } from '@mui/material/styles';
+import SummarizeButton from '@/app/components/Audio/Summary/SummarizeButton';
 
 /**
  * A component that houses the three main audio components.
@@ -41,6 +42,7 @@ const AudioHeader = () => {
         <Playback baseUrl="http://localhost:3000" selectedNote={selectedNote} />
       )}
       <TranscriptionButton />
+      <SummarizeButton />
     </Box>
   );
 };

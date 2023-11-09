@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import OpenAI, { toFile } from 'openai';
 import { Audio } from 'openai/resources';
+import { INote } from '@/app/models/Note';
 import Transcription = Audio.Transcription;
 
 class OpenAIService {
@@ -40,25 +41,32 @@ class OpenAIService {
 
   /**
    * Generates a summary report of the given text, using the text's context.
-   * @param tts the text to summarize
-   * @param context the context of the text
+   * @param notes the notes to generate a summary for
+   * @param template the template to use for the summary
    */
-  public async generateReport(
-    tts: string,
-    context: string,
+  public async generateSummary(
+    notes: INote[],
+    template?: string,
   ): Promise<string | null> {
     try {
+      const combinedNotes = notes.map((note) => note.transcription).join('\n');
+
       const completion = await this.openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'user', content: tts },
-          { role: 'system', content: context },
+          { role: 'user', content: combinedNotes },
+          {
+            role: 'system',
+            content:
+              template ||
+              'Summarize this transcription into key points (dont specify duration) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.',
+          },
         ],
       });
       return completion.choices[0].message.content;
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to generate report.');
+      throw new Error('Failed to generate summary.');
     }
   }
 

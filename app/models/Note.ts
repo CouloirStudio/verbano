@@ -7,6 +7,7 @@ export interface INote extends Document {
   tags?: string[];
   noteName: string;
   noteDescription?: string;
+  summary?: string;
 
   getProjectId(): Promise<String | null>;
 }
@@ -27,6 +28,7 @@ const NoteSchema = new Schema<INote>({
     required: true,
   },
   noteDescription: String,
+  summary: String,
 });
 
 NoteSchema.methods.getProjectId = async function (

@@ -75,10 +75,25 @@ export type NoteType = {
   audioLocation: string;
   dateCreated?: Date;
   transcription?: string;
+  summary?: string;
   tags: string[];
   projectId: string;
   noteName: string;
   noteDescription?: string;
+};
+
+export type SummaryType = {
+  id: string;
+  summaryName: string;
+  summaryDescription?: string;
+  content: string;
+  templateId: string;
+  noteIds: string[];
+};
+
+export type ProjectSummaryType = {
+  summary: SummaryType;
+  position: number;
 };
 
 export type ProjectType = {
@@ -86,6 +101,7 @@ export type ProjectType = {
   projectName: string;
   projectDescription?: string;
   notes: ProjectNoteType[];
+  summaries: ProjectSummaryType[];
 };
 
 export type ProjectNoteType = {

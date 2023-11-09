@@ -1,0 +1,3 @@
+query GetSingleSummary($id: ID!) {
+    getSingleSummary(id: $id)
+}

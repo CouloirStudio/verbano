@@ -10,7 +10,17 @@ query GetProjectsAndNotes {
                     audioLocation
                     dateCreated
                     transcription
+                    summary
                     tags
+                }
+                position
+            }
+            summaries {
+                summary {
+                    id
+                    summaryName
+                    dateCreated
+                    content
                 }
                 position
             }

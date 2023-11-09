@@ -10,7 +10,6 @@ import {
   ProjectNoteType,
   ProjectType,
 } from '@/app/graphql/resolvers/types';
-import client from '@/app/config/apolloClient';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 interface ExtendedNoteType extends NoteType {
@@ -137,13 +136,6 @@ export const useDragAndDrop = (
       }
 
       try {
-        const { data } = await client.query({
-          query: GetNote,
-          variables: { id: formattedDraggableId },
-        });
-
-        if (!data) return;
-
         if (!destination) {
           throw new Error(
             'No destination specified or selected project is missing.',

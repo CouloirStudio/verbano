@@ -31,7 +31,7 @@ const NoteTabs: React.FC<NoteTabsProps> = ({ activeTab, setActiveTab }) => {
         }}
       />
       <Tab
-        label="Reports"
+        label="Summaries"
         className={classes.tabItem}
         style={{
           color: theme.custom?.text ?? '',

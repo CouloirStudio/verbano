@@ -48,6 +48,19 @@ export const NoteQueries = {
     return note.transcription;
   },
 
+  async getSingleSummary(
+    _: unknown,
+    args: GetNoteArgs,
+    _context: ResolverContext,
+  ) {
+    const note = await Note.findById(args.id);
+    if (!note) {
+      console.error(`No note found with ID ${args.id}.`);
+      return null;
+    }
+    return note.summary;
+  },
+
   /**
    * Retrieve a list of all notes from the database.
    * @returns An array of notes, or an empty array if no notes are found.

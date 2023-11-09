@@ -4,6 +4,7 @@ export interface IProject extends Document {
   projectName: string;
   projectDescription?: string;
   notes: { note: typeof Schema.Types.ObjectId; position: number }[]; // Array of note-position objects
+  summaries: { summary: typeof Schema.Types.ObjectId; position: number }[]; // Array of summary-position objects
 }
 
 const ProjectSchema = new Schema<IProject>({
@@ -15,6 +16,12 @@ const ProjectSchema = new Schema<IProject>({
   notes: [
     {
       note: { type: Schema.Types.ObjectId, ref: 'Note' },
+      position: { type: Number },
+    },
+  ],
+  summaries: [
+    {
+      summary: { type: Schema.Types.ObjectId, ref: 'Summary' },
       position: { type: Number },
     },
   ],

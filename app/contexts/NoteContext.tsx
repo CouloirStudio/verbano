@@ -7,6 +7,8 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 interface NoteContextType {
   transcription: string;
   setTranscription: (transcription: string) => void;
+  summary: string;
+  setSummary: (summary: string) => void;
   refreshNoteDetails: () => void;
 }
 
@@ -30,6 +32,7 @@ export const NoteContextProvider: React.FC<NoteContextProviderProps> = ({
 }) => {
   const [transcription, setTranscription] =
     useState<string>('No Transcription');
+  const [summary, setSummary] = useState<string>('No Summary');
   const [, setRefresh] = useState(0);
 
   const refreshNoteDetails = () => {
@@ -41,6 +44,8 @@ export const NoteContextProvider: React.FC<NoteContextProviderProps> = ({
       value={{
         transcription,
         setTranscription,
+        summary,
+        setSummary,
         refreshNoteDetails,
       }}
     >
