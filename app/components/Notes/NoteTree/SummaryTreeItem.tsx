@@ -7,18 +7,15 @@ import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@apollo/client';
 import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
 import styles from './noteTree.module.scss';
-import { NoteType } from '@/app/graphql/resolvers/types';
+import { SummaryType } from '@/app/graphql/resolvers/types';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { useNoteListContext } from '@/app/contexts/NoteListContext';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
 import useNoteSelection from '@/app/hooks/useNoteSelection';
 import { getItemStyle } from '@/app/components/Notes/NoteTree/utilityFunctions';
-import { Chip } from '@mui/material';
-import { CgTranscript } from 'react-icons/cg';
-import { FaWandMagicSparkles } from 'react-icons/fa6';
 
-interface NoteTreeItemProps {
-  note: NoteType;
+interface SummaryTreeItemProps {
+  summary: SummaryType;
   index: number;
   handleContextMenu: (
     event: React.MouseEvent<HTMLDivElement>,
@@ -26,13 +23,13 @@ interface NoteTreeItemProps {
   ) => void;
 }
 
-const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
-  ({ note, index, handleContextMenu }) => {
+const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
+  ({ summary: summary, index, handleContextMenu }) => {
     const theme = useTheme();
-    const { id, noteName, transcription, summary } = note;
+    const { id, summaryName } = summary;
     const { selectedNote } = useProjectContext();
     const [updateNote] = useMutation(UpdateNote);
-    const [name, setName] = useState<string>(noteName);
+    const [name, setName] = useState<string>(summaryName);
     const { selectedNotes } = useNoteListContext();
     const { handleClick, isSelected } = useNoteSelection(id);
 
@@ -45,7 +42,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
       handleBlur,
       handleKeyDown,
       exitEditing,
-    } = useDoubleClickEdit(noteName);
+    } = useDoubleClickEdit(summaryName);
 
     useEffect(() => {
       if (selectedNote?.id !== id && isEditing) {
@@ -72,12 +69,12 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
     );
     // Function to submit the updated note name
     const submitUpdate = async (newValue: string): Promise<void> => {
-      if (newValue === note.noteName) {
+      if (newValue === summary.summaryName) {
         setName(newValue);
         return;
       }
       if (newValue.trim() === '') {
-        setName(note.noteName);
+        setName(summary.summaryName);
         return;
       }
 
@@ -85,14 +82,14 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
       try {
         await updateNote({
           variables: {
-            id: note.id,
+            id: summary.id,
             input: {
               noteName: newValue,
             },
           },
         });
       } catch (e) {
-        setName(note.noteName);
+        setName(summary.summaryName);
         console.error('Error updating note:', e);
       }
     };
@@ -104,8 +101,8 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
 
     return (
       <Draggable
-        key={'note-' + note.id}
-        draggableId={'note-' + note.id}
+        key={'summary-' + summary.id}
+        draggableId={'summary-' + summary.id}
         index={index}
       >
         {(provided) => {
@@ -133,25 +130,7 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
                   autoFocus
                 />
               ) : (
-                <>
-                  <Typography>{name}</Typography>
-                  {transcription && !summary && (
-                    <Chip
-                      icon={<CgTranscript />}
-                      size="small"
-                      label="Transcribed"
-                      variant="outlined"
-                    />
-                  )}
-                  {summary && (
-                    <Chip
-                      icon={<FaWandMagicSparkles />}
-                      size="small"
-                      label="Summarized"
-                      variant="outlined"
-                    />
-                  )}
-                </>
+                <Typography>{name}</Typography>
               )}
             </Box>
           );
@@ -160,9 +139,9 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
     );
   },
   (prevProps, nextProps) =>
-    prevProps.note.id === nextProps.note.id &&
-    prevProps.note.noteName === nextProps.note.noteName &&
+    prevProps.summary.id === nextProps.summary.id &&
+    prevProps.summary.summaryName === nextProps.summary.summaryName &&
     prevProps.index === nextProps.index,
 );
 
-export default NoteTreeItem;
+export default SummaryTreeItem;

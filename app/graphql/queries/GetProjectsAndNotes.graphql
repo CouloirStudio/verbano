@@ -10,6 +10,7 @@ query GetProjectsAndNotes {
                     audioLocation
                     dateCreated
                     transcription
+                    summary
                     tags
                 }
                 position

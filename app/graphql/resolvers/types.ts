@@ -75,6 +75,7 @@ export type NoteType = {
   audioLocation: string;
   dateCreated?: Date;
   transcription?: string;
+  summary?: string;
   tags: string[];
   projectId: string;
   noteName: string;

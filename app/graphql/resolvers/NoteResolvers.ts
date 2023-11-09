@@ -1,12 +1,6 @@
-import { Note } from '../../models/Note';
-import {
-  AddNoteArgs,
-  DeleteNoteArgs,
-  GetNoteArgs,
-  ResolverContext,
-  UpdateNoteArgs,
-} from './types';
-import { Project } from '../../models/Project';
+import {Note} from '../../models/Note';
+import {AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs,} from './types';
+import {Project} from '../../models/Project';
 
 /**
  * Resolvers for querying notes from the database.
@@ -46,6 +40,19 @@ export const NoteQueries = {
       return null;
     }
     return note.transcription;
+  },
+
+  async getSingleSummary(
+    _: unknown,
+    args: GetNoteArgs,
+    _context: ResolverContext,
+  ) {
+    const note = await Note.findById(args.id);
+    if (!note) {
+      console.error(`No note found with ID ${args.id}.`);
+      return null;
+    }
+    return note.summary;
   },
 
   /**

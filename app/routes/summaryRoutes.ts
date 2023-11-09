@@ -1,6 +1,6 @@
 import express from 'express';
 import OpenAIService from '../services/OpenAIService';
-import { Project, Summary } from '@/app/models';
+import { Note, Project, Summary } from '@/app/models';
 import { INote } from '@/app/models/Note';
 
 const router = express.Router();
@@ -17,6 +17,16 @@ router.post('/summarize', async (req, res) => {
     const openAI = new OpenAIService();
     // Transcribe audio
     const summaryText = await openAI.generateSummary(notes, templateId);
+
+    if (notes.length === 1) {
+      const note = await Note.findById(notes[0].id);
+      if (note && summaryText) {
+        note.summary = summaryText;
+        await note.save();
+        res.json({ success: true, summary: summaryText });
+        return;
+      }
+    }
 
     const summary = new Summary({
       summaryName: 'New Summary',

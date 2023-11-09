@@ -9,6 +9,7 @@ import RenderNoteTree from './RenderNoteTree';
 import NoteTabs from './NoteTabs';
 import { useNoteContextMenu } from '@/app/hooks/useNoteContextMenu';
 import { useNoteListContext } from '@/app/contexts/NoteListContext';
+import RenderSummaryTree from '@/app/components/Notes/NoteTree/RenderSummaryTree';
 
 function NoteTree() {
   const [activeTab, setActiveTab] = useState(0);
@@ -39,7 +40,13 @@ function NoteTree() {
         </>
       )}
 
-      {activeTab === 1 && <Box className={styles.reportList}></Box>}
+      {activeTab === 1 && (
+        <Box className={styles.reportList}>
+          <>
+            <RenderSummaryTree handleContextMenu={handleContextMenu} />
+          </>
+        </Box>
+      )}
 
       <ContextMenuComponent
         contextMenu={contextMenu}
