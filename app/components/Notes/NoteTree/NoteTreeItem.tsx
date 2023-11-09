@@ -13,7 +13,6 @@ import { useNoteListContext } from '@/app/contexts/NoteListContext';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
 import useNoteSelection from '@/app/hooks/useNoteSelection';
 import { getItemStyle } from '@/app/components/Notes/NoteTree/utilityFunctions';
-import { Chip } from '@mui/material';
 import { CgTranscript } from 'react-icons/cg';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 
@@ -136,20 +135,10 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
                 <>
                   <Typography>{name}</Typography>
                   {transcription && !summary && (
-                    <Chip
-                      icon={<CgTranscript />}
-                      size="small"
-                      label="Transcribed"
-                      variant="outlined"
-                    />
+                    <CgTranscript style={{ color: 'darkcyan' }} />
                   )}
                   {summary && (
-                    <Chip
-                      icon={<FaWandMagicSparkles />}
-                      size="small"
-                      label="Summarized"
-                      variant="outlined"
-                    />
+                    <FaWandMagicSparkles style={{ color: 'mediumpurple' }} />
                   )}
                 </>
               )}
