@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from './sidebar.module.scss';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 import ProjectTree from '@/app/components/Projects/ProjectTree';
 import NoteTree from '@/app/components/Notes/NoteTree';
-import {DragDropContext} from '@hello-pangea/dnd';
-import {useTheme} from '@mui/material/styles';
-import {NoteListContextProvider} from '@/app/contexts/NoteListContext';
-import {useDragAndDrop} from '@/app/hooks/useDragAndDrop';
+import { DragDropContext } from '@hello-pangea/dnd';
+import { useTheme } from '@mui/material/styles';
+import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
+import { useDragAndDrop } from '@/app/hooks/useDragAndDrop';
 
 /**
  * The Sidebar component handles the drag-and-drop logic for notes within and between projects.

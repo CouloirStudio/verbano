@@ -1,4 +1,4 @@
-import {gql} from 'apollo-server-express';
+import { gql } from 'apollo-server-express';
 
 /**
  * GraphQL schema for the Summary type and associated operations.
