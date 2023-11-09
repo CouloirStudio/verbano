@@ -42,7 +42,7 @@ class OpenAIService {
   /**
    * Generates a summary report of the given text, using the text's context.
    * @param notes the notes to generate a summary for
-   * @param context the context of the text
+   * @param template the template to use for the summary
    */
   public async generateSummary(
     notes: INote[],
@@ -59,7 +59,7 @@ class OpenAIService {
             role: 'system',
             content:
               template ||
-              'Summarize this transcription into key points in markdown formatting with included headings (No larger than h3), subheadings, bolded text, and bullet points.',
+              'Summarize this transcription into key points (dont specify duration) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.',
           },
         ],
       });

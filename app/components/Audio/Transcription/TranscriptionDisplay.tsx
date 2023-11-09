@@ -11,6 +11,7 @@ import { useLazyQuery } from '@apollo/client';
 import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
 import GetSingleSummary from '@/app/graphql/queries/GetSummary.graphql';
 import TranscriptionSegment from './TranscriptionSegment';
+import MuiMarkdown from 'mui-markdown';
 
 class TranscriptionParseError extends Error {
   constructor(message: string) {
@@ -119,8 +120,7 @@ const TranscriptionDisplay: React.FC = () => {
     return (
       <>
         <Typography variant="h6">Summary</Typography>
-
-        <Typography variant="body2">{summaryJson}</Typography>
+        <MuiMarkdown>{summaryJson}</MuiMarkdown>
       </>
     );
   };
