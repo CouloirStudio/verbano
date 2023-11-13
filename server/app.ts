@@ -11,6 +11,7 @@ import {
   handleLogout,
   isAuthenticated,
 } from '@/app/middleware/auth';
+import helmet from 'helmet';
 
 const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
@@ -36,15 +37,28 @@ export function createApp(mockMiddleware?: any) {
 
   // Allow cross-origin requests
   const corsOptions = {
-    origin: ['http://localhost:3000/graphql', 'http://localhost:3000'],
+    origin: ['https://localhost:3000/graphql', 'https://localhost:3000'],
     credentials: true,
   };
   app.use(cors(corsOptions));
+
+  // Set Content Security Policy headers
 
   // Initialize passport and session
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(json());
+  app.use(helmet());
+  app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        connectSrc: ["'self'", "https://localhost:3000"]
+      },
+    })
+  );
 
   // if test environment, use mock middleware
   if (process.env.NODE_ENV === 'test') {
