@@ -1,5 +1,7 @@
 import 'dotenv/config';
-import http from 'http';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
 import 'module-alias/register';
 import { connectDB } from '@/app/models/Database';
 import { ApolloServer, Config, ExpressContext } from 'apollo-server-express';
@@ -12,7 +14,7 @@ import createApp from '@/server/app';
 /**
  * Starts the server, including the Apollo GraphQL server and the Express server.
  */
-export async function startServer(): Promise<http.Server> {
+export async function startServer(): Promise<https.Server> {
   const app = createApp();
 
   await connectDB()
@@ -32,15 +34,18 @@ export async function startServer(): Promise<http.Server> {
   await server.start();
   server.applyMiddleware({ app, cors: false });
 
-  const httpServer = http.createServer(app);
+  const httpsServer = https.createServer({
+      key: fs.readFileSync(path.join(__dirname, 'localhost-key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, 'localhost.pem')),
+    }, app);
   const PORT = process.env.PORT || 3000;
 
-  httpServer.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-    console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`);
+  httpsServer.listen(PORT, () => {
+    console.log(`Server is running on https://localhost:${PORT}`);
+    console.log(`GraphQL endpoint: https://localhost:${PORT}/graphql`);
   });
 
-  return httpServer;
+  return httpsServer;
 }
 
 // Initialize and start the server only if NOT in a test environment
