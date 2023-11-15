@@ -10,6 +10,8 @@ export interface IUser extends Document {
   settings?: typeof Schema.Types.ObjectId;
   projects?: { project: typeof Schema.Types.ObjectId; position: number }[];
   googleId?: string;
+  active: boolean;
+  activationCode?: string;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -50,6 +52,14 @@ const UserSchema = new Schema<IUser>({
     },
   ],
   googleId: {
+    type: String,
+    default: null,
+  },
+  active: {
+    type: Boolean,
+    default: false,
+  },
+  activationCode: {
     type: String,
     default: null,
   },
