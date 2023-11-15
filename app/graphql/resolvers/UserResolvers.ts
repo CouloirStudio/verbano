@@ -9,6 +9,7 @@ import {
 import { Project } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
+import EmailService from '@/app/services/EmailService';
 
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
@@ -49,17 +50,33 @@ export const UserMutations = {
     // Entered password
     const hashedPassword = await hashPassword(password);
 
+    const activationCode = crypto.randomUUID();
+
     // Create user
     const newUser = new User({
       email: email.toLowerCase(),
       password: hashedPassword,
       firstName: firstName,
       lastName: lastName,
+      active: false,
+      activationCode: activationCode,
     });
 
     const result = await newUser.save();
 
-    await context.login(result);
+    const activationUrl = `http://localhost:3000/activate/${encodeURIComponent(
+      activationCode,
+    )}`;
+    const emailHtml = `
+        <p>Activate your account by clicking the following link:</p>
+        <a href="${activationUrl}">Activate Account</a>
+        `;
+
+    await EmailService.sendMail(
+      newUser.email,
+      'Activate Your Account',
+      emailHtml,
+    );
 
     // Return user
     return {

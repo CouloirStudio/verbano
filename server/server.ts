@@ -8,16 +8,12 @@ import resolvers from '@/app/graphql/resolvers/index';
 import {buildContext} from 'graphql-passport';
 import {User} from '@/app/models';
 import createApp from '@/server/app';
-import '@/app/config/mail';
-import sendEmail from '@/app/config/mail';
 
 /**
  * Starts the server, including the Apollo GraphQL server and the Express server.
  */
 export async function startServer(): Promise<http.Server> {
   const app = createApp();
-
-  await sendEmail();
 
   await connectDB()
     .then(() => {
