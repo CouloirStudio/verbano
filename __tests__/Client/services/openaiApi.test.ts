@@ -1,6 +1,7 @@
 import OpenAIService from '../../../app/services/OpenAIService';
 import 'openai/shims/node';
-import { expect } from '@jest/globals';
+import {expect} from '@jest/globals';
+import {INote} from '@/app/models/Note';
 
 // Mock the OpenAI class and the method chat.completions.create
 jest.mock('openai', () => {
@@ -19,6 +20,13 @@ jest.mock('openai', () => {
   };
 });
 
+const mockNote = {
+  transcription: 'Note 1 text',
+  noteName: 'Note 1',
+  noteDescription: 'Note 1 description',
+  getProjectId: jest.fn().mockResolvedValue(null),
+} as unknown as INote;
+
 describe('OpenAIService', () => {
   let service: OpenAIService;
 
@@ -27,8 +35,8 @@ describe('OpenAIService', () => {
   });
 
   it('generates a report', async () => {
-    const mockText = 'Some text';
     const mockContext = 'Context for the text';
+    const mockNotes = [mockNote];
     const mockResponse = {
       choices: [
         {
@@ -44,7 +52,7 @@ describe('OpenAIService', () => {
       service.openaiForTesting.chat.completions.create as jest.Mock
     ).mockResolvedValue(mockResponse);
 
-    const result = await service.generateReport(mockText, mockContext);
+    const result = await service.generateSummary(mockNotes, mockContext);
     expect(result).toEqual('Mocked Report');
   });
 

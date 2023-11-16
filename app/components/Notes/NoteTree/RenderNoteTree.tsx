@@ -42,10 +42,12 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
                 handleContextMenu={handleContextMenu}
               />
             ))
-          ) : (
+          ) : selectedProject && selectedProject.notes.length > 0 ? (
             <div className={styles.emptyState}>
               Create a new note to start transcribing!
             </div>
+          ) : (
+            <> </>
           )}
           {provided.placeholder}
         </Box>

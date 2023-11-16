@@ -46,7 +46,7 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
             ))
           ) : (
             <div className={styles.emptyState}>
-              Create a new note to start transcribing!
+              Summarize a note to see it here!
             </div>
           )}
           {provided.placeholder}
