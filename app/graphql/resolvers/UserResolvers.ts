@@ -91,7 +91,13 @@ export const UserMutations = {
     });
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error('Incorrect Email or Password');
+    }
+
+    if (!user.active) {
+      throw new Error(
+        'Account not activated. Please check your email for an activation link.',
+      );
     }
 
     await context.login(user);
