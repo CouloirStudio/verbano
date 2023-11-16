@@ -134,6 +134,32 @@ export const UserMutations = {
       const email = args.input.email;
       const user = await User.findOne({ email });
       if (user) throw new Error('Email in use.');
+
+      const emailTransferCode = crypto.randomUUID();
+
+      currentUser.emailTransfer = {
+        code: emailTransferCode,
+        oldEmail: currentUser.email,
+        newEmail: email,
+        requestedAt: new Date(),
+      };
+
+      await currentUser.save();
+
+      // Generate a new activation code
+      const activationUrl = `http://localhost:3000/transfer/${encodeURIComponent(
+        emailTransferCode,
+      )}`;
+
+      const emailHtml = `
+        <p>Transfer your Verbano account from ${currentUser.email} to ${email} by clicking the following link:</p>
+        <a href="${activationUrl}">Confirm Transfer Account</a>
+        <p>(If you didn't request this, just ignore it.)</p>
+        `;
+
+      await EmailService.sendMail(email, 'Transfer Your Account', emailHtml);
+
+      return !!currentUser;
     }
     const updated = await User.findByIdAndUpdate(args.id, args.input, {
       new: true,

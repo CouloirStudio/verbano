@@ -1,9 +1,7 @@
 import { Router } from 'express';
-import { User } from '@/app/models/User'; // Import your User model
+import { User } from '@/app/models/User';
 
 const router = Router();
-
-// Other routes...
 
 // Activation route
 router.get('/:activationCode', async (req, res) => {

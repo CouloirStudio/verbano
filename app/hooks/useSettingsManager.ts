@@ -1,5 +1,5 @@
-import { useUser } from '@/app/contexts/UserContext';
-import { useMutation } from '@apollo/client';
+import {useUser} from '@/app/contexts/UserContext';
+import {useMutation} from '@apollo/client';
 import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
 import UpdateUserPassword from '@/app/graphql/mutations/UpdatePassword.graphql';
 
@@ -30,7 +30,7 @@ const useSettingsManager = () => {
           },
         });
         // TODO: Need to trigger a refresh somehow to display new information
-        return 'success, log back in for changes to take effect. ';
+        return 'An email has been sent to your new email address.';
       }
     } catch (error) {
       if (error instanceof Error) return error.message;
