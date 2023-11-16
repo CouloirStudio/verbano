@@ -1,4 +1,4 @@
-import nodemailer, {Transporter} from 'nodemailer';
+import nodemailer, { Transporter } from 'nodemailer';
 
 /**
  * Email service

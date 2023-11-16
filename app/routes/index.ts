@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import audioRoutes from './audioRoutes';
 import transcriptionRoutes from './transcriptionRoutes';
 import summaryRoutes from '@/app/routes/summaryRoutes';
