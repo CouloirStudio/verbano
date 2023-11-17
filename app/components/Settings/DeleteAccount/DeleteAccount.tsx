@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import {useLazyQuery, useMutation} from '@apollo/client';
 import { IUser } from '@/app/models/User';
 import { Button } from '@mui/material';
 import InputField from '../../Authentication/Login/InputField';
 import { AiOutlineMail, AiOutlineLock } from 'react-icons/ai';
+import CheckCurrentPassword from '@/app/graphql/queries/CheckCurrentPassword.graphql';
+import DeleteUserAccount from '@/app/graphql/mutations/DeleteUserAccount.graphql';
 
 interface DeleteAccountProps {
 	currentUser: Partial<IUser>;
@@ -15,32 +18,52 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
 	const [inputEmail, setInputEmail] = useState('');
 	const [inputPassword, setInputPassword] = useState('');
 
+	const [checkPassword, { data }] = useLazyQuery(CheckCurrentPassword);
+	const [deleteUserAccount] = useMutation(DeleteUserAccount);
+
 	useEffect(() => {
-		// Check if the entered email and password match the predefined values
-		const isEmailValid = inputEmail === currentUser.email;
-		const isPasswordValid = inputPassword === 'password';
+		if (data) {
+			// Check if the entered email and password match the server response
+			const isEmailValid = inputEmail === currentUser.email;
+			const isPasswordValid = data.checkCurrentPassword;
 
-		// Enable the delete account button if both email and password are valid
-		setIsDisabled(!(isEmailValid && isPasswordValid));
-
-		// Set errors for each field individually
-		setIsErrorEmail(!isEmailValid);
-		setIsErrorPassword(!isPasswordValid);
-	}, [inputEmail, inputPassword]);
+			// Enable the delete account button if both email and password are valid
+			setIsDisabled(!(isEmailValid && isPasswordValid));
+		}
+	}, [data, inputEmail, currentUser.email]);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputEmail(e.target.value);
-		setIsErrorEmail(false); // Clear error when user types
 	};
 
 	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputPassword(e.target.value);
-		setIsErrorPassword(false); // Clear error when user types
+		// Trigger the checkPassword query when the password is changed
+		checkPassword({
+			variables: {
+				email: currentUser.email,
+				password: e.target.value,
+			},
+		});
 	};
 
-	const handleDeleteAccount = () => {
-		// Perform the delete account logic here
-		console.log('Deleting account...');
+	const handleDeleteAccount = async () => {
+		try {
+			// Use the deleteUserAccount mutation to delete the user account
+			await deleteUserAccount({
+				variables: {
+					email: currentUser.email,
+				},
+			});
+
+			// Handle successful deletion, e.g., redirect, display a message, etc.
+			console.log('User account deleted successfully');
+			alert('User account delete successfully')
+			window.location.href = '/login';
+		} catch (error) {
+			console.error('Error deleting user account:', error);
+			alert('Account not delete')
+		}
 	};
 
 	return (
