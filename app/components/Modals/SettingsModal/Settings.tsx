@@ -7,6 +7,8 @@ import { UpdateNameForm } from '@/app/components/Settings/UpdateNameForm';
 import { UpdatePasswordForm } from '@/app/components/Settings/UpdatePasswordForm';
 import { useUser } from '@/app/contexts/UserContext';
 import styles from './settings.module.scss';
+import { Button } from '@mui/material';
+import DeleteAccount from "@/app/components/Settings/DeleteAccount/DeleteAccount";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -78,6 +80,7 @@ function Settings() {
         <Tab label="General" {...a11yProps(0)} />
         <Tab label="Privacy" {...a11yProps(1)} />
         <Tab label="Billing" {...a11yProps(2)} />
+        <Tab label="Delete Account" {...a11yProps(3)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         <UpdateEmailForm currentUser={currentUser} />
@@ -86,6 +89,9 @@ function Settings() {
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>
       <TabPanel value={value} index={2}></TabPanel>
+      <TabPanel value={value} index={3}>
+        <DeleteAccount  currentUser={currentUser}/>
+      </TabPanel>
     </Box>
   );
 }
