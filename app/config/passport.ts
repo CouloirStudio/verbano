@@ -104,6 +104,7 @@ const googleCallback = async (
       firstName: firstName,
       lastName: lastName,
       email: email,
+      active: true,
     }).save();
 
     done(null, newUser);
