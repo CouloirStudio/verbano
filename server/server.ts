@@ -25,6 +25,8 @@ export async function startServer(): Promise<https.Server> {
       console.error('Error connecting to MongoDB:', err);
     });
 
+  const passphrase = process.env.CERT_PASSPHRASE;
+
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -35,8 +37,9 @@ export async function startServer(): Promise<https.Server> {
   server.applyMiddleware({ app, cors: false });
 
   const httpsServer = https.createServer({
-      key: fs.readFileSync(path.join(__dirname, 'localhost-key.pem')),
-      cert: fs.readFileSync(path.join(__dirname, 'localhost.pem')),
+      key: fs.readFileSync(path.join(__dirname, 'keys', 'key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, 'keys', 'cert.pem')),
+      passphrase: passphrase,
     }, app);
   const PORT = process.env.PORT || 3000;
 
