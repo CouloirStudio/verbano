@@ -14,6 +14,7 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isError, setIsError] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const theme = useTheme();
 
@@ -51,6 +52,7 @@ const LoginPage = () => {
     } catch (e: any) {
       setIsRedirecting(false);
       setIsError(true);
+      setErrors([e.message]);
     }
   };
 
@@ -113,7 +115,13 @@ const LoginPage = () => {
                   />
                 </div>
 
-                {isError ? <p>Incorrect Email or Password</p> : null}
+                {isError ? (
+                  errors.length > 0 ? (
+                    <p>{errors[0]}</p>
+                  ) : (
+                    <p>Incorrect Email or Password</p>
+                  )
+                ) : null}
                 <Button
                   id={'loginButton'}
                   sx={{

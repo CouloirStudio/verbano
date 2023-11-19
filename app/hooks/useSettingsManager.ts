@@ -30,7 +30,7 @@ const useSettingsManager = () => {
           },
         });
         // TODO: Need to trigger a refresh somehow to display new information
-        return 'success, log back in for changes to take effect. ';
+        return 'An email has been sent to your new email address.';
       }
     } catch (error) {
       if (error instanceof Error) return error.message;

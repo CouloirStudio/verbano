@@ -9,6 +9,7 @@ import {
 import { Project } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
+import EmailService from '@/app/services/EmailService';
 
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
@@ -49,17 +50,33 @@ export const UserMutations = {
     // Entered password
     const hashedPassword = await hashPassword(password);
 
+    const activationCode = crypto.randomUUID();
+
     // Create user
     const newUser = new User({
       email: email.toLowerCase(),
       password: hashedPassword,
       firstName: firstName,
       lastName: lastName,
+      active: false,
+      activationCode: activationCode,
     });
 
     const result = await newUser.save();
 
-    await context.login(result);
+    const activationUrl = `http://localhost:3000/activate/${encodeURIComponent(
+      activationCode,
+    )}`;
+    const emailHtml = `
+        <p>Activate your account by clicking the following link:</p>
+        <a href="${activationUrl}">Activate Account</a>
+        `;
+
+    await EmailService.sendMail(
+      newUser.email,
+      'Activate Your Account',
+      emailHtml,
+    );
 
     // Return user
     return {
@@ -74,7 +91,13 @@ export const UserMutations = {
     });
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error('Incorrect Email or Password');
+    }
+
+    if (!user.active) {
+      throw new Error(
+        'Account not activated. Please check your email for an activation link.',
+      );
     }
 
     await context.login(user);
@@ -111,6 +134,32 @@ export const UserMutations = {
       const email = args.input.email;
       const user = await User.findOne({ email });
       if (user) throw new Error('Email in use.');
+
+      const emailTransferCode = crypto.randomUUID();
+
+      currentUser.emailTransfer = {
+        code: emailTransferCode,
+        oldEmail: currentUser.email,
+        newEmail: email,
+        requestedAt: new Date(),
+      };
+
+      await currentUser.save();
+
+      // Generate a new activation code
+      const activationUrl = `http://localhost:3000/transfer/${encodeURIComponent(
+        emailTransferCode,
+      )}`;
+
+      const emailHtml = `
+        <p>Transfer your Verbano account from ${currentUser.email} to ${email} by clicking the following link:</p>
+        <a href="${activationUrl}">Confirm Transfer Account</a>
+        <p>(If you didn't request this, just ignore it.)</p>
+        `;
+
+      await EmailService.sendMail(email, 'Transfer Your Account', emailHtml);
+
+      return !!currentUser;
     }
     const updated = await User.findByIdAndUpdate(args.id, args.input, {
       new: true,

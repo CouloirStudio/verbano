@@ -2,12 +2,12 @@ import { CircularProgress, IconButton } from '@mui/material';
 import React from 'react';
 import { useMutation } from '@apollo/client';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { PiNote } from 'react-icons/pi';
 import AddNote from '@/app/graphql/mutations/AddNote';
+import { AiOutlinePlus } from 'react-icons/ai';
 
 const style = {
   color: '#4d99a8',
-  fontSize: '1.6rem',
+  fontSize: '1.2rem',
 };
 
 function CreateProjectButton() {
@@ -45,7 +45,7 @@ function CreateProjectButton() {
 
   return (
     <IconButton onClick={handleButtonClick} disabled={loading} style={style}>
-      {loading ? <CircularProgress size={24} /> : <PiNote />}
+      {loading ? <CircularProgress size={24} /> : <AiOutlinePlus />}
     </IconButton>
   );
 }
