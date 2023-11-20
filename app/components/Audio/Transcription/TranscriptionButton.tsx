@@ -13,7 +13,7 @@ import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
  * @constructor
  */
 const TranscriptionButton = () => {
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = 'https://localhost:3000';
   const context = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNote = context.selectedNote;
