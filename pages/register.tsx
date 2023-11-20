@@ -38,7 +38,9 @@ const RegisterPage = () => {
 
     try {
       await signup({ variables: user });
-      await router.push('/login');
+      await router.push(
+        '/login?message=Activate your account with the link sent to your email.',
+      );
     } catch (error) {
       setIsError(true);
       console.error('Error signing up:', error);
