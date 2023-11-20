@@ -6,7 +6,7 @@ import {
   UpdatePasswordArgs,
   UpdateUserArgs,
 } from '@/app/graphql/resolvers/types';
-import { Note, Project } from '@/app/models';
+import { Note, Project, Summary } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 import { deleteAudioFromS3 } from '@/app/services/AWSService';
@@ -198,14 +198,14 @@ export const UserMutations = {
 
             // for every summary delete from mongo - third loop
             for (let i = 0; i < summaries.length; i++) {
-              await Note.findByIdAndDelete(summaries[i].summary);
+              await Summary.findByIdAndDelete(summaries[i].summary);
             }
 
             // for every note delete from mongo and delete from AWS - second loop
             for (let i = 0; i < notes.length; i++) {
               const note = await Note.findByIdAndDelete(notes[i].note);
-              if (note) {
-                await deleteAudioFromS3(note.id);
+              if (note && note.audioLocation) {
+                await deleteAudioFromS3(note.audioLocation);
               }
             }
           }
