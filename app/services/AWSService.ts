@@ -53,7 +53,6 @@ const deleteAudioFromS3 = async (key: string) => {
     Bucket: S3_BUCKET,
     Key: key,
   };
-  console.log('inside of delete audio');
   try {
     await s3.deleteObject(deleteParams).promise();
   } catch (error: unknown) {

@@ -196,12 +196,12 @@ export const UserMutations = {
             // get project summaries
             const summaries = project.summaries;
 
-            // for every summary delete from mongo - third loop
+            // for every summary delete from mongo
             for (let i = 0; i < summaries.length; i++) {
               await Summary.findByIdAndDelete(summaries[i].summary);
             }
 
-            // for every note delete from mongo and delete from AWS - second loop
+            // for every note delete from mongo and delete from AWS
             for (let i = 0; i < notes.length; i++) {
               const note = await Note.findByIdAndDelete(notes[i].note);
               if (note && note.audioLocation) {
