@@ -37,8 +37,8 @@ export async function startServer(): Promise<https.Server> {
   server.applyMiddleware({ app, cors: false });
 
   const httpsServer = https.createServer({
-      key: fs.readFileSync(path.join(__dirname, 'keys', 'key.pem')),
-      cert: fs.readFileSync(path.join(__dirname, 'keys', 'cert.pem')),
+      key: fs.readFileSync(path.join(__dirname, '../certs', 'key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, '../certs', 'cert.pem')),
       passphrase: passphrase,
     }, app);
   const PORT = process.env.PORT || 3000;
