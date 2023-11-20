@@ -6,9 +6,10 @@ import {
   UpdatePasswordArgs,
   UpdateUserArgs,
 } from '@/app/graphql/resolvers/types';
-import { Project } from '@/app/models';
+import { Note, Project } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
+import { deleteAudioFromS3 } from '@/app/services/AWSService';
 
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
@@ -177,6 +178,41 @@ export const UserMutations = {
         throw new Error('User not found.');
       }
 
+      // get all projects
+      const userProjects = user.projects;
+
+      if (userProjects) {
+        // for every project get all notes - first loop
+        for (let i = 0; i < userProjects.length; i++) {
+          // get project
+          const project = await Project.findByIdAndDelete(
+            userProjects[i].project,
+          );
+
+          if (project) {
+            // get project notes
+            const notes = project.notes;
+
+            // get project summaries
+            const summaries = project.summaries;
+
+            // for every summary delete from mongo - third loop
+            for (let i = 0; i < summaries.length; i++) {
+              await Note.findByIdAndDelete(summaries[i].summary);
+            }
+
+            // for every note delete from mongo and delete from AWS - second loop
+            for (let i = 0; i < notes.length; i++) {
+              const note = await Note.findByIdAndDelete(notes[i].note);
+              if (note) {
+                await deleteAudioFromS3(note.id);
+              }
+            }
+          }
+        }
+      } else {
+        throw new Error('something went wrong');
+      }
       return true; // Return true if the user account was successfully deleted
     } catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import AWS from "aws-sdk";
 
 // Configuring AWS SDK with necessary credentials and region.
 AWS.config.update({
@@ -53,7 +53,7 @@ const deleteAudioFromS3 = async (key: string) => {
     Bucket: S3_BUCKET,
     Key: key,
   };
-
+  console.log('inside of delete audio');
   try {
     await s3.deleteObject(deleteParams).promise();
   } catch (error: unknown) {
