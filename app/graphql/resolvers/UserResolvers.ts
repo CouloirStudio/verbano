@@ -80,7 +80,7 @@ export const UserMutations = {
 
     const result = await newUser.save();
 
-    const activationUrl = `http://localhost:3000/activate/${encodeURIComponent(
+    const activationUrl = `https://localhost:3000/activate/${encodeURIComponent(
       activationCode,
     )}`;
     const emailHtml = `
@@ -163,7 +163,7 @@ export const UserMutations = {
       await currentUser.save();
 
       // Generate a new activation code
-      const activationUrl = `http://localhost:3000/transfer/${encodeURIComponent(
+      const activationUrl = `https://localhost:3000/transfer/${encodeURIComponent(
         emailTransferCode,
       )}`;
 

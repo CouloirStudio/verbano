@@ -89,7 +89,7 @@ describe('Account Creation', () => {
   });
 
   it('should succeed with valid input', () => {
-    cy.intercept('POST', 'http://localhost:3000/graphql', (req) => {
+    cy.intercept('POST', 'https://localhost:3000/graphql', (req) => {
       req.reply({
         statusCode: 200,
         body: {

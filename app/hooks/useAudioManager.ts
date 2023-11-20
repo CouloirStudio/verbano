@@ -10,7 +10,7 @@ import { NoteType, ProjectType } from '@/app/graphql/resolvers/types';
  */
 const useAudioManager = () => {
   const mediaRecorder = AudioRecorder.getRecorder();
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = 'https://localhost:3000';
   const { setErrorMessage, setIsError } = useErrorModalContext();
 
   const [recordingState, setRecordingState] = useState<

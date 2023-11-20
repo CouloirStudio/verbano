@@ -39,7 +39,7 @@ const AudioHeader = () => {
           selectedProject={selectedProject}
         />
       ) : (
-        <Playback baseUrl="http://localhost:3000" selectedNote={selectedNote} />
+        <Playback baseUrl="https://localhost:3000" selectedNote={selectedNote} />
       )}
       <TranscriptionButton />
       <SummarizeButton />

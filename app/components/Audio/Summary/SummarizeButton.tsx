@@ -12,7 +12,7 @@ import { FaWandMagicSparkles } from 'react-icons/fa6';
  * @constructor
  */
 const SummarizeButton = () => {
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = 'https://localhost:3000';
   const { selectedNote } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const selectedNotes = [selectedNote]; // Assuming multiple notes can be selected

@@ -20,7 +20,7 @@ describe('<Playback />', () => {
     cy.mount(
       <ErrorModalContextProvider>
         <ErrorModal />
-        <Playback baseUrl="http://localhost:3000" selectedNote={exampleNote} />
+        <Playback baseUrl="https://localhost:3000" selectedNote={exampleNote} />
       </ErrorModalContextProvider>,
     );
 
@@ -30,7 +30,7 @@ describe('<Playback />', () => {
       const blob = new Blob([data]);
       const url = URL.createObjectURL(blob);
       const json = { success: true, signedURL: url };
-      cy.intercept('POST', 'http://localhost:3000/audio/retrieve', {
+      cy.intercept('POST', 'https://localhost:3000/audio/retrieve', {
         statusCode: 200, // 200 OK
         body: json,
       }).as('getAudio');
@@ -79,13 +79,13 @@ describe('Playback Error Handling', () => {
     cy.mount(
       <ErrorModalContextProvider>
         <ErrorModal />
-        <Playback baseUrl="http://localhost:3000" selectedNote={exampleNote} />
+        <Playback baseUrl="https://localhost:3000" selectedNote={exampleNote} />
       </ErrorModalContextProvider>,
     );
   });
 
   it('Handles error on bad request', () => {
-    cy.intercept('POST', 'http://localhost:3000/audio/retrieve', {
+    cy.intercept('POST', 'https://localhost:3000/audio/retrieve', {
       statusCode: 400, // 400 not okay
       body: {
         success: false,
