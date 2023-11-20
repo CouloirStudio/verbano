@@ -47,7 +47,7 @@ describe('<Recorder />', () => {
     const recorder = AudioRecorder.getRecorder();
     cy.stub(recorder, 'cleanup');
 
-    cy.intercept('POST', 'http://localhost:3000/audio/upload', {
+    cy.intercept('POST', 'https://localhost:3000/audio/upload', {
       statusCode: 200, // 200 OK
       body: {
         success: true,

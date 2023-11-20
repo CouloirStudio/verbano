@@ -52,7 +52,7 @@ Cypress.Commands.add(
 
     cy.request({
       method: 'POST',
-      url: 'http://localhost:3000/graphql',
+      url: 'https://localhost:3000/graphql',
       body: {
         query: LOGIN_MUTATION,
         variables: {

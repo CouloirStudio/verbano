@@ -61,7 +61,7 @@ router.get('/:transferCode', async (req, res) => {
     await user.save();
 
     // Generate a new revert code
-    const activationUrl = `http://localhost:3000/transfer/${encodeURIComponent(
+    const activationUrl = `https://localhost:3000/transfer/${encodeURIComponent(
       emailRevertCode,
     )}`;
 

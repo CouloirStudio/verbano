@@ -67,7 +67,7 @@ const RegisterPage = () => {
           variant="contained"
           color="primary"
           onClick={() => {
-            window.location.href = 'http://localhost:3000/auth/google';
+            window.location.href = 'https://localhost:3000/auth/google';
           }}
         >
           Register with Google

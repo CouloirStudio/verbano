@@ -55,7 +55,7 @@ const googleOptions = {
     process.env.GOOGLE_CLIENT_SECRET,
     'GOOGLE_CLIENT_SECRET',
   ),
-  callbackURL: 'http://localhost:3000/auth/google/callback',
+  callbackURL: 'https://localhost:3000/auth/google/callback',
   scope: ['profile', 'email'],
   state: true,
   passReqToCallback: true as true,
