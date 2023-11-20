@@ -60,7 +60,6 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
       });
 
       // Handle successful deletion, e.g., redirect, display a message, etc.
-      console.log('User account deleted successfully');
       alert('User account deleted successfully');
       window.location.href = '/logout';
     } catch (error) {
