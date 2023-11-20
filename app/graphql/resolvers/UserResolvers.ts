@@ -12,7 +12,6 @@ import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 import { deleteAudioFromS3 } from '@/app/services/AWSService';
 import EmailService from '@/app/services/EmailService';
 
-
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
     return context.getUser();
@@ -219,8 +218,13 @@ export const UserMutations = {
       if (updated) return true;
     } else throw new Error('Old password incorrect.');
   },
-  async deleteUserAccount(_: any, { email }: any, context: any) {
+  async deleteUserAccount(
+    _: unknown,
+    args: UpdateUserArgs,
+    _context: ResolverContext,
+  ) {
     try {
+      const email = args.input.email;
       // Perform the logic to delete the user account based on the provided email
       const user = await User.findOneAndDelete({ email });
 

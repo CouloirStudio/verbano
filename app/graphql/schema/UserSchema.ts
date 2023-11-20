@@ -23,7 +23,7 @@ const typeDefs = gql`
 
   type Query {
     currentUser: User
-		checkCurrentPassword(email: String! password: String!): Boolean
+    checkCurrentPassword(email: String!, password: String!): Boolean
   }
 
   type AuthPayload {
@@ -36,7 +36,7 @@ const typeDefs = gql`
     logout: Boolean
     updateUser(id: ID!, input: UserInput!): Boolean
     updateUserPassword(id: ID!, input: PasswordUpdateInput!): Boolean
-    deleteUserAccount(email: String!): Boolean
+    deleteUserAccount(id: ID!, input: UserInput!): Boolean
   }
 
   input UserInput {

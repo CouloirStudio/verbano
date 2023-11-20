@@ -52,7 +52,10 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
       // Use the deleteUserAccount mutation to delete the user account
       await deleteUserAccount({
         variables: {
-          email: currentUser.email,
+          id: currentUser.id,
+          input: {
+            email: currentUser.email,
+          },
         },
       });
 
