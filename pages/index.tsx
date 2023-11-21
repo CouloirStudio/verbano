@@ -4,20 +4,25 @@ import TranscriptionDisplay from '@/app/components/Audio/Transcription/Transcrip
 import { NoteContextProvider } from '@/app/contexts/NoteContext';
 import { AudioHeader } from '@/app/components/Audio/AudioHeader';
 import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 
 export default function Home() {
   const { selectedNote } = useProjectContext();
   const theme = useTheme();
+  const backgroundColour = theme.custom?.mainBackground ?? '';
   return (
     <div className={styles.container}>
-      <div className={styles.noteWrapper}>
+      <Box
+        className={styles.noteWrapper}
+        sx={{ backgroundColor: backgroundColour }}
+      >
         {selectedNote && (
           <NoteContextProvider>
             <AudioHeader />
             <TranscriptionDisplay />
           </NoteContextProvider>
         )}
-      </div>
+      </Box>
     </div>
   );
 }
