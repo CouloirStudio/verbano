@@ -1,6 +1,6 @@
 import React from 'react';
 import Dialog from '@mui/material/Dialog';
-import { DialogContent } from '@mui/material';
+import { DialogContent, Divider } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Settings from './Settings';
@@ -29,6 +29,7 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
       fullWidth={true}
     >
       <DialogTitle id="scroll-dialog-title">Settings</DialogTitle>
+      <Divider />
       <DialogContent>
         <Settings />
       </DialogContent>

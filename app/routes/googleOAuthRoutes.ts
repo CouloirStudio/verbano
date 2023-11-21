@@ -6,7 +6,12 @@ const router = Router();
 router.get(
   '/auth/google',
   passport.authenticate('google', {
-    prompt: 'select_account',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ],
+    accessType: 'offline',
+    prompt: 'consent',
   }),
 );
 

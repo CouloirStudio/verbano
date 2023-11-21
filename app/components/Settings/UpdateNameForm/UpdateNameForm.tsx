@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineUser } from 'react-icons/ai';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
@@ -9,6 +9,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import { IUser } from '@/app/models/User';
 import useSettingsManager from '@/app/hooks/useSettingsManager';
+import Box from '@mui/material/Box';
 
 interface FullNameInputProps {
   currentUser: Partial<IUser>;
@@ -74,37 +75,43 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography sx={{ width: '33%', flexShrink: 0 }}>Name</Typography>
+        <Typography fontWeight={'600'} sx={{ width: '33%', flexShrink: 0 }}>
+          Name
+        </Typography>
         <Typography sx={{ color: 'text.secondary' }}>
           {getFirst() + ' ' + getLast()}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <form onSubmit={handleSubmit}>
-          <p>{success}</p>
-          <InputField
-            label="Update First Name"
-            icon={<AiOutlineUser />}
-            clearError={clearError}
-            error={isError}
-            isRequired={true}
-            onChange={(e) => setFirstName(e.target.value)}
-            type={'text'}
-            value={firstName}
-          />
-          <InputField
-            label="Update Last Name"
-            icon={<AiOutlineUser />}
-            clearError={clearError}
-            error={isError}
-            isRequired={false}
-            onChange={(e) => setLastName(e.target.value)}
-            type={'text'}
-            value={lastName}
-          />
-          <Button variant="contained" color="primary" type="submit">
-            Update Name
-          </Button>
+          <Stack spacing={2}>
+            <p>{success}</p>
+            <InputField
+              label="Update First Name"
+              icon={<AiOutlineUser />}
+              clearError={clearError}
+              error={isError}
+              isRequired={true}
+              onChange={(e) => setFirstName(e.target.value)}
+              type={'text'}
+              value={firstName}
+            />
+            <InputField
+              label="Update Last Name"
+              icon={<AiOutlineUser />}
+              clearError={clearError}
+              error={isError}
+              isRequired={false}
+              onChange={(e) => setLastName(e.target.value)}
+              type={'text'}
+              value={lastName}
+            />
+            <Box>
+              <Button variant="contained" color="primary" type="submit">
+                Update Name
+              </Button>
+            </Box>
+          </Stack>
         </form>
       </AccordionDetails>
     </Accordion>
