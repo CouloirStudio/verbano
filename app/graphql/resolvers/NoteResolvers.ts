@@ -1,7 +1,13 @@
-import { Note } from "../../models/Note";
-import { AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs } from "./types";
-import { Project } from "../../models/Project";
-import { deleteAudioFromS3 } from "@/app/services/AWSService";
+import { Note } from '../../models/Note';
+import {
+  AddNoteArgs,
+  DeleteNoteArgs,
+  GetNoteArgs,
+  ResolverContext,
+  UpdateNoteArgs,
+} from './types';
+import { Project } from '../../models/Project';
+import { deleteAudioFromS3 } from '@/app/services/AWSService';
 
 /**
  * Resolvers for querying notes from the database.

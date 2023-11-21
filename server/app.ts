@@ -55,9 +55,9 @@ export function createApp(mockMiddleware?: any) {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        connectSrc: ["'self'", "https://localhost:3000"]
+        connectSrc: ["'self'", 'https://localhost:3000'],
       },
-    })
+    }),
   );
 
   // if test environment, use mock middleware

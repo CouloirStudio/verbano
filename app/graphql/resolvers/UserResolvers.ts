@@ -120,11 +120,11 @@ export const UserMutations = {
     return { user };
   },
 
-  async logout(_: any, __: any, { req }: any) {
-    return new Promise((resolve, reject) => {
-      req.logout((err: any) => {
-        if (err) {
-          reject(err);
+  async logout(context: { req: Express.Request }) {
+    return new Promise<boolean>((resolve, reject) => {
+      context.req.logout((error: Error | null) => {
+        if (error) {
+          reject(new ApolloError('Logout failed: ' + error.message));
         } else {
           resolve(true);
         }

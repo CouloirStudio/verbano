@@ -36,11 +36,14 @@ export async function startServer(): Promise<https.Server> {
   await server.start();
   server.applyMiddleware({ app, cors: false });
 
-  const httpsServer = https.createServer({
+  const httpsServer = https.createServer(
+    {
       key: fs.readFileSync(path.join(__dirname, '../certs', 'key.pem')),
       cert: fs.readFileSync(path.join(__dirname, '../certs', 'cert.pem')),
       passphrase: passphrase,
-    }, app);
+    },
+    app,
+  );
   const PORT = process.env.PORT || 3000;
 
   httpsServer.listen(PORT, () => {
