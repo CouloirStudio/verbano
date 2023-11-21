@@ -22,38 +22,39 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
   const [isErrorPassword, setIsErrorPassword] = useState(false);
   const [inputEmail, setInputEmail] = useState('');
   const [inputPassword, setInputPassword] = useState('');
-
+  const [feedback, setFeedback] = useState('');
   const [checkPassword, { data }] = useLazyQuery(CheckCurrentPassword);
   const [deleteUserAccount] = useMutation(DeleteUserAccount);
 
   useEffect(() => {
-    if (data) {
-      // Check if the entered email and password match the server response
-      const isEmailValid = inputEmail === currentUser.email;
-      const isPasswordValid = data.checkCurrentPassword;
-
-      // Enable the delete account button if both email and password are valid
-      setIsDisabled(!(isEmailValid && isPasswordValid));
-    }
-  }, [data, inputEmail, currentUser.email]);
+    // Check if the entered email is correct
+    console.log(inputEmail);
+    console.log(currentUser.email);
+    setIsDisabled(!(inputEmail === currentUser.email));
+  }, [inputEmail, currentUser.email]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputEmail(e.target.value);
+    if (e.target.value == currentUser.email) setIsDisabled(false);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputPassword(e.target.value);
-    // Trigger the checkPassword query when the password is changed
-    checkPassword({
-      variables: {
-        email: currentUser.email,
-        password: e.target.value,
-      },
-    });
   };
 
   const handleDeleteAccount = async () => {
     try {
+      await checkPassword({
+        variables: {
+          email: inputEmail,
+          password: inputPassword,
+        },
+      });
+
+      if (data == false) {
+        setFeedback('Incorrect Password');
+        return;
+      }
       // Use the deleteUserAccount mutation to delete the user account
       await deleteUserAccount({
         variables: {
@@ -87,6 +88,7 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
       <AccordionDetails>
         <form onSubmit={handleDeleteAccount}>
           <div data-cy="email">
+            <p>{feedback}</p>
             <InputField
               clearError={() => setIsErrorEmail(false)}
               error={isErrorEmail}
