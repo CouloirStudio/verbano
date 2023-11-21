@@ -12,6 +12,7 @@ import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 import { deleteAudioFromS3 } from '@/app/services/AWSService';
 import EmailService from '@/app/services/EmailService';
 import { Request } from 'express';
+import revokeToken from '@/app/services/AuthHelper';
 
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
@@ -240,6 +241,9 @@ export const UserMutations = {
       if (!user) {
         throw new Error('User not found.');
       }
+
+      // If the user signed in with Google, revoke the refresh token
+      if (user.refreshToken) await revokeToken(user.refreshToken);
 
       // get all projects
       const userProjects = user.projects;
