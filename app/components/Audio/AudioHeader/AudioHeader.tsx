@@ -10,8 +10,13 @@ import { useTheme } from '@mui/material/styles';
 import SummarizeButton from '@/app/components/Audio/Summary/SummarizeButton';
 
 /**
- * A component that houses the three main audio components.
- * @constructor
+ * AudioHeader is a React component that serves as a container for audio-related functionalities,
+ * including recording, playback, transcription, and summarization of audio notes.
+ * It dynamically renders either the Recorder or Playback component based on whether
+ * the currently selected note has an associated audio recording.
+ *
+ * It utilizes project and note contexts to determine the current state and actions
+ * for the selected note and project.
  */
 const AudioHeader = () => {
   const { selectedNote, selectedProject } = useProjectContext();
@@ -19,7 +24,7 @@ const AudioHeader = () => {
   const [hasRecording, setHasRecording] = useState(false);
   const theme = useTheme();
 
-  // Component updates when selected note is changed.
+  // Update the component state based on the presence of an audio recording in the selected note.
   useEffect(() => {
     setHasRecording(!!(selectedNote && selectedNote.audioLocation));
   }, [selectedNote]);
@@ -39,7 +44,10 @@ const AudioHeader = () => {
           selectedProject={selectedProject}
         />
       ) : (
-        <Playback baseUrl="https://localhost:3000" selectedNote={selectedNote} />
+        <Playback
+          baseUrl="https://localhost:3000"
+          selectedNote={selectedNote}
+        />
       )}
       <TranscriptionButton />
       <SummarizeButton />

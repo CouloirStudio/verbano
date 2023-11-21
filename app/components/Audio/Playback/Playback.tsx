@@ -8,12 +8,22 @@ import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
 import { NoteType } from '@/app/graphql/resolvers/types';
 
 interface PlaybackProps {
-  // audioUrl: string;
   baseUrl: string;
   selectedNote: NoteType | null;
 }
 
-const Playback: React.FC<PlaybackProps> = ({ baseUrl, selectedNote }) => {
+/**
+ * The Playback component provides an interface for audio playback.
+ * It includes controls for starting, pausing, and displaying the current state of playback.
+ *
+ * @param {PlaybackProps} props - The props for the Playback component.
+ * @param {string} props.baseUrl - The base URL for the audio file.
+ * @param {NoteType | null} props.selectedNote - The selected note containing the audio file.
+ */
+const Playback: React.FC<PlaybackProps> = ({
+  baseUrl,
+  selectedNote,
+}: PlaybackProps) => {
   const {
     startPlayback,
     pausePlayback,
@@ -32,7 +42,12 @@ const Playback: React.FC<PlaybackProps> = ({ baseUrl, selectedNote }) => {
       // Make the component state match the current audio player.
       updateStateFromPlayer();
     }
-  }, [currentAudioSourceRef, selectedNote, setPlaybackState]);
+  }, [
+    currentAudioSourceRef,
+    selectedNote,
+    setPlaybackState,
+    updateStateFromPlayer,
+  ]);
 
   const togglePlayback = async () => {
     try {

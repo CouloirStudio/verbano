@@ -1,13 +1,22 @@
+/**
+ * Represents an audio recorder for capturing audio from the user's microphone.
+ * Implements the Singleton design pattern to ensure only one instance of the recorder exists.
+ */
 export class AudioRecorder {
   private static instance: AudioRecorder | undefined;
   public audioChunks: Blob[] = [];
   public mediaStream: MediaStream | undefined;
   public mediaRecorder: MediaRecorder | undefined;
 
-  // constructor for getting empty Recorder
+  /**
+   * Private constructor to prevent direct construction calls with the `new` operator.
+   */
   private constructor() {}
 
-  //implementing singleton design pattern, as there should not be two recorders at once.
+  /**
+   * Gets the singleton instance of the AudioRecorder.
+   * @returns The singleton instance of the AudioRecorder.
+   */
   public static getRecorder(): AudioRecorder {
     if (!AudioRecorder.instance) {
       AudioRecorder.instance = new AudioRecorder();
@@ -15,7 +24,11 @@ export class AudioRecorder {
     return AudioRecorder.instance;
   }
 
-  // Request access to the user's microphone
+  /**
+   * Initializes the audio recorder by requesting access to the user's microphone.
+   * @throws Will throw an error if the browser does not support audio recording
+   * or if access to the microphone is denied.
+   */
   async initialize(): Promise<void> {
     // Check if the feature is supported in the browser
     if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
@@ -62,7 +75,10 @@ export class AudioRecorder {
     }
   }
 
-  // Start recording
+  /**
+   * Starts recording audio from the user's microphone.
+   * @throws Will throw an error if the MediaRecorder is not initialized.
+   */
   startRecording(): any {
     if (!this.mediaRecorder) {
       throw new Error('Media Recorder is not initialized');
@@ -72,7 +88,11 @@ export class AudioRecorder {
     this.mediaRecorder.start();
   }
 
-  // Stop recording
+  /**
+   * Stops the recording and returns the captured audio as a Blob.
+   * @returns A promise that resolves to a Blob containing the recorded audio.
+   * @throws Will throw an error if the MediaRecorder is not initialized or no audio data is recorded.
+   */
   stopRecording(): Promise<Blob> {
     if (!this.mediaRecorder) {
       throw new Error('Media Recorder is not initialized');
@@ -106,7 +126,9 @@ export class AudioRecorder {
     });
   }
 
-  // Clean up resources such as media streams and reset the recorder for the next use
+  /**
+   * Cleans up resources such as media streams and resets the recorder for the next use.
+   */
   cleanup(): void {
     if (this.mediaStream) {
       this.mediaStream.getTracks().forEach((track) => {
