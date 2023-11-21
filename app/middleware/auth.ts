@@ -66,7 +66,6 @@ export async function handleLogout(req: Request, res: Response): Promise<void> {
  *
  * @param req - The Express request object.
  * @param res - The Express response object.
- * @param next - The next middleware function in the application's request-response cycle.
  */
 export function authCheckTestMiddleware(req: Request, res: Response): void {
   if (req.user) {

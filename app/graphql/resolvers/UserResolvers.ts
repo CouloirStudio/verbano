@@ -1,5 +1,5 @@
-import { User } from '../../models/User';
-import { hashPassword } from '../../config/passport';
+import { User } from '@/app/models/User';
+import { hashPassword } from '@/app/config/passport';
 import {
   AddUserArgs,
   ResolverContext,
@@ -11,6 +11,7 @@ import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
 import { deleteAudioFromS3 } from '@/app/services/AWSService';
 import EmailService from '@/app/services/EmailService';
+import { Request } from 'express';
 
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
@@ -120,7 +121,15 @@ export const UserMutations = {
     return { user };
   },
 
-  async logout(context: { req: Express.Request }) {
+  /**
+   * Asynchronously logs out a user.
+   * This function wraps the Express logout method in a promise,
+   * resolving to true upon successful logout and rejecting with an ApolloError upon failure.
+   *
+   * @param context - The context object containing the Express request.
+   * @returns A promise that resolves to a boolean indicating the success of the logout operation.
+   */
+  async logout(context: { req: Request }): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       context.req.logout((error: Error | null) => {
         if (error) {
