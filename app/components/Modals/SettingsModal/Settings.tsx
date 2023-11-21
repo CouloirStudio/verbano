@@ -65,7 +65,7 @@ function Settings() {
         flexGrow: 1,
         bgcolor: 'background.paper',
         display: 'flex',
-        height: 224,
+        height: 400,
       }}
     >
       <Tabs

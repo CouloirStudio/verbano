@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
 import { AiOutlineMail } from 'react-icons/ai';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import EditIcon from '@mui/icons-material/Edit';
@@ -9,6 +9,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import { IUser } from '@/app/models/User';
 import useSettingsManager from '@/app/hooks/useSettingsManager';
+import Box from '@mui/material/Box';
 
 interface EmailInputProps {
   currentUser: Partial<IUser>;
@@ -66,27 +67,33 @@ const UpdateEmailForm: React.FC<EmailInputProps> = ({ currentUser }) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography sx={{ width: '33%', flexShrink: 0 }}>Email</Typography>
+        <Typography fontWeight={'600'} width={'33%'}>
+          Email
+        </Typography>
         <Typography sx={{ color: 'text.secondary' }}>{getEmail()}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <form onSubmit={handleSubmit}>
-          <p>{success}</p>
-          <div data-cy="email">
-            <InputField
-              label="Update Email"
-              icon={<AiOutlineMail />}
-              clearError={clearError}
-              error={isError}
-              isRequired={true}
-              onChange={(e) => setEmail(e.target.value)}
-              type={'email'}
-              value={email}
-            />
-          </div>
-          <Button variant="contained" color="primary" type="submit">
-            Update Email
-          </Button>
+          <Stack spacing={2}>
+            <p>{success}</p>
+            <div data-cy="email">
+              <InputField
+                label="Update Email"
+                icon={<AiOutlineMail />}
+                clearError={clearError}
+                error={isError}
+                isRequired={true}
+                onChange={(e) => setEmail(e.target.value)}
+                type={'email'}
+                value={email}
+              />
+            </div>
+            <Box>
+              <Button variant="contained" color="primary" type="submit">
+                Update Email
+              </Button>
+            </Box>
+          </Stack>
         </form>
       </AccordionDetails>
     </Accordion>
