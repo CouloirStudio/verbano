@@ -8,6 +8,16 @@ export interface PlaybackButtonProps {
   theme?: 'light' | 'dark';
 }
 
+/**
+ * PlaybackButton is a React functional component that renders a button
+ * to control audio playback. The button's icon changes based on the current playback state.
+ *
+ * @param {PlaybackButtonProps} props - The props for the PlaybackButton component.
+ * @param {PlaybackState} props.playbackState - The current state of playback.
+ * @param {() => void} props.togglePlayback - A function to toggle the playback state.
+ * @param {'light' | 'dark'} [props.theme] - Optional theme for the button.
+ */
+
 const PlaybackButton: React.FC<PlaybackButtonProps> = ({
   playbackState,
   togglePlayback,
@@ -23,6 +33,12 @@ const PlaybackButton: React.FC<PlaybackButtonProps> = ({
 
 import Image from 'next/image';
 
+/**
+ * Returns the appropriate icon for the playback button based on the current playback state.
+ *
+ * @param {PlaybackState} playbackState - The current state of playback.
+ * @returns {JSX.Element} - The JSX Element representing the button icon.
+ */
 function getButtonIcon(playbackState: PlaybackState): JSX.Element {
   switch (playbackState) {
     case PlaybackState.PLAYING:
