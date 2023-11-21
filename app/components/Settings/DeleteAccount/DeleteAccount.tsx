@@ -16,6 +16,10 @@ interface DeleteAccountProps {
   currentUser: Partial<IUser>;
 }
 
+/**
+ * A functional component that holds the form for deleting a user account.
+ * @param currentUser The current user of the app
+ */
 const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
   const [disabled, setIsDisabled] = useState(true);
   const [isErrorEmail, setIsErrorEmail] = useState(false);
@@ -28,8 +32,6 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
 
   useEffect(() => {
     // Check if the entered email is correct
-    console.log(inputEmail);
-    console.log(currentUser.email);
     setIsDisabled(!(inputEmail === currentUser.email));
   }, [inputEmail, currentUser.email]);
 
@@ -42,6 +44,9 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
     setInputPassword(e.target.value);
   };
 
+  /**
+   * Function for handling account deletion using graphql
+   */
   const handleDeleteAccount = async () => {
     try {
       await checkPassword({
