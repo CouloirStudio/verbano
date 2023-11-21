@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 
-import client from '../config/apolloClient';
-import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes';
+import client from '@/app/config/apolloClient';
+import GetProjectsAndNotes from '@/app/graphql/queries/GetProjectsAndNotes.graphql';
 
 /**
  * Type representing the structure of the response received
