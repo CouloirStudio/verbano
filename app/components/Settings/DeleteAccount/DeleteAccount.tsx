@@ -6,6 +6,11 @@ import InputField from '../../Authentication/Login/InputField';
 import { AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
 import CheckCurrentPassword from '@/app/graphql/queries/CheckCurrentPassword.graphql';
 import DeleteUserAccount from '@/app/graphql/mutations/DeleteUserAccount.graphql';
+import EditIcon from '@mui/icons-material/Edit';
+import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 interface DeleteAccountProps {
   currentUser: Partial<IUser>;
@@ -69,37 +74,51 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ currentUser }) => {
   };
 
   return (
-    <>
-      <InputField
-        clearError={() => setIsErrorEmail(false)}
-        error={isErrorEmail}
-        icon={<AiOutlineMail />}
-        isRequired={true}
-        label={'Confirm Current Email'}
-        onChange={handleEmailChange}
-        type={'text'}
-        value={inputEmail}
-      />
-      <br />
-      <InputField
-        clearError={() => setIsErrorPassword(false)}
-        error={isErrorPassword}
-        icon={<AiOutlineLock />}
-        isRequired={true}
-        label={'Confirm Current Password'}
-        onChange={handlePasswordChange}
-        type={'password'}
-        value={inputPassword}
-      />
-
-      <Button
-        variant="contained"
-        disabled={disabled}
-        onClick={handleDeleteAccount}
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<EditIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
       >
-        Delete Account
-      </Button>
-    </>
+        <Typography sx={{ width: '33%', flexShrink: 0 }}>
+          Delete Account
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <form onSubmit={handleDeleteAccount}>
+          <div data-cy="email">
+            <InputField
+              clearError={() => setIsErrorEmail(false)}
+              error={isErrorEmail}
+              icon={<AiOutlineMail />}
+              isRequired={true}
+              label={'Confirm Current Email'}
+              onChange={handleEmailChange}
+              type={'text'}
+              value={inputEmail}
+            />
+            <br />
+            <InputField
+              clearError={() => setIsErrorPassword(false)}
+              error={isErrorPassword}
+              icon={<AiOutlineLock />}
+              isRequired={true}
+              label={'Confirm Current Password'}
+              onChange={handlePasswordChange}
+              type={'password'}
+              value={inputPassword}
+            />
+          </div>
+          <Button
+            variant="contained"
+            disabled={disabled}
+            onClick={handleDeleteAccount}
+          >
+            Delete Account
+          </Button>
+        </form>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
