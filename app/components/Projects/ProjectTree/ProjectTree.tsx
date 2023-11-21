@@ -10,6 +10,7 @@ import { PositionedProjectType } from '../../../graphql/resolvers/types';
 import ProjectTreeItem from '@/app/components/Projects/ProjectTree/ProjectTreeItem';
 import { Droppable } from '@hello-pangea/dnd';
 import { useDraggingContext } from '@/app/contexts/DraggingContext';
+import { useTheme } from '@mui/material/styles';
 
 const renderProjectTree = (projects: PositionedProjectType[]) => {
   return projects.map((project: PositionedProjectType, index) => (
@@ -47,8 +48,11 @@ function ProjectTree() {
     renderProjectTree(localProjects);
   }, [projects, draggingItemType]);
 
+  const theme = useTheme();
+  const sidebarBg = theme.custom?.moreContrastBackground ?? '';
+
   return (
-    <Box className={styles.projectList}>
+    <Box className={styles.projectList} sx={{ backgroundColor: sidebarBg }}>
       <ProjectTreeHeader />
       <TreeView
         aria-label="icon expansion"

@@ -9,10 +9,7 @@ export default function Home() {
   const { selectedNote } = useProjectContext();
   const theme = useTheme();
   return (
-    <div
-      className={styles.container}
-      style={{ backgroundColor: theme.custom?.mainBackground ?? '' }}
-    >
+    <div className={styles.container}>
       <div className={styles.noteWrapper}>
         {selectedNote && (
           <NoteContextProvider>
