@@ -18,20 +18,6 @@ export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
     return context.getUser();
   },
-  async checkCurrentPassword(_: any, { email, password }: any) {
-    try {
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      return await verifyPassword(password, user.password);
-    } catch (error) {
-      console.error(error);
-      throw new Error('An error occurred while checking the password');
-    }
-  },
 };
 
 export const UserMutations = {
