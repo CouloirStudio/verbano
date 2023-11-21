@@ -26,7 +26,7 @@ const SettingsModal: React.FC<SettingsModalProps> = (props) => {
       aria-labelledby="scroll-dialog-title"
       aria-describedby="scroll-dialog-description"
       maxWidth={'md'}
-      fullWidth={false}
+      fullWidth={true}
     >
       <DialogTitle id="scroll-dialog-title">Settings</DialogTitle>
       <Divider />
