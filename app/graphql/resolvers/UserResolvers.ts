@@ -267,6 +267,13 @@ export const UserMutations = {
       } else {
         throw new Error('something went wrong');
       }
+      const emailHtml = `
+        <p>Just writing to let you know your Verbano account has been deleted.</p>
+        <p>We hope to see you again soon!</p>
+        <p>(If you didn't request this, just ignore it.)</p>
+        `;
+
+      await EmailService.sendMail(email, 'Account Deleted', emailHtml);
       return true; // Return true if the user account was successfully deleted
     } catch (error) {
       console.error(error);
