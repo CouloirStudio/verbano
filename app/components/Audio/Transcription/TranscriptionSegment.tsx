@@ -43,7 +43,7 @@ const TranscriptionSegment: React.FC<TranscriptionSegmentProps> = ({
         </Stack>
         <Box
           className={styles.content}
-          sx={{ backgroundColor: theme.custom?.moreContrastBackground }}
+          sx={{ backgroundColor: theme.custom?.contrastBackground }}
         >
           <Typography variant="body1">{segment.text}</Typography>
         </Box>
