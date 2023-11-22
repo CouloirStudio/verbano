@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
-import { summarize } from '@/app/api/summarize'; // You need to implement this
+import React, {useEffect, useRef} from 'react';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
+import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
+import {summarize} from '@/app/api/summarize'; // You need to implement this
 import IconButton from '@mui/material/IconButton';
-import { Tooltip, useTheme } from '@mui/material';
-import { useNoteContext } from '@/app/contexts/NoteContext';
-import { FaWandMagicSparkles } from 'react-icons/fa6';
+import {Tooltip, useTheme} from '@mui/material';
+import {useNoteContext} from '@/app/contexts/NoteContext';
+import {FaWandMagicSparkles} from 'react-icons/fa6';
 
 /**
  * A button that grabs the selected notes and generates a summary.
@@ -55,8 +55,11 @@ const SummarizeButton = () => {
     }
   };
 
+  const disabled = !selectedNote?.transcription;
+  const tooltipTitle = disabled ? 'Transcribe the note first' : 'Summarize';
+
   return (
-    <Tooltip title="Summarize">
+    <Tooltip title={tooltipTitle}>
       <span>
         <IconButton
           sx={{

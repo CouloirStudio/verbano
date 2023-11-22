@@ -39,7 +39,7 @@ export default function Home() {
                 Welcome to Verbano!
               </Typography>
               <Typography variant={'h4'} color="text.primary">
-                Start by entering a project
+                Start by selecting a project
               </Typography>
               <TakingNotesSVG />
             </Stack>
