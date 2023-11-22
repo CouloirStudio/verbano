@@ -56,6 +56,7 @@ export function createApp(mockMiddleware?: any) {
         scriptSrc: ["'self'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         connectSrc: ["'self'", 'https://localhost:3000'],
+        mediaSrc: ['https://verbano-dev-audio.s3.us-west-2.amazonaws.com'],
       },
     }),
   );
