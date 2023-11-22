@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import styles from './transcription.module.scss';
@@ -12,9 +12,20 @@ import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
 import GetSingleSummary from '@/app/graphql/queries/GetSummary.graphql';
 import TranscriptionSegment from './TranscriptionSegment';
 import MuiMarkdown from 'mui-markdown';
-import { Fade, Stack } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Fade,
+  IconButton,
+  Stack,
+  Tooltip,
+} from '@mui/material';
 import RecordingSVG from '@/app/components/UI/SVGs/RecordingSVG';
 import TranscriptionSVG from '@/app/components/UI/SVGs/TranscriptionSVG';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { IoCopyOutline } from 'react-icons/io5';
 
 class TranscriptionParseError extends Error {
   constructor(message: string) {
@@ -28,6 +39,32 @@ interface TranscriptionSegmentData {
   text: string;
 }
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 2 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
 /**
  * `TranscriptionDisplay` is a component that renders the transcription of a selected note.
  * It fetches the transcription data via a GraphQL query and displays it segment by segment.
@@ -37,6 +74,12 @@ const TranscriptionDisplay: React.FC = () => {
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const { transcription, setTranscription } = useNoteContext();
   const { summary, setSummary } = useNoteContext();
+  const [tabValue, setTabValue] = useState(-1);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
   const [getTranscript, { data, loading, error }] = useLazyQuery<{
     getTranscription: string;
   }>(GetTranscription);
@@ -101,6 +144,10 @@ const TranscriptionDisplay: React.FC = () => {
 
   useEffect(() => {}, [transcription]);
 
+  useEffect(() => {
+    setTabValue(0);
+  }, [selectedNote]);
+
   // Parse and render transcription segments
   const renderTranscription = (transcriptionJson: string) => {
     try {
@@ -122,17 +169,74 @@ const TranscriptionDisplay: React.FC = () => {
   const renderSummary = (summaryJson: string) => {
     return (
       <>
-        <Typography variant="h6">Summary</Typography>
         <MuiMarkdown>{summaryJson}</MuiMarkdown>
       </>
     );
   };
 
+  const copyToClipboard = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(transcription);
+    } catch (err) {
+      // maybe perms issue or something, idk
+    }
+  }, [transcription]);
+
   return (
     <Box className={styles.transcription}>
-      <ScrollView className={styles.scrollView}>
-        {transcription ? renderTranscription(transcription) : null}
-        {summary ? renderSummary(summary) : null}
+      {selectedNote?.audioLocation && (
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          aria-label="Transcription tabs"
+          sx={{ marginLeft: '16px' }}
+        >
+          <Tab label="Transcription" disabled={!transcription} />
+          <Tab label="Summary" disabled={!summary} />
+        </Tabs>
+      )}
+
+      <ScrollView>
+        <TabPanel value={tabValue} index={0}>
+          {transcription ? (
+            <Card variant={'outlined'} sx={{ position: 'relative' }}>
+              <Tooltip title="Copy to clipboard">
+                <IconButton
+                  onClick={copyToClipboard}
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    m: 2,
+                    zIndex: 2,
+                  }}
+                >
+                  <IoCopyOutline />
+                </IconButton>
+              </Tooltip>
+              <CardHeader
+                title={<Typography variant={'h3'}>Transcription</Typography>}
+                subheader={
+                  <Typography>
+                    Formatted transcript of your audio message
+                  </Typography>
+                }
+              />
+              <CardContent>{renderTranscription(transcription)}</CardContent>
+            </Card>
+          ) : null}
+        </TabPanel>
+        <TabPanel value={tabValue} index={1}>
+          <Card variant={'outlined'}>
+            <CardHeader
+              title={<Typography variant={'h3'}>Summary</Typography>}
+              subheader={
+                <Typography>The summary of your transcript</Typography>
+              }
+            />
+            <CardContent>{summary ? renderSummary(summary) : null}</CardContent>
+          </Card>
+        </TabPanel>
         {!transcription && !summary && !selectedNote?.audioLocation && (
           <Fade in={true} timeout={300}>
             <Stack

@@ -56,7 +56,10 @@ const SummarizeButton = () => {
   };
 
   const disabled = !selectedNote?.transcription;
-  const tooltipTitle = disabled ? 'Transcribe the note first' : 'Summarize';
+  const tooltipTitle = disabled
+    ? 'Transcribe the note before summarizing'
+    : 'Summarize';
+  const color = disabled ? theme.palette.action.disabled : '#8675fd';
 
   return (
     <Tooltip title={tooltipTitle}>
@@ -65,6 +68,7 @@ const SummarizeButton = () => {
           sx={{
             width: '50px',
             height: '50px',
+            color: color,
           }}
           disabled={!selectedNote?.transcription}
           onClick={generateSummary}

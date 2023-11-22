@@ -59,7 +59,7 @@ class OpenAIService {
             role: 'system',
             content:
               template ||
-              'Summarize this transcription into key points (dont specify duration) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.',
+              'Summarize this transcription into key points (dont specify duration) (dont start with "summary" heading, just the content) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.',
           },
         ],
       });
