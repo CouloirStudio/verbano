@@ -1,4 +1,4 @@
-import CreateProjectButton from '@/app/components/Projects/ProjectTree/CreateProjectButon';
+import CreateProjectButton from '@/app/components/Projects/ProjectTree/CreateProjectButton';
 import React from 'react';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';

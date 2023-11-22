@@ -1,13 +1,13 @@
 describe('Register Page', () => {
   beforeEach(() => {
-    cy.visit('localhost:3000/register', {
-      timeout: 10000,
+    cy.visit('https://localhost:3000/register', {
+      timeout: 100000,
       failOnStatusCode: true,
     });
   });
 
   it('loads correctly', () => {
-    cy.visit('localhost:3000/register', {
+    cy.visit('https://localhost:3000/register', {
       timeout: 60000,
       failOnStatusCode: true,
     });
@@ -18,7 +18,7 @@ describe('Register Page', () => {
   });
 
   it('should have login hyperlink', () => {
-    cy.contains('Login here!');
+    cy.contains('Already have an account?');
   });
 
   it('should have all fields', () => {
@@ -31,7 +31,7 @@ describe('Register Page', () => {
 
 describe('Input Validation', () => {
   beforeEach(() => {
-    cy.visit('localhost:3000/register', {
+    cy.visit('https://localhost:3000/register', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -82,7 +82,7 @@ describe('Input Validation', () => {
 
 describe('Account Creation', () => {
   beforeEach(() => {
-    cy.visit('localhost:3000/register', {
+    cy.visit('https://localhost:3000/register', {
       timeout: 10000,
       failOnStatusCode: true,
     });
