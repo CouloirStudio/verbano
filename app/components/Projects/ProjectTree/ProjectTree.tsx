@@ -18,6 +18,7 @@ const renderProjectTree = (projects: PositionedProjectType[]) => {
       key={project.project.id}
       project={project.project}
       index={index}
+      className={styles.projectTreeItem}
     />
   ));
 };
