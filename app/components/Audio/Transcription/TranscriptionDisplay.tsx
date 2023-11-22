@@ -12,6 +12,9 @@ import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
 import GetSingleSummary from '@/app/graphql/queries/GetSummary.graphql';
 import TranscriptionSegment from './TranscriptionSegment';
 import MuiMarkdown from 'mui-markdown';
+import { Fade, Stack } from '@mui/material';
+import RecordingSVG from '@/app/components/UI/SVGs/RecordingSVG';
+import TranscriptionSVG from '@/app/components/UI/SVGs/TranscriptionSVG';
 
 class TranscriptionParseError extends Error {
   constructor(message: string) {
@@ -130,6 +133,40 @@ const TranscriptionDisplay: React.FC = () => {
       <ScrollView className={styles.scrollView}>
         {transcription ? renderTranscription(transcription) : null}
         {summary ? renderSummary(summary) : null}
+        {!transcription && !summary && !selectedNote?.audioLocation && (
+          <Fade in={true} timeout={300}>
+            <Stack
+              direction={'column'}
+              justifyContent={'center'}
+              flexGrow={1}
+              height={'80%'}
+              alignItems={'center'}
+              spacing={3}
+            >
+              <Typography variant={'h4'}>
+                Capture your thoughts and ideas <br /> through an audio note
+              </Typography>
+              <RecordingSVG />
+            </Stack>
+          </Fade>
+        )}
+        {!transcription && !summary && selectedNote?.audioLocation && (
+          <Fade in={true} timeout={300}>
+            <Stack
+              direction={'column'}
+              justifyContent={'center'}
+              flexGrow={1}
+              height={'80%'}
+              alignItems={'center'}
+              spacing={3}
+            >
+              <Typography variant={'h4'}>
+                Transcribe or listen to your audio note
+              </Typography>
+              <TranscriptionSVG />
+            </Stack>
+          </Fade>
+        )}
       </ScrollView>
       <Footer
         footerText={

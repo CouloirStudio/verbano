@@ -5,6 +5,7 @@ import styles from './noteTree.module.scss';
 import { useProjectContext } from '@/app/contexts/ProjectContext';
 import { ProjectSummaryType } from '@/app/graphql/resolvers/types';
 import SummaryTreeItem from '@/app/components/Notes/NoteTree/SummaryTreeItem';
+import Typography from '@mui/material/Typography';
 
 interface RenderNoteTreeProps {
   handleContextMenu: (event: React.MouseEvent, noteId: string) => void;
@@ -46,7 +47,9 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
             ))
           ) : (
             <div className={styles.emptyState}>
-              Summarize a note to see it here!
+              <Typography variant={'subtitle1'}>
+                Summarize a note to see it here!
+              </Typography>
             </div>
           )}
           {provided.placeholder}
