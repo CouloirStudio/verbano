@@ -1,13 +1,13 @@
 describe('Email/Pass Login', () => {
   it('loads correctly', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 60000,
       failOnStatusCode: true,
     });
   });
 
   it('logs in successfully', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 60000,
       failOnStatusCode: true,
     });
@@ -24,7 +24,7 @@ describe('Email/Pass Login', () => {
   });
 
   it('errors on invalid email', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 60000,
       failOnStatusCode: true,
     });
@@ -34,11 +34,11 @@ describe('Email/Pass Login', () => {
     cy.get('[data-cy="password-input-field"]').click().type('password');
 
     cy.get('#loginButton').click();
-    cy.contains('Incorrect Email or Password');
+    cy.contains('Invalid credentials.');
   });
 
   it('errors on invalid password', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -48,11 +48,11 @@ describe('Email/Pass Login', () => {
     cy.get('[data-cy="password-input-field"]').click().type('wrongpassword');
 
     cy.get('#loginButton').click();
-    cy.contains('Incorrect Email or Password');
+    cy.contains('Invalid credentials.');
   });
 
   it('errors on empty email', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -65,7 +65,7 @@ describe('Email/Pass Login', () => {
   });
 
   it('errors on empty password', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -79,7 +79,7 @@ describe('Email/Pass Login', () => {
 });
 
 it('Register button works', () => {
-  cy.visit('localhost:3000/login', {
+  cy.visit('https://localhost:3000/login', {
     timeout: 10000,
     failOnStatusCode: true,
   });
@@ -90,7 +90,7 @@ it('Register button works', () => {
 
 describe('Google Login', () => {
   it('Google button loads', () => {
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 10000,
       failOnStatusCode: true,
     });
