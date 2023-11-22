@@ -143,7 +143,7 @@ const TranscriptionDisplay: React.FC = () => {
               alignItems={'center'}
               spacing={3}
             >
-              <Typography variant={'h4'}>
+              <Typography variant={'h4'} color="text.primary">
                 Capture your thoughts and ideas <br /> through an audio note
               </Typography>
               <RecordingSVG />
@@ -160,7 +160,7 @@ const TranscriptionDisplay: React.FC = () => {
               alignItems={'center'}
               spacing={3}
             >
-              <Typography variant={'h4'}>
+              <Typography variant={'h4'} color="textPrimary">
                 Transcribe or listen to your audio note
               </Typography>
               <TranscriptionSVG />

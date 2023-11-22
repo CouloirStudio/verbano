@@ -35,8 +35,10 @@ export default function Home() {
               textAlign={'center'}
               spacing={2}
             >
-              <Typography variant={'h1'}>Welcome to Verbano!</Typography>
-              <Typography variant={'h4'}>
+              <Typography variant={'h1'} color="text.primary">
+                Welcome to Verbano!
+              </Typography>
+              <Typography variant={'h4'} color="text.primary">
                 Start by entering a project
               </Typography>
               <TakingNotesSVG />

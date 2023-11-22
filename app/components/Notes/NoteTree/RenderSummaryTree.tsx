@@ -47,7 +47,7 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
             ))
           ) : (
             <div className={styles.emptyState}>
-              <Typography variant={'subtitle1'}>
+              <Typography variant={'subtitle1'} color="text.primary">
                 Summarize a note to see it here!
               </Typography>
             </div>

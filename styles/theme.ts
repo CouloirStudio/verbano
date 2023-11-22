@@ -55,6 +55,11 @@ export const lightThemeOptions: CustomThemeOptions = {
     info: { main: infoColor },
     warning: { main: warningColor },
     error: { main: errorColor },
+    text: {
+      primary: black,
+      secondary: '#6B6B6B',
+      disabled: '#BDBDBD',
+    },
   },
   custom: {
     headerBackground: primaryColor,
@@ -94,6 +99,11 @@ export const darkThemeOptions: CustomThemeOptions = {
     info: { main: infoColor },
     warning: { main: warningColor },
     error: { main: errorColor },
+    text: {
+      primary: white,
+      secondary: '#BDBDBD',
+      disabled: '#6B6B6B',
+    },
   },
   custom: {
     headerBackground: '#272727',
