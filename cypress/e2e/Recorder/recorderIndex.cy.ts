@@ -4,34 +4,39 @@ describe('Record Audio', () => {
   });
 
   it('loads correctly', () => {
-    cy.visit('localhost:3000', {
+    cy.visit('https://localhost:3000', {
       timeout: 60000,
       failOnStatusCode: true,
     });
   });
 
   it('Is ready to record', () => {
-    cy.visit('localhost:3000', {
+    cy.visit('https://localhost:3000', {
       timeout: 60000,
       failOnStatusCode: true,
     });
-    cy.get('#recorderButton').should('have.length', 1);
-    cy.get('#recorderButton').should('have.text', 'Start');
+    cy.contains('4CYPRESS').click();
+    cy.wait(1000);
+    cy.contains('DONOTDELETE').click();
+    cy.get('#recordImage').should('be.visible');
   });
 
   it('Starts Recording', () => {
-    cy.visit('localhost:3000', {
+    cy.visit('https://localhost:3000', {
       timeout: 60000,
       failOnStatusCode: true,
     });
-    cy.get('#recorderButton').should('have.text', 'Start');
-    cy.get('#recorderButton').click();
-    cy.get('#recorderButton').should('have.text', 'Stop');
+    cy.contains('4CYPRESS').click();
+    cy.wait(1000);
+    cy.contains('DONOTDELETE').click();
+    cy.get('#recordImage').should('be.visible');
+    cy.get('#recordButton').click();
+    cy.get('#stopImage').should('be.visible');
     cy.get('#errorTitle').should('not.exist');
   });
 
   it('Stops Recording', () => {
-    cy.visit('localhost:3000', {
+    cy.visit('https://localhost:3000', {
       timeout: 60000,
       failOnStatusCode: true,
     });
@@ -43,18 +48,23 @@ describe('Record Audio', () => {
         message: 'Successfully uploaded.',
       },
     }).as('uploadRequest');
-    cy.get('#recorderButton').should('have.text', 'Start');
-    cy.get('#recorderButton').click();
+
+    cy.contains('4CYPRESS').click();
     cy.wait(1000);
-    cy.get('#recorderButton').should('have.text', 'Stop');
-    cy.get('#recorderButton').click();
-    cy.wait(1000);
-    cy.get('#recorderButton').should('have.text', 'Start');
+    cy.contains('DONOTDELETE').click();
+    cy.get('#recordImage').should('be.visible');
+    cy.get('#recordButton').click();
+    cy.wait(2000);
+    cy.get('#stopImage').should('be.visible');
+    cy.get('#recordButton').click();
+    cy.wait(2000);
+    cy.get('#errorTitle').should('not.exist');
+    cy.get('#recordButton').should('be.visible');
     cy.get('#errorTitle').should('not.exist');
   });
 
   it('Renders Error Modal on failed upload', () => {
-    cy.visit('localhost:3000', {
+    cy.visit('https://localhost:3000', {
       timeout: 60000,
       failOnStatusCode: true,
     });
@@ -65,9 +75,15 @@ describe('Record Audio', () => {
         message: 'Test',
       },
     }).as('uploadRequest');
-    cy.get('#recorderButton').click();
+    cy.contains('4CYPRESS').click();
     cy.wait(1000);
-    cy.get('#recorderButton').click();
+    cy.contains('DONOTDELETE').click();
+    cy.get('#recordImage').should('be.visible');
+    cy.get('#recordButton').click();
+    cy.wait(2000);
+    cy.get('#stopImage').should('be.visible');
+    cy.get('#recordButton').click();
+    cy.wait(2000);
     cy.get('#errorTitle').should('exist');
     cy.get('#errorMessage').should('have.text', 'Test');
   });

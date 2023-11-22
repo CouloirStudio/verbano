@@ -42,7 +42,12 @@ function CreateProjectButton() {
   };
 
   return (
-    <IconButton onClick={handleButtonClick} disabled={loading} style={style}>
+    <IconButton
+      id={'createProjectButton'}
+      onClick={handleButtonClick}
+      disabled={loading}
+      style={style}
+    >
       {loading ? <CircularProgress size={24} /> : <AiOutlinePlus />}
     </IconButton>
   );

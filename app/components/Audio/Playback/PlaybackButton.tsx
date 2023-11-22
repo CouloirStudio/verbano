@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './playback.module.scss';
 import { PlaybackState } from '@/app/hooks/usePlaybackManager';
+import Image from 'next/image';
 
 export interface PlaybackButtonProps {
   playbackState: PlaybackState;
@@ -20,8 +21,6 @@ const PlaybackButton: React.FC<PlaybackButtonProps> = ({
     </button>
   );
 };
-
-import Image from 'next/image';
 
 function getButtonIcon(playbackState: PlaybackState): JSX.Element {
   switch (playbackState) {
@@ -46,6 +45,7 @@ function getButtonIcon(playbackState: PlaybackState): JSX.Element {
     case PlaybackState.IDLE:
       return (
         <Image
+          id={'playButton'}
           src="/icons/Play-Button.svg"
           alt="Play"
           width={163}
