@@ -1,6 +1,6 @@
 describe('Authentication Redirection', () => {
   it('redirects to login page when not logged in', () => {
-    cy.visit('localhost:3000/', {
+    cy.visit('https://localhost:3000/', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -10,7 +10,7 @@ describe('Authentication Redirection', () => {
 
   it('cant access /login when logged in', () => {
     cy.login();
-    cy.visit('localhost:3000/login', {
+    cy.visit('https://localhost:3000/login', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -20,7 +20,7 @@ describe('Authentication Redirection', () => {
 
   it('cant access /register when logged in', () => {
     cy.login();
-    cy.visit('localhost:3000/register', {
+    cy.visit('https://localhost:3000/register', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -30,7 +30,7 @@ describe('Authentication Redirection', () => {
 
   it('accessing /logout when logged in redirects to /login', () => {
     cy.login();
-    cy.visit('localhost:3000/logout', {
+    cy.visit('https://localhost:3000/logout', {
       timeout: 10000,
       failOnStatusCode: true,
     });
@@ -40,12 +40,12 @@ describe('Authentication Redirection', () => {
 
   it('logging out, then accessing the dashboard redirects to /login', () => {
     cy.login();
-    cy.visit('localhost:3000/logout', {
+    cy.visit('https://localhost:3000/logout', {
       timeout: 10000,
       failOnStatusCode: true,
     });
 
-    cy.visit('localhost:3000/', {
+    cy.visit('https://localhost:3000/', {
       timeout: 10000,
       failOnStatusCode: true,
     });
