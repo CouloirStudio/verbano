@@ -35,6 +35,7 @@ const typeDefs = gql`
     logout: Boolean
     updateUser(id: ID!, input: UserInput!): Boolean
     updateUserPassword(id: ID!, input: PasswordUpdateInput!): Boolean
+    deleteUserAccount(id: ID!, input: UserInput!): Boolean
   }
 
   input UserInput {

@@ -1,10 +1,10 @@
 import 'dotenv/config';
-import { User } from '../models/User';
+import {User} from '../models/User';
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongoose';
-import { GraphQLLocalStrategy } from 'graphql-passport';
+import {ObjectId} from 'mongoose';
+import {GraphQLLocalStrategy} from 'graphql-passport';
 import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 
 /**
  * Configure how Passport authenticates users.
@@ -57,8 +57,10 @@ const googleOptions = {
   ),
   callbackURL: 'https://localhost:3000/auth/google/callback',
   scope: ['profile', 'email'],
+  accessType: 'offline',
   state: true,
   passReqToCallback: true as true,
+  prompt: 'consent',
 };
 
 /**
@@ -104,6 +106,7 @@ const googleCallback = async (
       firstName: firstName,
       lastName: lastName,
       email: email,
+      refreshToken: refreshToken,
       active: true,
     }).save();
 

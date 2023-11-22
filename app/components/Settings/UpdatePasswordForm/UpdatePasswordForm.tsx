@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import InputField from '@/app/components/Authentication/Login/InputField';
-import { AiOutlineLock } from 'react-icons/ai';
-import { Button } from '@mui/material';
+import {AiOutlineLock} from 'react-icons/ai';
+import {Button, Stack} from '@mui/material';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import useSettingsManager from '@/app/hooks/useSettingsManager';
+import Box from '@mui/material/Box';
 
 /**
  * `UpdatePasswordField` is a React functional component that provides a password input field for updating a password.
@@ -54,7 +55,9 @@ const UpdatePasswordForm: React.FC = ({}) => {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography sx={{ width: '33%', flexShrink: 0 }}>Password</Typography>
+        <Typography fontWeight={'600'} sx={{ width: '33%', flexShrink: 0 }}>
+          Password
+        </Typography>
         <Typography sx={{ color: 'text.secondary' }}>
           {' '}
           &#x2022; &#x2022; &#x2022; &#x2022; &#x2022; &#x2022;{' '}
@@ -63,42 +66,46 @@ const UpdatePasswordForm: React.FC = ({}) => {
       <AccordionDetails>
         <p>{success}</p>
         <form onSubmit={handleSubmit}>
-          <InputField
-            label={'Old Password'}
-            icon={<AiOutlineLock />}
-            clearError={clearError}
-            error={isError}
-            isRequired={true}
-            onChange={(e) => setOldPass(e.target.value)}
-            type={'password'}
-            value={oldPass}
-          />
+          <Stack spacing={2}>
+            <InputField
+              label={'Old Password'}
+              icon={<AiOutlineLock />}
+              clearError={clearError}
+              error={isError}
+              isRequired={true}
+              onChange={(e) => setOldPass(e.target.value)}
+              type={'password'}
+              value={oldPass}
+            />
 
-          <InputField
-            label={'New Password'}
-            icon={<AiOutlineLock />}
-            clearError={() => {}}
-            error={false}
-            isRequired={false}
-            onChange={(e) => setNewPass(e.target.value)}
-            type={'password'}
-            value={newPass}
-          />
+            <InputField
+              label={'New Password'}
+              icon={<AiOutlineLock />}
+              clearError={() => {}}
+              error={false}
+              isRequired={false}
+              onChange={(e) => setNewPass(e.target.value)}
+              type={'password'}
+              value={newPass}
+            />
 
-          <InputField
-            label={'Confirm New Password'}
-            icon={<AiOutlineLock />}
-            clearError={() => {}}
-            error={false}
-            isRequired={false}
-            onChange={(e) => setNewPassConfirm(e.target.value)}
-            type={'password'}
-            value={newPassConfirm}
-          />
+            <InputField
+              label={'Confirm New Password'}
+              icon={<AiOutlineLock />}
+              clearError={() => {}}
+              error={false}
+              isRequired={false}
+              onChange={(e) => setNewPassConfirm(e.target.value)}
+              type={'password'}
+              value={newPassConfirm}
+            />
 
-          <Button variant="contained" color="primary" type="submit">
-            Update Password
-          </Button>
+            <Box>
+              <Button variant="contained" color="primary" type="submit">
+                Update Password
+              </Button>
+            </Box>
+          </Stack>
         </form>
       </AccordionDetails>
     </Accordion>
