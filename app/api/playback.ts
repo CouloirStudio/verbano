@@ -2,7 +2,6 @@
  * Representation of the interactions with the HTML5 audio element
  * This uses a reference to an element, without actually embedding the element itself.
  */
-
 export class AudioPlayer {
   public audio: HTMLAudioElement | undefined;
   public isLoaded: boolean = false;

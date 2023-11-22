@@ -1,7 +1,7 @@
 import OpenAIService from '../../../app/services/OpenAIService';
 import 'openai/shims/node';
-import {expect} from '@jest/globals';
-import {INote} from '@/app/models/Note';
+import { expect } from '@jest/globals';
+import { INote } from '@/app/models/Note';
 
 // Mock the OpenAI class and the method chat.completions.create
 jest.mock('openai', () => {

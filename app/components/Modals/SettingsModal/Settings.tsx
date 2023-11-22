@@ -7,6 +7,7 @@ import { UpdateNameForm } from '@/app/components/Settings/UpdateNameForm';
 import { UpdatePasswordForm } from '@/app/components/Settings/UpdatePasswordForm';
 import { useUser } from '@/app/contexts/UserContext';
 import styles from './settings.module.scss';
+import DeleteAccount from '@/app/components/Settings/DeleteAccount/DeleteAccount';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -64,7 +65,7 @@ function Settings() {
         flexGrow: 1,
         bgcolor: 'background.paper',
         display: 'flex',
-        height: 224,
+        height: 400,
       }}
     >
       <Tabs
@@ -75,7 +76,7 @@ function Settings() {
         aria-label="Vertical tabs example"
         sx={{ borderRight: 1, borderColor: 'divider' }}
       >
-        <Tab label="General" {...a11yProps(0)} />
+        <Tab label="Account" {...a11yProps(0)} />
         <Tab label="Privacy" {...a11yProps(1)} />
         <Tab label="Billing" {...a11yProps(2)} />
       </Tabs>
@@ -83,6 +84,7 @@ function Settings() {
         <UpdateEmailForm currentUser={currentUser} />
         <UpdateNameForm currentUser={currentUser} />
         <UpdatePasswordForm />
+        <DeleteAccount currentUser={currentUser} />
       </TabPanel>
       <TabPanel value={value} index={1}></TabPanel>
       <TabPanel value={value} index={2}></TabPanel>

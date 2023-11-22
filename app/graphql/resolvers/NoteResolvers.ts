@@ -7,6 +7,7 @@ import {
   UpdateNoteArgs,
 } from './types';
 import { Project } from '../../models/Project';
+import { deleteAudioFromS3 } from '@/app/services/AWSService';
 
 /**
  * Resolvers for querying notes from the database.
@@ -262,7 +263,8 @@ export const NoteMutations = {
     if (!deletedNote) {
       return false; // If no note was found and deleted, return false
     }
-
+    if (deletedNote.audioLocation)
+      await deleteAudioFromS3(deletedNote.audioLocation);
     // Next, find any projects that reference this note and remove the reference
     await Project.updateMany(
       { 'notes.note': args.id },

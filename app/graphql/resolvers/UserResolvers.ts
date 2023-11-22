@@ -1,15 +1,18 @@
-import { User } from '../../models/User';
-import { hashPassword } from '../../config/passport';
+import { User } from '@/app/models/User';
+import { hashPassword } from '@/app/config/passport';
 import {
   AddUserArgs,
   ResolverContext,
   UpdatePasswordArgs,
   UpdateUserArgs,
 } from '@/app/graphql/resolvers/types';
-import { Project } from '@/app/models';
+import { Note, Project, Summary } from '@/app/models';
 import { ApolloError } from 'apollo-server-express';
 import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
+import { deleteAudioFromS3 } from '@/app/services/AWSService';
 import EmailService from '@/app/services/EmailService';
+import { Request } from 'express';
+import revokeToken from '@/app/services/AuthHelper';
 
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
@@ -105,11 +108,19 @@ export const UserMutations = {
     return { user };
   },
 
-  async logout(_: any, __: any, { req }: any) {
-    return new Promise((resolve, reject) => {
-      req.logout((err: any) => {
-        if (err) {
-          reject(err);
+  /**
+   * Asynchronously logs out a user.
+   * This function wraps the Express logout method in a promise,
+   * resolving to true upon successful logout and rejecting with an ApolloError upon failure.
+   *
+   * @param context - The context object containing the Express request.
+   * @returns A promise that resolves to a boolean indicating the success of the logout operation.
+   */
+  async logout(context: { req: Request }): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      context.req.logout((error: Error | null) => {
+        if (error) {
+          reject(new ApolloError('Logout failed: ' + error.message));
         } else {
           resolve(true);
         }
@@ -202,6 +213,71 @@ export const UserMutations = {
       // check if update was a success
       if (updated) return true;
     } else throw new Error('Old password incorrect.');
+  },
+  async deleteUserAccount(
+    _: unknown,
+    args: UpdateUserArgs,
+    _context: ResolverContext,
+  ) {
+    try {
+      const email = args.input.email;
+      // Perform the logic to delete the user account based on the provided email
+      const user = await User.findOneAndDelete({ email });
+
+      if (!user) {
+        throw new Error('User not found.');
+      }
+
+      // If the user signed in with Google, revoke the refresh token
+      if (user.refreshToken) await revokeToken(user.refreshToken);
+
+      // get all projects
+      const userProjects = user.projects;
+
+      if (userProjects) {
+        // for every project get all notes - first loop
+        for (let i = 0; i < userProjects.length; i++) {
+          // get project
+          const project = await Project.findByIdAndDelete(
+            userProjects[i].project,
+          );
+
+          if (project) {
+            // get project notes
+            const notes = project.notes;
+
+            // get project summaries
+            const summaries = project.summaries;
+
+            // for every summary delete from mongo
+            for (let i = 0; i < summaries.length; i++) {
+              await Summary.findByIdAndDelete(summaries[i].summary);
+            }
+
+            // for every note delete from mongo and delete from AWS
+            for (let i = 0; i < notes.length; i++) {
+              const note = await Note.findByIdAndDelete(notes[i].note);
+              if (note && note.audioLocation) {
+                await deleteAudioFromS3(note.audioLocation);
+              }
+            }
+          }
+        }
+      } else {
+        throw new Error('something went wrong');
+      }
+      const emailHtml = `
+        <p>Just writing to let you know your Verbano account has been deleted.</p>
+        <p>We hope to see you again soon!</p>
+        <p>(If you didn't request this, just ignore it.)</p>
+        `;
+
+      await EmailService.sendMail(email, 'Account Deleted', emailHtml);
+      return true; // Return true if the user account was successfully deleted
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while deleting the user account.');
+    }
   },
 };
 

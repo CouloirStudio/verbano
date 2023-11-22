@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
+import { InputAdornment, Stack } from '@mui/material';
 
 interface InputFieldProps {
   value: string | undefined;
@@ -29,9 +29,9 @@ const InputField: React.FC<InputFieldProps> = ({
       clearError();
     }
   };
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-      {icon}
+    <Stack direction={'row'} alignItems={'center'}>
       {error ? (
         <TextField
           fullWidth
@@ -42,6 +42,11 @@ const InputField: React.FC<InputFieldProps> = ({
           type={type}
           error
           id="outlined-error-helper-text"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">{icon}</InputAdornment>
+            ),
+          }}
         />
       ) : (
         <TextField
@@ -52,9 +57,14 @@ const InputField: React.FC<InputFieldProps> = ({
           required={isRequired}
           label={label}
           type={type}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">{icon}</InputAdornment>
+            ),
+          }}
         />
       )}
-    </Box>
+    </Stack>
   );
 };
 
