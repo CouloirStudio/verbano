@@ -17,10 +17,11 @@ import { useDraggingContext } from '@/app/contexts/DraggingContext';
 interface ProjectTreeItemProps {
   project: ProjectType;
   index: number;
+  className?: string;
 }
 
 const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
-  ({ project, index }) => {
+  ({ project, index, className }) => {
     const [contextMenu, setContextMenu] = useState<{
       mouseX: number;
       mouseY: number;
@@ -160,6 +161,8 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
                   key={project.id}
                   nodeId={project.id.toString()}
                   project={project}
+                  className={styles.projectTreeItem}
+                  customClassName={styles.projectTreeItem}
                   label={
                     <Box
                       onContextMenu={handleContextMenu}
@@ -203,6 +206,7 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
                             key={projectNote.note.id}
                             nodeId={projectNote.note.id.toString()}
                             label={projectNote.note.noteName}
+                            className={styles.projectTreeItem}
                           />
                         ))}
                       </div>

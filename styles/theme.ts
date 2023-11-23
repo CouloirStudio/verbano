@@ -28,12 +28,12 @@ const urbanist = '"Urbanist", "Helvetica", "Arial", sans-serif';
 const epilogue = '"Epilogue", "Helvetica", "Arial", sans-serif';
 
 const commonTypography = {
-  h1: { fontFamily: quicksand },
-  h2: { fontFamily: quicksand },
-  h3: { fontFamily: quicksand },
-  h4: { fontFamily: quicksand },
-  h5: { fontFamily: quicksand },
-  h6: { fontFamily: quicksand },
+  h1: { fontWeight: '700', fontFamily: quicksand, fontSize: '2.027rem' },
+  h2: { fontWeight: '500', fontFamily: quicksand, fontSize: '1.802rem' },
+  h3: { fontWeight: '500', fontFamily: quicksand, fontSize: '1.602rem' },
+  h4: { fontWeight: '500', fontFamily: quicksand, fontSize: '1.424rem' },
+  h5: { fontWeight: '400', fontFamily: quicksand, fontSize: '1.266rem' },
+  h6: { fontWeight: '400', fontFamily: quicksand, fontSize: '1.125rem' },
   fontFamily: urbanist,
   subtitle1: { fontFamily: urbanist },
   button: {
@@ -55,6 +55,11 @@ export const lightThemeOptions: CustomThemeOptions = {
     info: { main: infoColor },
     warning: { main: warningColor },
     error: { main: errorColor },
+    text: {
+      primary: black,
+      secondary: '#6B6B6B',
+      disabled: '#BDBDBD',
+    },
   },
   custom: {
     headerBackground: primaryColor,
@@ -94,6 +99,11 @@ export const darkThemeOptions: CustomThemeOptions = {
     info: { main: infoColor },
     warning: { main: warningColor },
     error: { main: errorColor },
+    text: {
+      primary: white,
+      secondary: '#BDBDBD',
+      disabled: '#6B6B6B',
+    },
   },
   custom: {
     headerBackground: '#272727',

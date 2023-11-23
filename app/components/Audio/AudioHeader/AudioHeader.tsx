@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import Box from '@mui/material/Box';
-import styles from './audio.module.scss';
+import React, {useEffect, useState} from 'react';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
 import Recorder from '@/app/components/Audio/Recorder';
-import { Playback } from '@/app/components/Audio/Playback';
-import { TranscriptionButton } from '@/app/components/Audio/Transcription';
-import { useNoteContext } from '@/app/contexts/NoteContext';
-import { useTheme } from '@mui/material/styles';
+import {Playback} from '@/app/components/Audio/Playback';
+import {TranscriptionButton} from '@/app/components/Audio/Transcription';
+import {useNoteContext} from '@/app/contexts/NoteContext';
+import {useTheme} from '@mui/material/styles';
 import SummarizeButton from '@/app/components/Audio/Summary/SummarizeButton';
+import {Stack} from '@mui/material';
+import Typography from '@mui/material/Typography';
+import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
+import TextField from '@mui/material/TextField';
+import {useMutation} from '@apollo/client';
+import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
 
 /**
  * AudioHeader is a React component that serves as a container for audio-related functionalities,
@@ -19,8 +23,13 @@ import SummarizeButton from '@/app/components/Audio/Summary/SummarizeButton';
  * for the selected note and project.
  */
 const AudioHeader = () => {
-  const { selectedNote, selectedProject } = useProjectContext();
+  const { selectedNote, setSelectedNote, selectedProject, refetchData } =
+    useProjectContext();
   const { refreshNoteDetails } = useNoteContext();
+  const [updateNote] = useMutation(UpdateNote);
+  const [name, setName] = useState<string>(
+    selectedNote?.noteName ?? 'Untitled',
+  );
   const [hasRecording, setHasRecording] = useState(false);
   const theme = useTheme();
 
@@ -29,29 +38,122 @@ const AudioHeader = () => {
     setHasRecording(!!(selectedNote && selectedNote.audioLocation));
   }, [selectedNote]);
 
+  function epocToFriendlyDate(epoch: string) {
+    const date = new Date(parseInt(epoch));
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  const {
+    isEditing,
+    value,
+    handleChange,
+    handleSubmit,
+    handleDoubleClick,
+    handleBlur,
+    handleKeyDown,
+    exitEditing,
+  } = useDoubleClickEdit(name);
+
+  const submitUpdate = async (newValue: string): Promise<void> => {
+    if (newValue === selectedNote?.noteName) {
+      setName(newValue);
+      return;
+    }
+    if (newValue.trim() === '') {
+      setName(selectedNote?.noteName ?? 'Untitled');
+      return;
+    }
+
+    setName(newValue.trim());
+    try {
+      await updateNote({
+        variables: {
+          id: selectedNote?.id,
+          input: {
+            noteName: newValue,
+          },
+        },
+      });
+
+      refetchData();
+    } catch (e) {
+      setName(selectedNote?.noteName ?? 'Untitled');
+      console.error('Error updating note:', e);
+    }
+  };
+
   return (
-    <Box
-      className={styles.AudioContainer}
+    <Stack
+      direction={'row'}
+      alignItems={'center'}
+      justifyContent={'space-evenly'}
       sx={{
         color: theme.custom?.text,
-        backgroundColor: theme.custom?.mainBackground,
       }}
     >
-      {!hasRecording ? (
-        <Recorder
-          refreshNoteDetails={refreshNoteDetails}
-          selectedNote={selectedNote}
-          selectedProject={selectedProject}
-        />
-      ) : (
-        <Playback
-          baseUrl="https://localhost:3000"
-          selectedNote={selectedNote}
-        />
-      )}
-      <TranscriptionButton />
-      <SummarizeButton />
-    </Box>
+      <Stack
+        width={'33%'}
+        direction={'row'}
+        alignItems={'center'}
+        justifyContent={'center'}
+      >
+        {isEditing ? (
+          <TextField
+            variant="standard"
+            type="text"
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={(e) => handleKeyDown(e, submitUpdate)}
+            autoFocus
+          />
+        ) : (
+          <Typography
+            variant={'h3'}
+            color={'text.primary'}
+            onDoubleClick={handleDoubleClick}
+          >
+            {selectedNote?.noteName}
+          </Typography>
+        )}
+      </Stack>
+      <Stack
+        width={'33%'}
+        direction={'row'}
+        alignItems={'center'}
+        justifyContent={'center'}
+      >
+        {!hasRecording ? (
+          <Recorder
+            refreshNoteDetails={refreshNoteDetails}
+            selectedNote={selectedNote}
+            selectedProject={selectedProject}
+          />
+        ) : (
+          <Playback
+            baseUrl="https://localhost:3000"
+            selectedNote={selectedNote}
+          />
+        )}
+        <TranscriptionButton />
+        <SummarizeButton />
+      </Stack>
+      <Stack
+        width={'33%'}
+        direction={'row'}
+        alignItems={'center'}
+        justifyContent={'center'}
+      >
+        <Typography variant={'subtitle1'} color={'text.secondary'} noWrap>
+          {epocToFriendlyDate(selectedNote?.dateCreated?.toString() ?? '')}
+        </Typography>
+      </Stack>
+    </Stack>
   );
 };
 

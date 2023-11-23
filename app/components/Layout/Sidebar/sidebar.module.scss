@@ -8,7 +8,6 @@
   flex-direction: row;
   justify-content: flex-start;
   height: calc(100vh - $header-height);
-  overflow-y: auto;
 
   h1 {
     @include verticalSpacing($spacing-base);

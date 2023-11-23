@@ -1,10 +1,11 @@
 import React from 'react';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { IoPersonOutline } from 'react-icons/io5';
 import useFormatTimestamp from '@/app/hooks/useFormatTimestamp'; // Import the hook
 import styles from './transcription.module.scss';
+import {Stack} from '@mui/material';
+import {useTheme} from '@mui/material/styles';
+import {RiSpeakLine} from 'react-icons/ri';
 
 /**
  * `TranscriptionSegmentProps` defines the properties that the `TranscriptionSegment` component expects.
@@ -29,19 +30,25 @@ const TranscriptionSegment: React.FC<TranscriptionSegmentProps> = ({
   segment,
 }) => {
   const formatTimestamp = useFormatTimestamp();
+  const theme = useTheme();
 
   return (
-    <Paper className={styles.segment} elevation={1}>
-      <Box className={styles.avatarBox}>
-        <IoPersonOutline size={24} />
-      </Box>
-      <Box>
-        <Typography variant={'subtitle2'}>
-          {formatTimestamp(segment.start)}
-        </Typography>
-        <Typography variant="body1">{segment.text}</Typography>
-      </Box>
-    </Paper>
+    <Box>
+      <Stack direction={'column'} className={styles.segment} spacing={1}>
+        <Stack direction={'row'} spacing={1} alignItems={'middle'}>
+          <RiSpeakLine size={24} />
+          <Typography variant={'subtitle2'}>
+            {formatTimestamp(segment.start)}
+          </Typography>
+        </Stack>
+        <Box
+          className={styles.content}
+          sx={{ backgroundColor: theme.custom?.contrastBackground }}
+        >
+          <Typography variant="body1">{segment.text}</Typography>
+        </Box>
+      </Stack>
+    </Box>
   );
 };
 

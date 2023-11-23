@@ -47,6 +47,10 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
     } = useDoubleClickEdit(noteName);
 
     useEffect(() => {
+      setName(noteName);
+    }, [noteName]);
+
+    useEffect(() => {
       if (selectedNote?.id !== id && isEditing) {
         exitEditing();
       }

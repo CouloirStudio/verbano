@@ -1,29 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import { Droppable } from '@hello-pangea/dnd';
 import styles from './noteTree.module.scss';
 import NoteTreeItem from '@/app/components/Notes/NoteTree/NoteTreeItem';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { ProjectNoteType } from '@/app/graphql/resolvers/types';
+import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
 
-interface RenderNoteTreeProps {
-  handleContextMenu: (event: React.MouseEvent, noteId: string) => void;
-}
-
-const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
-  handleContextMenu,
-}) => {
-  const { projects, selectedProject, setSelectedProject } = useProjectContext();
-
-  const [localNotes, setLocalNotes] = useState<ProjectNoteType[]>([]);
-
-  useEffect(() => {
-    if (selectedProject) {
-      setLocalNotes(
-        [...selectedProject.notes].sort((a, b) => a.position - b.position),
-      );
-    }
-  }, [selectedProject]);
+const renderNoteTree = (
+  notes: ProjectNoteType[],
+  handleContextMenu: {
+    (event: React.MouseEvent<Element, MouseEvent>, noteId: string): void;
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>, noteId: string): void;
+  },
+  selectedProject: ProjectType | null,
+) => {
+  const sortedNotes = [...notes].sort((a, b) => a.position - b.position);
 
   return (
     <Droppable droppableId="notes" type={'note'}>
@@ -33,8 +23,8 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
           ref={provided.innerRef}
           {...provided.droppableProps}
         >
-          {localNotes.length > 0 ? (
-            localNotes.map((note, index) => (
+          {sortedNotes.length > 0 ? (
+            sortedNotes.map((note, index) => (
               <NoteTreeItem
                 key={note.note.id}
                 note={note.note}
@@ -56,4 +46,4 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   );
 };
 
-export default RenderNoteTree;
+export default renderNoteTree;

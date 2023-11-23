@@ -1,21 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import styles from './header.module.scss';
-import {
-  Avatar,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  Theme,
-  useTheme,
-} from '@mui/material';
-import { Nightlight, WbSunny } from '@mui/icons-material';
-import { BiLogOut } from 'react-icons/bi';
-import { IoSettingsOutline } from 'react-icons/io5';
-import { useUser } from '@/app/contexts/UserContext';
-import { useThemeContext } from '@/app/contexts/ThemeContext';
-import { deepPurple } from '@mui/material/colors';
-import { SettingsModal } from '@/app/components/Modals/SettingsModal';
+import {Avatar, Divider, IconButton, Menu, MenuItem, Stack, Theme, useTheme,} from '@mui/material';
+import {Nightlight, WbSunny} from '@mui/icons-material';
+import {BiLogOut} from 'react-icons/bi';
+import {IoSettingsOutline} from 'react-icons/io5';
+import {useUser} from '@/app/contexts/UserContext';
+import {useThemeContext} from '@/app/contexts/ThemeContext';
+import {deepPurple} from '@mui/material/colors';
+import {SettingsModal} from '@/app/components/Modals/SettingsModal';
+import Typography from '@mui/material/Typography';
 
 /**
  * Generates style properties for an avatar based on the user's name.
@@ -124,8 +117,10 @@ const Header: React.FC = () => {
             }}
             className="menu-item"
           >
-            <IoSettingsOutline />
-            Settings
+            <Stack direction={'row'} alignItems={'center'} spacing={2}>
+              <IoSettingsOutline />
+              <Typography>Settings</Typography>
+            </Stack>
           </MenuItem>
 
           <Divider />
@@ -137,8 +132,10 @@ const Header: React.FC = () => {
             }}
             className="menu-item"
           >
-            <BiLogOut />
-            Logout
+            <Stack direction={'row'} alignItems={'center'} spacing={2}>
+              <BiLogOut />
+              <Typography> Logout</Typography>
+            </Stack>
           </MenuItem>
         </Menu>
       </div>

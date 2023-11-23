@@ -3,14 +3,14 @@
 
   .scrollView {
     width: 100%;
+    background-color: red;
   }
 }
 
 .segment {
-  display: flex;
-  align-items: center;
-  padding: 24px;
-  margin: 12px;
-  gap: 12px;
-  max-width: 50%;
+  .content {
+    border-radius: 100vh;
+    padding: 8px 16px;
+    width: fit-content;
+  }
 }

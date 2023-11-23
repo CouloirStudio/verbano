@@ -94,14 +94,26 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   props: TreeItemProps & {
     projectNotes?: ProjectNoteType[];
     project?: ProjectType;
+    customClassName?: string; // Add a customClassName prop
   },
   ref: React.Ref<HTMLLIElement>,
 ) {
-  const { project, projectNotes, ...restProps } = props;
+  const { project, projectNotes, className, customClassName, ...restProps } =
+    props;
 
   return (
     <CustomTreeContext.Provider value={{ project, projectNotes }}>
-      <TreeItem ContentComponent={CustomContent} {...restProps} ref={ref} />
+      <TreeItem
+        ContentComponent={(contentProps) => (
+          <CustomContent
+            {...contentProps}
+            className={`${contentProps.className} ${customClassName}`} // Combine MUI className and customClassName
+          />
+        )}
+        className={className} // Use the className prop for MUI styles
+        {...restProps}
+        ref={ref}
+      />
     </CustomTreeContext.Provider>
   );
 });
