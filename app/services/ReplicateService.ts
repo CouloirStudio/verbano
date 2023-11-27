@@ -34,7 +34,7 @@ class ReplicateService {
       throw new Error('Replicate API key not provided.');
     }
     this.replicateModel =
-      '9aa6ecadd30610b81119fc1b6807302fd18ca6cbb39b3216f430dcf23618cedd';
+      '4d50797290df275329f202e48c76360b3f22b08d28c196cbc54600319435f8d2';
     this.replicate = new Replicate({
       auth: this.replicateApiKey,
     });
@@ -52,6 +52,8 @@ class ReplicateService {
       version: this.replicateModel,
       input: {
         audio: s3PresignedUrl,
+        align_output: false,
+        debug: true,
       },
     });
 
@@ -75,6 +77,7 @@ class ReplicateService {
         throw new Error(result.error.message);
       }
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log(result);
     } while (result.status !== 'succeeded');
 
     return result.output;

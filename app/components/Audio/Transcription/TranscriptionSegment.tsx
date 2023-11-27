@@ -13,8 +13,15 @@ import {RiSpeakLine} from 'react-icons/ri';
  */
 interface TranscriptionSegmentProps {
   segment: {
+    id: number;
+    end: number;
     start: number;
     text: string;
+    tokens: number[];
+    avgLogProb: number;
+    temperature: number;
+    noSpeechProb: number;
+    compressionRatio: number;
   };
 }
 

@@ -35,8 +35,15 @@ class TranscriptionParseError extends Error {
 }
 
 interface TranscriptionSegmentData {
+  id: number;
+  end: number;
   start: number;
   text: string;
+  tokens: number[];
+  avgLogProb: number;
+  temperature: number;
+  noSpeechProb: number;
+  compressionRatio: number;
 }
 
 interface TabPanelProps {
@@ -151,8 +158,9 @@ const TranscriptionDisplay: React.FC = () => {
   // Parse and render transcription segments
   const renderTranscription = (transcriptionJson: string) => {
     try {
-      const segments: TranscriptionSegmentData[] =
-        JSON.parse(transcriptionJson);
+      const parsedData = JSON.parse(transcriptionJson);
+      const segments: TranscriptionSegmentData[] = parsedData.segments;
+
       return segments.map((segment, index) => (
         <TranscriptionSegment key={index} segment={segment} />
       ));
