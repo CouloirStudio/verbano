@@ -13,15 +13,23 @@ const RecordButton: React.FC<RecordButtonProps> = ({
   toggleRecording,
 }) => (
   <button
+    id={'recordButton'}
     onClick={toggleRecording}
     className={`${styles.recorderButton} ${
       isRecording ? styles.recording : ''
     }`}
   >
     {isRecording ? (
-      <Image src="/icons/Stop-Button.svg" alt="Stop" width={163} height={42} />
+      <Image
+        id={'stopImage'}
+        src="/icons/Stop-Button.svg"
+        alt="Stop"
+        width={163}
+        height={42}
+      />
     ) : (
       <Image
+        id={'recordImage'}
         src="/icons/Record-Button.svg"
         alt="Record"
         width={163}
