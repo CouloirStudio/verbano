@@ -4,7 +4,10 @@ const httpLink = new HttpLink({
   uri: 'https://localhost:3000/graphql',
   credentials: 'include',
 });
-
+]
+/**
+ * a function to initiate the apollo client.
+ */
 const client = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache(),

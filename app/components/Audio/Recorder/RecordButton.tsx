@@ -8,6 +8,12 @@ export interface RecordButtonProps {
   theme?: 'light' | 'dark';
 }
 
+/**
+ * RecordButton renders a button to control audio recording.
+ * The button's appearance updates according to the recording state.
+ * @param isRecording a boolean that represents the recording state
+ * @param toggleRecording a function that is called when the button is clicked
+ */
 const RecordButton: React.FC<RecordButtonProps> = ({
   isRecording,
   toggleRecording,

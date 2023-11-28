@@ -1,7 +1,9 @@
-import { gql } from 'apollo-boost';
-import { useQuery } from '@apollo/react-hooks';
-import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
+import { useQuery } from "@apollo/react-hooks";
+import GetCurrentUser from "@/app/graphql/queries/GetCurrentUser";
 
+/**
+ * User is a component that represents the current user and displays their information.
+ */
 const User = () => {
   const { loading, error, data } = useQuery(GetCurrentUser);
 

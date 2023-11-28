@@ -8,6 +8,13 @@ interface TooltipIconButtonProps {
   className?: string;
 }
 
+/**
+ *  A re-usable icon button that contains a tooltip.
+ * @param title the tool tip text
+ * @param onClick function for when the button is clicked
+ * @param icon the icon of the button
+ * @param className the styles for the button
+ */
 const TooltipIconButton: React.FC<TooltipIconButtonProps> = ({
   title,
   onClick,

@@ -1,20 +1,17 @@
-import React, {useState} from 'react';
-import InputField from '@/app/components/Authentication/Login/InputField';
-import {AiOutlineLock} from 'react-icons/ai';
-import {Button, Stack} from '@mui/material';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import EditIcon from '@mui/icons-material/Edit';
-import Typography from '@mui/material/Typography';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import useSettingsManager from '@/app/hooks/useSettingsManager';
-import Box from '@mui/material/Box';
+import React, { useState } from "react";
+import InputField from "@/app/components/Authentication/Login/InputField";
+import { AiOutlineLock } from "react-icons/ai";
+import { Button, Stack } from "@mui/material";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import EditIcon from "@mui/icons-material/Edit";
+import Typography from "@mui/material/Typography";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import useSettingsManager from "@/app/hooks/useSettingsManager";
+import Box from "@mui/material/Box";
 
 /**
  * `UpdatePasswordField` is a React functional component that provides a password input field for updating a password.
- *
- * It includes basic password validation to ensure a minimum length of 8 characters.
- *
  * @remarks
  * This component can be used in forms where the user is required to enter or update their password.
  *
@@ -36,6 +33,10 @@ const UpdatePasswordForm: React.FC = ({}) => {
   const clearError = () => {
     setIsError(false);
   };
+  /**
+   * A function that handles form submission
+   * @param e react.FormEvent to be prevented
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {

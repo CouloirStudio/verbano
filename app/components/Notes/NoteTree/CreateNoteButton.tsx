@@ -10,13 +10,18 @@ const style = {
   fontSize: '1.2rem',
 };
 
-function CreateProjectButton() {
+/**
+ * CreateNoteButton provides a button for creating notes.
+ */
+function CreateNoteButton() {
   // Define the mutation hook
   const [addNote, { data, loading, error }] = useMutation(AddNote);
 
   const context = useProjectContext();
 
-  // Handle the button click
+  /**
+   * This function handles the creation of the note when the button is clicked.
+   */
   const handleButtonClick = async () => {
     const notesWithContainsName = context.selectedProject?.notes?.filter(
       (note) => note.note.noteName.includes('New Note'),
@@ -55,4 +60,4 @@ function CreateProjectButton() {
   );
 }
 
-export default CreateProjectButton;
+export default CreateNoteButton;

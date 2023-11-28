@@ -1,16 +1,15 @@
-import React, {useEffect, useRef} from 'react';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
-import {useErrorModalContext} from '@/app/contexts/ErrorModalContext';
-import {transcribe} from '@/app/api/transcription';
-import IconButton from '@mui/material/IconButton';
-import {useNoteContext} from '@/app/contexts/NoteContext';
-import {Tooltip, useTheme} from '@mui/material';
-import client from '@/app/config/apolloClient';
-import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
+import React, { useEffect, useRef } from "react";
+import { useProjectContext } from "@/app/contexts/ProjectContext";
+import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
+import { transcribe } from "@/app/api/transcription";
+import IconButton from "@mui/material/IconButton";
+import { useNoteContext } from "@/app/contexts/NoteContext";
+import { Tooltip, useTheme } from "@mui/material";
+import client from "@/app/config/apolloClient";
+import GetTranscription from "@/app/graphql/queries/GetTranscription.graphql";
 
 /**
- * A button that grabs the selected note and transcribes the audio. .
- * @constructor
+ * A button that grabs the selected note and transcribes the audio.
  */
 const TranscriptionButton = () => {
   const BASE_URL = 'https://localhost:3000';

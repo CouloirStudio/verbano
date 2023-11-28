@@ -53,7 +53,10 @@ const UpdateNameForm: React.FC<FullNameInputProps> = ({ currentUser }) => {
     return 'Current User Unavailable';
   };
 
-  // Function for submitting the form
+  /**
+   * A function that handles form submission
+   * @param e react.FormEvent to be prevented
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

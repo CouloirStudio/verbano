@@ -1,10 +1,10 @@
-import 'dotenv/config';
-import {User} from '../models/User';
-import bcrypt from 'bcrypt';
-import {ObjectId} from 'mongoose';
-import {GraphQLLocalStrategy} from 'graphql-passport';
-import passport from 'passport';
-import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
+import "dotenv/config";
+import { User } from "../models/User";
+import bcrypt from "bcrypt";
+import { ObjectId } from "mongoose";
+import { GraphQLLocalStrategy } from "graphql-passport";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 /**
  * Configure how Passport authenticates users.
@@ -136,6 +136,10 @@ passport.deserializeUser(async (id: ObjectId, done: any) => {
   done(null, user);
 });
 
+/**
+ * A function for hashing passwords.
+ * @param password the password to be hashed
+ */
 export const hashPassword = async (password: string): Promise<string> => {
   try {
     const saltRounds = 10;
