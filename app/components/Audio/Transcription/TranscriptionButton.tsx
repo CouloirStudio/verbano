@@ -7,6 +7,7 @@ import {useNoteContext} from '@/app/contexts/NoteContext';
 import {Tooltip, useTheme} from '@mui/material';
 import client from '@/app/config/apolloClient';
 import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
+import {useProgress} from '@/app/contexts/ProgressContext';
 
 /**
  * A button that grabs the selected note and transcribes the audio. .
@@ -21,6 +22,8 @@ const TranscriptionButton = () => {
 
   const selectedNoteRef = useRef(selectedNote);
 
+  const { updateProgress } = useProgress();
+
   const theme = useTheme();
 
   useEffect(() => {
@@ -31,58 +34,77 @@ const TranscriptionButton = () => {
    * Transcribes audio with Whisper and sets transcription state to the new transcription.
    */
   const transcribeAudio = () => {
-    try {
-      if (selectedNote) {
-        try {
-          // Transcribe audio
-          transcribe(
-            selectedNote?.audioLocation,
-            BASE_URL,
-            selectedNote?.id,
-          ).then((transcription) => {
-            if (!transcription) {
-              return;
-            }
-
-            // Check that the selected note has not changed since the transcription was requested
-            const currentNoteId = selectedNoteRef.current
-              ? selectedNoteRef.current.id
-              : null;
-            if (selectedNote.id !== currentNoteId) {
-              return;
-            }
-            // Set transcription in the NoteContext so that the display updates
-            // this works
-
-            //update the transcription context
-            setTranscription(JSON.stringify(transcription, null, 2));
-
-            //update the apollo cache with the new transcription
-            client.refetchQueries({
-              include: [
-                {
-                  query: GetTranscription,
-                  variables: {
-                    id: selectedNote.id,
-                  },
-                },
-              ],
-            });
-          });
-        } catch (err: any) {
-          setErrorMessage(err.message);
-          setIsError(true);
-        }
-      } else {
-        // There should be a selected note if this button is pressed
-        setIsError(true);
-        setErrorMessage('No note selected.');
-      }
-    } catch (error) {
-      console.log(error);
+    if (!selectedNote) {
       setIsError(true);
-      if (error instanceof Error) setErrorMessage(error.message);
+      setErrorMessage('No note selected.');
+      return;
     }
+
+    updateProgress(selectedNote.noteName, selectedNote.id, 'Transcription', 0);
+
+    transcribe(selectedNote.audioLocation, BASE_URL, selectedNote.id)
+      .then((transcription) => {
+        if (!transcription) {
+          clearInterval(progressInterval);
+          return;
+        }
+
+        const currentNoteId = selectedNoteRef.current
+          ? selectedNoteRef.current.id
+          : null;
+        if (selectedNote.id !== currentNoteId) {
+          clearInterval(progressInterval);
+          return;
+        }
+
+        updateProgress(
+          selectedNote.noteName,
+          selectedNote.id,
+          'Transcription',
+          1,
+          0,
+        );
+
+        setTranscription(transcription);
+        client.refetchQueries({
+          include: [
+            {
+              query: GetTranscription,
+              variables: { id: selectedNote.id },
+            },
+          ],
+        });
+      })
+      .catch((err) => {
+        clearInterval(progressInterval);
+        setErrorMessage(err.message);
+        setIsError(true);
+      });
+
+    // Polling for progress
+    const checkProgress = () => {
+      fetch(`${BASE_URL}/transcription/progress/${selectedNote.id}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          updateProgress(
+            selectedNote.noteName,
+            selectedNote.id,
+            'Transcription',
+            data.progress,
+            data.estimatedSecondsLeft,
+          );
+        })
+        .catch((error) => {
+          console.error('Error fetching transcription progress:', error);
+        });
+    };
+
+    const progressInterval = setInterval(checkProgress, 1000); // Poll every second
   };
 
   const disabled = !selectedNote?.audioLocation;

@@ -159,8 +159,8 @@ const TranscriptionDisplay: React.FC = () => {
   const renderTranscription = (transcriptionJson: string) => {
     try {
       const parsedData = JSON.parse(transcriptionJson);
-      const segments: TranscriptionSegmentData[] = parsedData.segments;
 
+      const segments: TranscriptionSegmentData[] = parsedData.segments;
       return segments.map((segment, index) => (
         <TranscriptionSegment key={index} segment={segment} />
       ));

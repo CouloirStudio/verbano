@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import { Fade, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import TakingNotesSVG from '@/app/components/UI/SVGs/TakingNotesSVG';
+import ProgressContext from '@/app/contexts/ProgressContext';
 
 export default function Home() {
   const { selectedNote } = useProjectContext();
@@ -46,6 +47,7 @@ export default function Home() {
           </Fade>
         )}
       </Box>
+      <ProgressContext />
     </div>
   );
 }

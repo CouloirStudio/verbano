@@ -4,6 +4,10 @@ export interface INote extends Document {
   audioLocation?: string;
   dateCreated?: Date;
   transcription?: string;
+  progress?: {
+    percentage: number;
+    secondsLeft: number;
+  };
   tags?: string[];
   noteName: string;
   noteDescription?: string;
@@ -29,6 +33,16 @@ const NoteSchema = new Schema<INote>({
   },
   noteDescription: String,
   summary: String,
+  progress: {
+    percentage: {
+      type: Number,
+      default: 0,
+    },
+    secondsLeft: {
+      type: Number,
+      default: 0,
+    },
+  },
 });
 
 NoteSchema.methods.getProjectId = async function (
