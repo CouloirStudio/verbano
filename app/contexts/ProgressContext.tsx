@@ -182,7 +182,9 @@ const ProgressBox: React.FC = () => {
       );
     }
 
-    return <CircularProgress size="2rem" />;
+    if (task.estimatedSecondsLeft && task.estimatedSecondsLeft == 0) {
+      return <CircularProgress size="2rem" />;
+    }
   };
 
   return (
