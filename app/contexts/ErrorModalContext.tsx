@@ -1,6 +1,8 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
-// Define the shape of your error context
+/**
+ * Defines the shape of the ErrorModalContext
+ */
 interface ErrorModalContextType {
   errorMessage: string | null;
   isError: boolean;
@@ -8,10 +10,19 @@ interface ErrorModalContextType {
   setErrorMessage: (errorMessage: string | null) => void;
 }
 
+/**
+ * Context for the error modal
+ */
 const ErrorModalContext = createContext<ErrorModalContextType | undefined>(
   undefined,
 );
-
+/**
+ * A custom hook ot access the ErrorModalContext and ensure it is used
+ * from within the provider.
+ *
+ * @throws Will throw an error if used outside of ErrorContextProvider.
+ * @returns {ErrorModalContextType} the error modal context
+ */
 export const useErrorModalContext = (): ErrorModalContextType => {
   const context = useContext(ErrorModalContext);
   if (!context) {
@@ -22,10 +33,17 @@ export const useErrorModalContext = (): ErrorModalContextType => {
   return context;
 };
 
+/**
+ * Props for the ErrorContextProvider
+ */
 interface ErrorContextProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Component for providing ErrorModalContext.
+ * @param children ErrorContextProviderProps
+ */
 export const ErrorModalContextProvider: React.FC<ErrorContextProviderProps> = ({
   children,
 }) => {

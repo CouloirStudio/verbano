@@ -1,9 +1,9 @@
-import { INote, Note } from '../../models/Note';
-import { IProject, Project } from '../../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../../models/User';
-import { ResolverContext } from '@/app/graphql/resolvers/types';
-import { ISummary } from '@/app/models/Summary';
+import { INote, Note } from "../../models/Note";
+import { IProject, Project } from "../../models/Project";
+import { ApolloError } from "apollo-server-express";
+import { User } from "../../models/User";
+import { ResolverContext } from "@/app/graphql/resolvers/types";
+import { ISummary } from "@/app/models/Summary";
 
 /**
  * Resolvers for querying projects from the database.
@@ -11,6 +11,8 @@ import { ISummary } from '@/app/models/Summary';
 export const ProjectQueries = {
   /**
    * Retrieve a list of all projects from the database.
+   *
+   * @param context current user
    * @throws ApolloError - Throws an error if no projects are found.
    * @returns An array of projects.
    */
@@ -51,7 +53,18 @@ export const ProjectQueries = {
   },
 };
 
+/**
+ * Resolvers for mutating projects in the database.
+ */
 export const ProjectMutations = {
+  /**
+   * Creates a new project and returns it.
+   *
+   * @param _ - Root object (unused in this mutation).
+   * @param args  project name and description for the mutation
+   * @param context for the mutation
+   * @returns the new project
+   */
   async addProject(
     _: unknown,
     args: { input: { projectName: string; projectDescription?: string } },
@@ -110,6 +123,14 @@ export const ProjectMutations = {
     }
   },
 
+  /**
+   * Deletes a project and returns a boolean.
+   *
+   * @param _ - Root object (unused in this mutation).
+   * @param args project id for the mutation
+   * @param context
+   * @returns True if project is deleted, False if not
+   */
   async deleteProject(_: unknown, args: { id: string }, context: any) {
     if (!context.getUser()) {
       throw new Error('User not authenticated.');
@@ -155,6 +176,13 @@ export const ProjectMutations = {
     }
   },
 
+  /**
+   *
+   * @param _ - Root object (unused in this mutation)
+   * @param args project name and description for the mutation
+   * @param context - Resolver context (unused in this mutation).
+   * @returns the updated project
+   */
   async updateProject(
     _: unknown,
     args: {
@@ -179,6 +207,14 @@ export const ProjectMutations = {
     return Project.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 
+  /**
+   * Moves project to a different place in the list
+   *
+   * @param _ - Root object (unused in this mutation)
+   * @param args project id and order to be updated
+   * @param _context - Resolver Context (unused in this mutation)
+   * @returns the updated project
+   */
   async moveProjectOrder(
     _: any,
     args: { projectId: string; order: number },
@@ -266,6 +302,11 @@ export const ProjectType = {
     });
   },
 
+  /**
+   *  Retrieve a list of summaries for a given project.
+   * @param project - The project for which summaries are to be fetched
+   * @returns an array of summaries associated with the project
+   */
   async summaries(project: {
     id: string;
     summaries: { summary: ISummary; position: number }[];

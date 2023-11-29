@@ -1,5 +1,8 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
+/**
+ * Interface for INote object
+ */
 export interface INote extends Document {
   audioLocation?: string;
   dateCreated?: Date;
@@ -12,6 +15,9 @@ export interface INote extends Document {
   getProjectId(): Promise<String | null>;
 }
 
+/**
+ * MongoDB Schema for Note object
+ */
 const NoteSchema = new Schema<INote>({
   audioLocation: {
     type: String,
@@ -31,6 +37,11 @@ const NoteSchema = new Schema<INote>({
   summary: String,
 });
 
+/**
+ * Function for retrieving the id of the project that a  note belongs to.
+ * @param INote the note
+ * @returns the project id
+ */
 NoteSchema.methods.getProjectId = async function (
   this: INote,
 ): Promise<string | null> {

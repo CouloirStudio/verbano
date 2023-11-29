@@ -1,17 +1,16 @@
-import { useLazyQuery, useMutation } from '@apollo/client';
-import { useCallback } from 'react';
-import { DropResult } from '@hello-pangea/dnd';
-import GetNote from '@/app/graphql/queries/GetNote.graphql';
-import MoveNoteOrder from '@/app/graphql/mutations/MoveNoteOrder.graphql';
-import MoveProjectOrder from '@/app/graphql/mutations/MoveProjectOrder.graphql';
-import MoveNoteToProject from '@/app/graphql/mutations/MoveNoteToProject.graphql';
-import {
-  NoteType,
-  ProjectNoteType,
-  ProjectType,
-} from '@/app/graphql/resolvers/types';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useLazyQuery, useMutation } from "@apollo/client";
+import { useCallback } from "react";
+import { DropResult } from "@hello-pangea/dnd";
+import GetNote from "@/app/graphql/queries/GetNote.graphql";
+import MoveNoteOrder from "@/app/graphql/mutations/MoveNoteOrder.graphql";
+import MoveProjectOrder from "@/app/graphql/mutations/MoveProjectOrder.graphql";
+import MoveNoteToProject from "@/app/graphql/mutations/MoveNoteToProject.graphql";
+import { NoteType, ProjectNoteType, ProjectType } from "@/app/graphql/resolvers/types";
+import { useProjectContext } from "@/app/contexts/ProjectContext";
 
+/**
+ * Interface representing an ExtendedNote
+ */
 interface ExtendedNoteType extends NoteType {
   position: number;
 }

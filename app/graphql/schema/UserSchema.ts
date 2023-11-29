@@ -1,5 +1,8 @@
-import { gql } from 'apollo-server-express';
+import { gql } from "apollo-server-express";
 
+/**
+ * Graphql schema for the user type and associated operations.
+ */
 const typeDefs = gql`
   type User {
     id: ID!
