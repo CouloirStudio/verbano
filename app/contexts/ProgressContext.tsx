@@ -119,11 +119,7 @@ const ProgressBox: React.FC = () => {
     return 'Summarising';
   };
 
-  const classes = useStyles();
-
   const theme = useTheme();
-
-  console.log(tasks);
 
   return (
     <Box
