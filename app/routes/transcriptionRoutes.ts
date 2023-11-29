@@ -2,6 +2,8 @@ import express from 'express';
 import { generatePresignedUrl } from '../services/AWSService';
 import { Note } from '../models';
 import ReplicateService from '@/app/services/ReplicateService';
+import passport from 'passport';
+import { IUser } from '@/app/models/User';
 
 const router = express.Router();
 
@@ -82,27 +84,43 @@ router.post('/transcribe', async (req, res) => {
   }
 });
 
-router.get('/progress/:noteId', async (req, res) => {
-  try {
-    const noteId = req.params.noteId;
-    const note = await Note.findById(noteId);
+router.get(
+  '/progress/:noteId',
+  passport.authenticate('session'),
+  async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).send('Unauthorized');
+      }
 
-    if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      const user = req.user as IUser;
+
+      const noteId = req.params.noteId;
+      const note = await Note.findById(noteId);
+
+      if (!note) {
+        return res.status(404).json({ error: 'Note not found' });
+      }
+
+      const noteOwner = await note.getOwnerId();
+
+      if (noteOwner?.toString() !== user.id.toString()) {
+        return res.status(403).json({ error: 'Unauthorized' });
+      }
+
+      const progress = note.progress?.percentage || 0;
+      const secondsLeft = note.progress?.secondsLeft || 0;
+
+      res.json({
+        isComplete: progress >= 1,
+        progress,
+        estimatedSecondsLeft: secondsLeft,
+      });
+    } catch (error) {
+      console.error('An error occurred:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-
-    const progress = note.progress?.percentage || 0;
-    const secondsLeft = note.progress?.secondsLeft || 0;
-
-    res.json({
-      isComplete: progress >= 1,
-      progress,
-      estimatedSecondsLeft: secondsLeft,
-    });
-  } catch (error) {
-    console.error('An error occurred:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+  },
+);
 
 export default router;
