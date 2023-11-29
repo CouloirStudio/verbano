@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {useProjectContext} from '@/app/contexts/ProjectContext';
+import React, { useEffect, useState } from 'react';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 import Recorder from '@/app/components/Audio/Recorder';
-import {Playback} from '@/app/components/Audio/Playback';
-import {TranscriptionButton} from '@/app/components/Audio/Transcription';
-import {useNoteContext} from '@/app/contexts/NoteContext';
-import {useTheme} from '@mui/material/styles';
+import { Playback } from '@/app/components/Audio/Playback';
+import { TranscriptionButton } from '@/app/components/Audio/Transcription';
+import { useNoteContext } from '@/app/contexts/NoteContext';
+import { useTheme } from '@mui/material/styles';
 import SummarizeButton from '@/app/components/Audio/Summary/SummarizeButton';
-import {Stack} from '@mui/material';
+import { Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import useDoubleClickEdit from '@/app/hooks/useDoubleClickEdit';
 import TextField from '@mui/material/TextField';
-import {useMutation} from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import UpdateNote from '@/app/graphql/mutations/UpdateNote.graphql';
 
 /**

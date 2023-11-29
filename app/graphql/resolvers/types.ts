@@ -1,5 +1,5 @@
-import { Request } from "express";
-import { GraphQLResolveInfo } from "graphql";
+import { Request } from 'express';
+import { GraphQLResolveInfo } from 'graphql';
 
 /**
  * Interface for resolver context

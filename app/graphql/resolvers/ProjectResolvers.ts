@@ -1,10 +1,10 @@
-import {INote, Note} from '../../models/Note';
-import {IProject, Project} from '../../models/Project';
-import {ApolloError} from 'apollo-server-express';
-import {User} from '../../models/User';
-import {ResolverContext} from '@/app/graphql/resolvers/types';
-import {ISummary} from '@/app/models/Summary';
-import {deleteAudioFromS3} from '@/app/services/AWSService';
+import { INote, Note } from '../../models/Note';
+import { IProject, Project } from '../../models/Project';
+import { ApolloError } from 'apollo-server-express';
+import { User } from '../../models/User';
+import { ResolverContext } from '@/app/graphql/resolvers/types';
+import { ISummary } from '@/app/models/Summary';
+import { deleteAudioFromS3 } from '@/app/services/AWSService';
 
 /**
  * Resolvers for querying projects from the database.
