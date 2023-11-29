@@ -168,7 +168,6 @@ const TranscriptionDisplay: React.FC = () => {
 
       const rowRenderer: ListRowRenderer = ({ key, index, style }) => {
         const segment = segments[index];
-        console.log(`Rendering segment at index ${index}:`, segment);
 
         return (
           <div key={key} style={style}>
@@ -176,8 +175,6 @@ const TranscriptionDisplay: React.FC = () => {
           </div>
         );
       };
-
-      console.log(segments);
 
       return (
         <div style={{ width: '100%', height: '100%', minHeight: '800px' }}>
