@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {
   Box,
   Chip,
@@ -120,6 +126,19 @@ const ProgressBox: React.FC = () => {
   };
 
   const theme = useTheme();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [lastTaskCount, setLastTaskCount] = useState(0);
+
+  useEffect(() => {
+    if (Object.keys(tasks).length > lastTaskCount) {
+      setIsExpanded(true);
+    }
+    setLastTaskCount(Object.keys(tasks).length);
+  }, [tasks]);
+
+  const handleAccordionChange = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
     <Box
@@ -132,13 +151,14 @@ const ProgressBox: React.FC = () => {
       zIndex={1000}
     >
       {tasks && Object.entries(tasks).length > 0 && (
-        <Accordion>
+        <Accordion expanded={isExpanded}>
           <AccordionSummary
             expandIcon={<MdExpandLess />}
             sx={{
               backgroundColor: theme.palette.secondary.main,
               color: theme.palette.primary.contrastText,
             }}
+            onClick={handleAccordionChange}
           >
             <Typography variant={'h6'}>
               <IoSparklesOutline />

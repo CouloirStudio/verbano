@@ -15,9 +15,8 @@ import {useProgress} from '@/app/contexts/ProgressContext';
  */
 const TranscriptionButton = () => {
   const BASE_URL = 'https://localhost:3000';
-  const context = useProjectContext();
+  const { selectedNote, refetchData } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
-  const selectedNote = context.selectedNote;
   const { setTranscription } = useNoteContext();
 
   const selectedNoteRef = useRef(selectedNote);
@@ -74,6 +73,8 @@ const TranscriptionButton = () => {
             },
           ],
         });
+
+        refetchData();
       })
       .catch((err) => {
         clearInterval(progressInterval);
