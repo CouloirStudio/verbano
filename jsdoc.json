@@ -1,0 +1,18 @@
+{
+  "source": {
+    "includePattern": ".+\\\\.ts(doc|x)?$",
+    "include": [
+      "pages",
+      "app/**/*",
+      "server"
+    ],
+    "exclude": [
+      "node_modules",
+      "__tests__",
+      "cypress"
+    ]
+  },
+  "opts": {
+    "destination": "./docs"
+  }
+}
