@@ -3,7 +3,9 @@ import { User } from '@/app/models/User';
 
 const router = Router();
 
-// Activation route
+/**
+ * Route for activating a user account.
+ */
 router.get('/:activationCode', async (req, res) => {
   const activationCode = req.params.activationCode;
 

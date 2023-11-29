@@ -8,6 +8,10 @@ class OpenAIService {
   private readonly apiKey: string;
   private readonly openai: OpenAI;
 
+  /**
+   * Constructor for OpenAIService object.
+   * @param apiKey an api key to be used
+   */
   constructor(apiKey?: string) {
     this.apiKey = apiKey || process.env.OPENAI_API_KEY || '';
     if (!this.apiKey) {
@@ -25,6 +29,11 @@ class OpenAIService {
     return this.openai;
   }
 
+  /**
+   * Transcribes audio using OpenAI's whisper model.
+   * @param audio the audio to be transcribed
+   * @returns the transcription, or an error message
+   */
   public async transcribeAudio(audio: Blob): Promise<Transcription | string> {
     const file = await toFile(audio, 'audio.wav');
 
@@ -43,6 +52,7 @@ class OpenAIService {
    * Generates a summary report of the given text, using the text's context.
    * @param notes the notes to generate a summary for
    * @param template the template to use for the summary
+   * @returns the summary if generated, null if not
    */
   public async generateSummary(
     notes: INote[],
@@ -73,6 +83,7 @@ class OpenAIService {
   /**
    * Generates a list of tags for the given text.
    * @param tts the text to generate tags for
+   * @returns the list of tags
    */
   public async generateTags(tts: string): Promise<string[] | undefined> {
     try {
@@ -97,6 +108,7 @@ class OpenAIService {
   /**
    * Generates a title for the given text.
    * @param tts the text to generate a title for
+   * @returns the generated title
    */
   public async generateTitle(tts: string): Promise<string | null> {
     try {

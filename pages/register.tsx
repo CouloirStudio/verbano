@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import styles from '@/pages/styles/register.module.scss';
-import UserSignup from '@/app/graphql/mutations/UserSignup.graphql';
-import { Button, Divider } from '@mui/material';
-import { FaGoogle } from 'react-icons/fa';
-import { useRouter } from 'next/router';
-import InputField from '@/app/components/Authentication/Login/InputField';
-import { useTheme } from '@mui/material/styles';
+import React, { useState } from "react";
+import { useMutation } from "@apollo/client";
+import styles from "@/pages/styles/register.module.scss";
+import UserSignup from "@/app/graphql/mutations/UserSignup.graphql";
+import { Button, Divider } from "@mui/material";
+import { FaGoogle } from "react-icons/fa";
+import { useRouter } from "next/router";
+import InputField from "@/app/components/Authentication/Login/InputField";
+import { useTheme } from "@mui/material/styles";
 
+/**
+ * The registration page for Verbano.
+ */
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
