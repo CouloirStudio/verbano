@@ -265,6 +265,8 @@ const ProgressBox: React.FC = () => {
     }
   };
 
+  const emptyTasks = Object.entries(tasks).length === 0;
+
   return (
     <Box
       position="fixed"
@@ -275,7 +277,7 @@ const ProgressBox: React.FC = () => {
       boxShadow={3}
       zIndex={1000}
     >
-      {tasks && Object.entries(tasks).length > 0 && (
+      {!emptyTasks && (
         <Accordion expanded={isExpanded}>
           <AccordionSummary
             expandIcon={<MdExpandLess />}
@@ -290,6 +292,7 @@ const ProgressBox: React.FC = () => {
               AI Operations
             </Typography>
           </AccordionSummary>
+
           <Stack p={2} direction={'column'} spacing={2}>
             {Object.entries(tasks).map(([noteId, actions]) =>
               Object.entries(actions).map(([actionType, task]) => (

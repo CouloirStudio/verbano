@@ -11,6 +11,7 @@ import ProjectTreeItem from '@/app/components/Projects/ProjectTree/ProjectTreeIt
 import { Droppable } from '@hello-pangea/dnd';
 import { useDraggingContext } from '@/app/contexts/DraggingContext';
 import { useTheme } from '@mui/material/styles';
+import { Skeleton, Stack } from '@mui/material';
 
 const renderProjectTree = (projects: PositionedProjectType[]) => {
   return projects.map((project: PositionedProjectType, index) => (
@@ -26,6 +27,7 @@ const renderProjectTree = (projects: PositionedProjectType[]) => {
 function ProjectTree() {
   const { refetchData, setSelectedProject, setSelectedNote, projects } =
     useProjectContext();
+  const [loading, setLoading] = useState(true);
 
   const [localProjects, setLocalProjects] = useState<PositionedProjectType[]>(
     [],
@@ -37,15 +39,25 @@ function ProjectTree() {
         (a, b) => a.position - b.position,
       );
       setLocalProjects(sortedProjects);
+      setTimeout(() => setLoading(false), 1500);
     } else {
-      setLocalProjects([]);
+      setLoading(true);
     }
   }, [projects]);
+
+  const renderSkeletons = () => {
+    return (
+      <Stack spacing={1}>
+        {[...Array(5)].map((_, index) => (
+          <Skeleton variant="rounded" height={40} />
+        ))}
+      </Stack>
+    );
+  };
 
   const { draggingItemType } = useDraggingContext();
 
   useEffect(() => {
-    // render project tree when projects list changes
     renderProjectTree(localProjects);
   }, [projects, draggingItemType]);
 
@@ -67,7 +79,7 @@ function ProjectTree() {
         >
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
-              {renderProjectTree(projects)}
+              {loading ? renderSkeletons() : renderProjectTree(localProjects)}
               {provided.placeholder}
             </div>
           )}
