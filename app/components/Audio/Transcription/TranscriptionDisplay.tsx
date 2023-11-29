@@ -97,45 +97,57 @@ const TranscriptionDisplay: React.FC = () => {
   useEffect(() => {
     if (!selectedNote?.id) return;
 
-    getTranscript({ variables: { id: selectedNote.id } });
-    getSummary({ variables: { id: selectedNote.id } });
-
-    if (data && data.getTranscription) {
-      try {
-        const transcriptionData: TranscriptionSegmentData[] = JSON.parse(
-          data.getTranscription,
-        );
-        setTranscription(JSON.stringify(transcriptionData, null, 2));
-      } catch (error: unknown) {
-        setIsError(true);
-        let errorMessage = 'An unknown error occurred.';
-        if (error instanceof TranscriptionParseError) {
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = 'An unexpected error occurred: ' + error.message;
-        }
-        setErrorMessage(errorMessage);
-      }
+    if (selectedNote.transcription) {
+      setTranscription(selectedNote.transcription);
     } else {
       setTranscription('');
     }
 
-    if (summaryData && summaryData.getSingleSummary) {
-      try {
-        setSummary(summaryData.getSingleSummary);
-      } catch (error: unknown) {
-        setIsError(true);
-        let errorMessage = 'An unknown error occurred.';
-        if (error instanceof TranscriptionParseError) {
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = 'An unexpected error occurred: ' + error.message;
-        }
-        setErrorMessage(errorMessage);
-      }
+    if (selectedNote.summary) {
+      setSummary(selectedNote.summary);
     } else {
       setSummary('');
     }
+
+    // getTranscript({ variables: { id: selectedNote.id } });
+    // getSummary({ variables: { id: selectedNote.id } });
+    //
+    // if (data && data.getTranscription) {
+    //   try {
+    //     const transcriptionData: TranscriptionSegmentData[] = JSON.parse(
+    //       data.getTranscription,
+    //     );
+    //     setTranscription(JSON.stringify(transcriptionData, null, 2));
+    //   } catch (error: unknown) {
+    //     setIsError(true);
+    //     let errorMessage = 'An unknown error occurred.';
+    //     if (error instanceof TranscriptionParseError) {
+    //       errorMessage = error.message;
+    //     } else if (error instanceof Error) {
+    //       errorMessage = 'An unexpected error occurred: ' + error.message;
+    //     }
+    //     setErrorMessage(errorMessage);
+    //   }
+    // } else {
+    //   setTranscription('');
+    // }
+    //
+    // if (summaryData && summaryData.getSingleSummary) {
+    //   try {
+    //     setSummary(summaryData.getSingleSummary);
+    //   } catch (error: unknown) {
+    //     setIsError(true);
+    //     let errorMessage = 'An unknown error occurred.';
+    //     if (error instanceof TranscriptionParseError) {
+    //       errorMessage = error.message;
+    //     } else if (error instanceof Error) {
+    //       errorMessage = 'An unexpected error occurred: ' + error.message;
+    //     }
+    //     setErrorMessage(errorMessage);
+    //   }
+    // } else {
+    //   setSummary('');
+    // }
   }, [
     selectedNote?.id,
     getTranscript,
