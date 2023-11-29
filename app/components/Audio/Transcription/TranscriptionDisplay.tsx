@@ -101,19 +101,6 @@ const TranscriptionDisplay: React.FC = () => {
     if (!selectedNote?.id) return;
 
     setTranscription('');
-
-    // if (selectedNote.transcription) {
-    //   setTranscription(selectedNote.transcription);
-    // } else {
-    //   setTranscription('');
-    // }
-    //
-    // if (selectedNote.summary) {
-    //   setSummary(selectedNote.summary);
-    // } else {
-    //   setSummary('');
-    // }
-
     getTranscript({ variables: { id: selectedNote.id } });
     getSummary({ variables: { id: selectedNote.id } });
 

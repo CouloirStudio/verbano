@@ -3,7 +3,7 @@ import Replicate, { Prediction } from 'replicate';
 
 interface ProgressInfo {
   progress: number;
-  estimatedSecondsLeft?: number; // Time remaining as a string
+  estimatedSecondsLeft?: number;
 }
 
 /**
