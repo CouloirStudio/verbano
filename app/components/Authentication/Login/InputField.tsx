@@ -13,6 +13,17 @@ interface InputFieldProps {
   clearError: () => void;
 }
 
+/**
+ * InputField is a reusable functional component for gathering user input.
+ * @param value the value of the text field
+ * @param onChange the function called when the input field is changed
+ * @param isRequired boolean that represents whether the field is required or not
+ * @param label the label of the input field
+ * @param type the type of input, can be password, email etc...
+ * @param icon the icon to the left of the input field
+ * @param error boolean for whether there was an input error
+ * @param clearError function that clears the error
+ */
 const InputField: React.FC<InputFieldProps> = ({
   value,
   onChange,
@@ -23,6 +34,9 @@ const InputField: React.FC<InputFieldProps> = ({
   error,
   clearError,
 }) => {
+  /**
+   * function that enforces the onChange functional parameter when the input field is changed.
+   */
   const customOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e); // Call the provided onChange
     if (value === '') {

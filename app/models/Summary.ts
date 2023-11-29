@@ -1,5 +1,8 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
+/**
+ * Interface for ISummary object
+ */
 export interface ISummary extends Document {
   summaryName: string;
   summaryDescription?: string;
@@ -10,6 +13,9 @@ export interface ISummary extends Document {
   noteIds?: (typeof Schema.Types.ObjectId)[];
 }
 
+/**
+ * MongoDB schema for Summary document.
+ */
 const SummarySchema = new Schema<ISummary>({
   summaryName: {
     type: String,

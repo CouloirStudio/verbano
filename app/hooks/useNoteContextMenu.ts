@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import DeleteNote from '@/app/graphql/mutations/DeleteNote';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import DeleteNote from "@/app/graphql/mutations/DeleteNote";
+import { useProjectContext } from "@/app/contexts/ProjectContext";
 
+/**
+ * Custom hook for handling the Note context menu.
+ */
 export const useNoteContextMenu = () => {
   const { refetchData, setSelectedNote } = useProjectContext();
   const [contextMenu, setContextMenu] = useState<{
@@ -14,6 +17,11 @@ export const useNoteContextMenu = () => {
   );
   const [deleteNote, { loading, error }] = useMutation(DeleteNote);
 
+  /**
+   * Handles the interaction with the context menu.
+   * @param event react mouse event
+   * @param noteId the id of the note
+   */
   const handleContextMenu = (event: React.MouseEvent, noteId: string) => {
     event.preventDefault();
     setContextMenu({
@@ -27,6 +35,9 @@ export const useNoteContextMenu = () => {
     setContextMenu(null);
   };
 
+  /**
+   * Handles the deletion of the note
+   */
   const handleDelete = async () => {
     try {
       const response = await deleteNote({

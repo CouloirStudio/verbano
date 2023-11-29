@@ -1,31 +1,48 @@
 // DraggingContext.tsx
 
-import React, { createContext, ReactNode, useContext, useState } from 'react'; // Define the type of the item being dragged
+import React, { createContext, ReactNode, useContext, useState } from "react"; // Define the type of the item being dragged
 
 // Define the type of the item being dragged
 export type DraggedItemType = 'note' | 'project' | null;
 
-// Define the shape of the dragging context
-interface DraggingContextState {
+/**
+ * Defines the shape of the DraggingContect
+ */
+interface DraggingContextType {
   draggingItemType: DraggedItemType;
   setDraggingItemType: (itemType: DraggedItemType) => void;
 }
 
-// Create the context with a default value
-const DraggingContext = createContext<DraggingContextState>({
+/**
+ * Context for dragging items
+ */
+const DraggingContext = createContext<DraggingContextType>({
   draggingItemType: null,
   setDraggingItemType: () => {},
 });
 
-// Create a custom hook to use the dragging context
-export const useDraggingContext = () => useContext(DraggingContext);
+/**
+ * A custom hook for accessing DraggingContext and ensuring it is used
+ * within the provider.
+ *
+ * @throws Will throw an error if used outside of DraggingContextProvider
+ * @returns {DraggingContextType} the dragging context
+ *
+ */
+export const useDraggingContext = (): DraggingContextType =>
+  useContext(DraggingContext);
 
-// Define the props for the provider
+/**
+ * Props for DraggingProvider
+ */
 interface DraggingProviderProps {
   children: ReactNode;
 }
 
-// Create a provider component
+/**
+ * A component for providing DraggingContext
+ * @param children DraggingProviderProps
+ */
 export const DraggingProvider: React.FC<DraggingProviderProps> = ({
   children,
 }) => {

@@ -1,8 +1,10 @@
-import { Router } from 'express';
-import passport from '@/app/config/passport';
+import { Router } from "express";
+import passport from "@/app/config/passport";
 
+/**
+ * Router for Google Oauth endpoints.
+ */
 const router = Router();
-
 router.get(
   '/auth/google',
   passport.authenticate('google', {

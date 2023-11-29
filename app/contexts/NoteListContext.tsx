@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
 /**
  * This component provides context for what is contained in the notes sidebar list.
@@ -9,10 +9,17 @@ interface NoteListContextType {
   clearSelectedNotes: () => void;
 }
 
+/**
+ * Context for selecting multiple Notes.
+ */
 const NoteListContext = createContext<NoteListContextType | undefined>(
   undefined,
 );
 
+/**
+ * A custom hook to access the UserNoteListContext and ensure it is used within
+ * the provider.
+ */
 export const useNoteListContext = (): NoteListContextType => {
   const context = useContext(NoteListContext);
 
@@ -24,10 +31,17 @@ export const useNoteListContext = (): NoteListContextType => {
   return context;
 };
 
+/**
+ * Props for the NoteListContextProvider
+ */
 interface NoteListContextProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Component for providing NoteListContext.
+ * @param children children to be passed to nested components
+ */
 export const NoteListContextProvider: React.FC<
   NoteListContextProviderProps
 > = ({ children }) => {

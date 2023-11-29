@@ -14,7 +14,6 @@ interface SettingsModalProps {
 /**
  * A modal build of MUI dialog box, this modal houses the settings component.
  * @param props props for the settings modal
- * @constructor
  */
 const SettingsModal: React.FC<SettingsModalProps> = (props) => {
   const { open, handleClose } = props;

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
 /**
  * This component provides context for what is contained in the notes details. Currently just the transcription components.
@@ -12,8 +12,17 @@ interface NoteContextType {
   refreshNoteDetails: () => void;
 }
 
+/**
+ * Context for Note items.
+ */
 const NoteContext = createContext<NoteContextType | undefined>(undefined);
 
+/**
+ * Custom hook for using the NoteContext from within a provider
+ *
+ * @throws Will throw an error if used outside of NoteContextProvider.
+ * @returns {NoteContextType} the note context
+ */
 export const useNoteContext = (): NoteContextType => {
   const context = useContext(NoteContext);
 
@@ -23,10 +32,17 @@ export const useNoteContext = (): NoteContextType => {
   return context;
 };
 
+/**
+ * Props for the NoteContext
+ */
 interface NoteContextProviderProps {
   children: ReactNode;
 }
 
+/**
+ * A component for providing NoteContext.
+ * @param children NoteContextProviderProps
+ */
 export const NoteContextProvider: React.FC<NoteContextProviderProps> = ({
   children,
 }) => {

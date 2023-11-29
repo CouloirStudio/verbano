@@ -8,9 +8,15 @@ const LOGOUT_MUTATION = gql`
     logout
   }
 `;
+/**
+ * a button that handles logging out the user.
+ */
 const LogoutButton = () => {
   const [logout] = useMutation(LOGOUT_MUTATION);
 
+  /**
+   * a function for handling the user logout process.
+   */
   const handleLogout = async () => {
     try {
       await logout();

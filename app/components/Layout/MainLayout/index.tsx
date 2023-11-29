@@ -10,6 +10,9 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
+/**
+ * Layout represents the core layout of the web page, and houses most other components.
+ */
 function Layout({ children }: LayoutProps) {
   return (
     <Box className={styles.layoutContainer}>

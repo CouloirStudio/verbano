@@ -1,5 +1,8 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
+/**
+ * Interface for an IUser object.
+ */
 export interface IUser extends Document {
   email: string;
   firstName: string;
@@ -22,6 +25,9 @@ export interface IUser extends Document {
   };
 }
 
+/**
+ * MongoDB schema for a User document.
+ */
 const UserSchema = new Schema<IUser>({
   email: {
     // This is now the email, ensuring it's unique

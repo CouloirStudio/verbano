@@ -25,6 +25,9 @@ interface NoteTreeItemProps {
   ) => void;
 }
 
+/**
+ * NoteTreeItem is a draggable/droppable component that represents an item in the NoteTree.
+ */
 const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
   ({ note, index, handleContextMenu }) => {
     const theme = useTheme();

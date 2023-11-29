@@ -9,6 +9,11 @@ interface NoteTabsProps {
   setActiveTab: React.Dispatch<React.SetStateAction<number>>;
 }
 
+/**
+ * NoteTabs is a component that allows the user to toggle between viewing notes and summaries.
+ * @param activeTab the currently active tab
+ * @param setActiveTab sets the currently active tab
+ */
 const NoteTabs: React.FC<NoteTabsProps> = ({ activeTab, setActiveTab }) => {
   const classes = useStyles();
   const theme = useTheme();

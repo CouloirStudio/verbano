@@ -84,9 +84,6 @@ const useDoubleClickEdit = <T>(
     }
   };
 
-  /**
-   * Return the values and functions
-   */
   return {
     isEditing,
     value,

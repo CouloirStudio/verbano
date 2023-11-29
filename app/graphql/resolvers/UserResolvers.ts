@@ -1,27 +1,35 @@
-import { User } from '@/app/models/User';
-import { hashPassword } from '@/app/config/passport';
-import {
-  AddUserArgs,
-  ResolverContext,
-  UpdatePasswordArgs,
-  UpdateUserArgs,
-} from '@/app/graphql/resolvers/types';
-import { Note, Project, Summary } from '@/app/models';
-import { ApolloError } from 'apollo-server-express';
-import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
-import { deleteAudioFromS3 } from '@/app/services/AWSService';
-import EmailService from '@/app/services/EmailService';
-import { Request } from 'express';
-import revokeToken from '@/app/services/AuthHelper';
+import { User } from "@/app/models/User";
+import { hashPassword } from "@/app/config/passport";
+import { AddUserArgs, ResolverContext, UpdatePasswordArgs, UpdateUserArgs } from "@/app/graphql/resolvers/types";
+import { Note, Project, Summary } from "@/app/models";
+import { ApolloError } from "apollo-server-express";
+import verifyPassword from "@/app/graphql/resolvers/verifyPassword";
+import { deleteAudioFromS3 } from "@/app/services/AWSService";
+import EmailService from "@/app/services/EmailService";
+import { Request } from "express";
+import revokeToken from "@/app/services/AuthHelper";
 
+/**
+ * Resolvers for querying users from the database.
+ */
 export const UserQueries = {
   async currentUser(parent: unknown, args: unknown, context: any) {
     return context.getUser();
   },
 };
 
+/**
+ * Resolvers for mutating users in the database
+ */
 export const UserMutations = {
-  async signup(_: unknown, args: AddUserArgs, context: any) {
+  /**
+   * Mutation for signing up a new user and adding them to the database.
+   *
+   * @param _ -Root object (unused in this mutation)
+   * @param args AddUserArgs for adding a new user
+   * @param _context - Resolver context (unused in this mutation)
+   */
+  async signup(_: unknown, args: AddUserArgs, _context: ResolverContext) {
     const password = args.input.password;
     const email = args.input.email;
     const firstName = args.input.firstName;
@@ -87,6 +95,14 @@ export const UserMutations = {
     };
   },
 
+  /**
+   * Mutation for logging in a user.
+   *
+   * @param parent - Root object (unused in this mutation)
+   * @param email of the user
+   * @param password of the user
+   * @param context - Resolver Context (unused in this mutation)
+   */
   async login(parent: any, { email, password }: any, context: any) {
     const { user } = await context.authenticate('graphql-local', {
       email,
@@ -128,6 +144,13 @@ export const UserMutations = {
     });
   },
 
+  /**
+   * Mutation for updating a user's information.
+   *
+   * @param _ - Root object (unused in this mutation)
+   * @param args UpdateUserArgs for updating the user
+   * @param _context - Resolver context (unused in this mutation)
+   */
   async updateUser(
     _: unknown,
     args: UpdateUserArgs,
@@ -178,6 +201,13 @@ export const UserMutations = {
     return !!updated;
   },
 
+  /**
+   * Mutation for updating a user's password.
+   *
+   * @param _ - Root object (unused in this mutation)
+   * @param args UpdatePasswordArgs for updating the password
+   * @param _context - Resolver context (unused in this mutation)
+   */
   async updateUserPassword(
     _: unknown,
     args: UpdatePasswordArgs,
@@ -214,6 +244,13 @@ export const UserMutations = {
       if (updated) return true;
     } else throw new Error('Old password incorrect.');
   },
+  /**
+   * Mutation for deleting a user's account.
+   *
+   * @param _ - Root object (unused in this mutation)
+   * @param args UpdateUserArgs for updating the user
+   * @param _context - Resolver context (unused in this mutation)
+   */
   async deleteUserAccount(
     _: unknown,
     args: UpdateUserArgs,
@@ -281,7 +318,15 @@ export const UserMutations = {
   },
 };
 
+/**
+ * Type resolvers related to the user type.
+ */
 export const UserType = {
+  /**
+   * Retrieve a list of projects for the current user.
+   *
+   * @param user the user to retrieve the projects for
+   */
   async projects(user: { id: string; projectIds: string[] }) {
     const projects = await Project.find({
       _id: { $in: user.projectIds },

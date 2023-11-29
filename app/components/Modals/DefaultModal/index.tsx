@@ -12,6 +12,15 @@ interface ModalProps {
   className?: string; // New prop
 }
 
+/**
+ * DefaultModal is a reusable modal component.
+ * @param isOpen boolean representing whether the modal is open or closed
+ * @param title the title of the modal
+ * @param width the width of the modal
+ * @param onClose function for closing the modal
+ * @param children the content of the modal
+ * @param className the style for the modal
+ */
 export default function DefaultModal({
   isOpen,
   title,

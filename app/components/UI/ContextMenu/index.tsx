@@ -14,6 +14,12 @@ type ContextMenuProps = {
   options: ContextMenuOption[];
 };
 
+/**
+ * This is a functional component that allows the user to access a context menu.
+ * @param contextMenu the option for opening the context menu
+ * @param handleClose function for closing the menu
+ * @param options the items in the menu
+ */
 export const ContextMenuComponent: React.FC<ContextMenuProps> = ({
   contextMenu,
   handleClose,

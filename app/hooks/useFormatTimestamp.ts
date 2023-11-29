@@ -1,6 +1,9 @@
-import { useCallback } from 'react'; // Custom hook for formatting timestamps
+import { useCallback } from "react"; // Custom hook for formatting timestamps
 
-// Custom hook for formatting timestamps
+/**
+ * Custom hook for formatting timestamps.
+ * @returns the formatted timestamp
+ */
 const useFormatTimestamp = () => {
   const formatTimestamp = useCallback((seconds: number): string => {
     const pad = (num: number, size: number): string =>

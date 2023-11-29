@@ -49,6 +49,9 @@ const Playback: React.FC<PlaybackProps> = ({
     updateStateFromPlayer,
   ]);
 
+  /**
+   * Toggles the playback state using the Playback hook.
+   */
   const togglePlayback = async () => {
     try {
       switch (playbackState) {

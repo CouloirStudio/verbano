@@ -1,10 +1,10 @@
-import 'dotenv/config';
-import {User} from '../models/User';
-import bcrypt from 'bcrypt';
-import {ObjectId} from 'mongoose';
-import {GraphQLLocalStrategy} from 'graphql-passport';
-import passport from 'passport';
-import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
+import "dotenv/config";
+import { User } from "../models/User";
+import bcrypt from "bcrypt";
+import { ObjectId } from "mongoose";
+import { GraphQLLocalStrategy } from "graphql-passport";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 /**
  * Configure how Passport authenticates users.
@@ -100,7 +100,9 @@ const googleCallback = async (
       return;
     }
 
-    // Create new user
+    /**
+     * Creates a new user
+     */
     const newUser = await new User({
       googleId: id,
       firstName: firstName,
@@ -118,24 +120,29 @@ const googleCallback = async (
 
 passport.use(new GoogleStrategy(googleOptions, googleCallback));
 
-/*
- * Configure how Passport serializes the user.
- * Determines what data from the user object should be stored in the session.
- * In this case, we're storing the user's ID.
+/**
+ *  Configure how Passport serializes the user.
+ *  Determines what data from the user object should be stored in the session.
+ *  In this case, we're storing the user's ID.
  */
 passport.serializeUser((user: any, done: any) => {
   done(null, user._id);
 });
 
-/*
- * Configure how Passport deserializes the user.
- * Here, the user is fetched from the database using the ID that was serialized to the session.
+/**
+ *  Configure how Passport deserializes the user.
+ *  Here, the user is fetched from the database using the ID that was serialized to the session.
  */
 passport.deserializeUser(async (id: ObjectId, done: any) => {
   const user = await User.findById(id);
   done(null, user);
 });
 
+/**
+ * A function for hashing passwords.
+ * @param password the password to be hashed
+ * @returns Promise<string> the hashed password
+ */
 export const hashPassword = async (password: string): Promise<string> => {
   try {
     const saltRounds = 10;
