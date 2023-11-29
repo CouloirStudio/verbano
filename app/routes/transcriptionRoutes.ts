@@ -51,6 +51,7 @@ router.post('/transcribe', async (req, res) => {
     }
 
     note.progress = { percentage: 0, secondsLeft: 0 };
+    note.save();
 
     // Generate a pre-signed URL for the audio file
     const url = await generatePresignedUrl(key);

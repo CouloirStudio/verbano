@@ -18,7 +18,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import { MdExpandLess } from 'react-icons/md';
 import { useTheme } from '@mui/material/styles';
 import { IoSparklesOutline } from 'react-icons/io5';
-import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
+import {
+  IoIosCheckmarkCircleOutline,
+  IoIosCloseCircleOutline,
+} from 'react-icons/io';
 
 type ProgressType = 'Transcription' | 'Summary';
 
@@ -128,6 +131,7 @@ const ProgressBox: React.FC = () => {
   const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
   const [lastTaskCount, setLastTaskCount] = useState(0);
+  const [hoveredTask, setHoveredTask] = useState<string | null>(null);
 
   useEffect(() => {
     if (Object.keys(tasks).length > lastTaskCount) {
@@ -138,6 +142,47 @@ const ProgressBox: React.FC = () => {
 
   const handleAccordionChange = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const renderStatusChip = (task: TaskDetail) => {
+    if (task.progress < 1) {
+      if (task.estimatedSecondsLeft !== undefined) {
+        return task.estimatedSecondsLeft > 0 ? (
+          <Chip label={`Time left: ${formatTime(task.estimatedSecondsLeft)}`} />
+        ) : (
+          <Chip label={'Preparing...'} color={'info'} />
+        );
+      }
+    }
+    return null;
+  };
+
+  const renderTaskIcon = (
+    noteId: string,
+    actionType: ProgressType,
+    task: TaskDetail,
+  ) => {
+    const taskId = `${noteId}-${actionType}`;
+    const isTaskComplete = task.progress === 1;
+    const isHovering = hoveredTask === taskId;
+
+    if (isTaskComplete) {
+      return isHovering ? (
+        <IoIosCloseCircleOutline
+          size={'2rem'}
+          color={theme.palette.primary.dark}
+          onClick={() => removeTask(noteId, actionType)}
+          style={{ cursor: 'pointer' }}
+        />
+      ) : (
+        <IoIosCheckmarkCircleOutline
+          size={'2rem'}
+          color={theme.palette.secondary.main}
+        />
+      );
+    }
+
+    return <CircularProgress size="2rem" />;
   };
 
   return (
@@ -180,36 +225,16 @@ const ProgressBox: React.FC = () => {
                       justifyContent={'space-between'}
                       direction={'row'}
                       sx={{ width: '100%' }}
+                      onMouseEnter={() =>
+                        setHoveredTask(`${noteId}-${actionType}`)
+                      }
+                      onMouseLeave={() => setHoveredTask(null)}
                     >
                       <Typography variant="body2" noWrap>
                         {label(actionType)} {task.noteName}
                       </Typography>
-                      {task?.estimatedSecondsLeft !== undefined ? (
-                        task.progress == 1 ? (
-                          <IoIosCheckmarkCircleOutline
-                            size={'2rem'}
-                            color={theme.palette.secondary.main}
-                          />
-                        ) : (
-                          <>
-                            {task?.estimatedSecondsLeft > 0 ? (
-                              <Chip
-                                label={
-                                  task?.estimatedSecondsLeft
-                                    ? `Time left: ${formatTime(
-                                        task?.estimatedSecondsLeft,
-                                      )}`
-                                    : ''
-                                }
-                              />
-                            ) : (
-                              <Chip label={'Preparing...'} color={'info'} />
-                            )}
-                          </>
-                        )
-                      ) : (
-                        <CircularProgress size="2rem" />
-                      )}
+                      {renderStatusChip(task)}
+                      {renderTaskIcon(noteId, actionType as ProgressType, task)}
                     </Stack>
                     <LinearProgress
                       variant={'determinate'}

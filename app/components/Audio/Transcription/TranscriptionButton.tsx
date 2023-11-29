@@ -92,6 +92,10 @@ const TranscriptionButton = () => {
           return response.json();
         })
         .then((data) => {
+          if (data.progress === 1) {
+            clearInterval(progressInterval);
+          }
+
           updateProgress(
             selectedNote.noteName,
             selectedNote.id,
@@ -105,7 +109,7 @@ const TranscriptionButton = () => {
         });
     };
 
-    const progressInterval = setInterval(checkProgress, 1000); // Poll every second
+    const progressInterval = setInterval(checkProgress, 1000);
   };
 
   const disabled = !selectedNote?.audioLocation;
