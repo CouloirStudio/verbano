@@ -1,9 +1,10 @@
-import { INote, Note } from '../../models/Note';
-import { IProject, Project } from '../../models/Project';
-import { ApolloError } from 'apollo-server-express';
-import { User } from '../../models/User';
-import { ResolverContext } from '@/app/graphql/resolvers/types';
-import { ISummary } from '@/app/models/Summary';
+import {INote, Note} from '../../models/Note';
+import {IProject, Project} from '../../models/Project';
+import {ApolloError} from 'apollo-server-express';
+import {User} from '../../models/User';
+import {ResolverContext} from '@/app/graphql/resolvers/types';
+import {ISummary} from '@/app/models/Summary';
+import {deleteAudioFromS3} from '@/app/services/AWSService';
 
 /**
  * Resolvers for querying projects from the database.
@@ -143,7 +144,10 @@ export const ProjectMutations = {
 
     const notes = project.notes;
     for (let i = 0; i < notes.length; i++) {
-      await Note.findByIdAndDelete(notes[i].note);
+      const deletedNote = await Note.findByIdAndDelete(notes[i].note);
+      if (deletedNote && deletedNote.audioLocation) {
+        await deleteAudioFromS3(deletedNote.audioLocation);
+      }
     }
 
     try {
