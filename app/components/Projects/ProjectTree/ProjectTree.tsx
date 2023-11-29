@@ -49,7 +49,7 @@ function ProjectTree() {
     return (
       <Stack spacing={1}>
         {[...Array(5)].map((_, index) => (
-          <Skeleton variant="rounded" height={40} />
+          <Skeleton key={index} variant="rounded" height={40} />
         ))}
       </Stack>
     );

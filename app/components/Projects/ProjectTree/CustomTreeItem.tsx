@@ -21,7 +21,7 @@ const CustomTreeContext = React.createContext<CustomTreeContextType>({});
 
 const CustomContent = React.forwardRef(function CustomContent(
   props: TreeItemContentProps,
-  ref,
+  ref: React.Ref<HTMLDivElement>,
 ) {
   const {
     classes,
@@ -74,7 +74,7 @@ const CustomContent = React.forwardRef(function CustomContent(
         [classes.disabled]: disabled,
       })}
       onMouseDown={handleMouseDown}
-      ref={ref as React.Ref<HTMLDivElement>}
+      ref={ref}
     >
       <div onClick={handleExpansion} className={classes.iconContainer}>
         {icon}
@@ -104,11 +104,14 @@ const CustomTreeItem = React.forwardRef(function CustomTreeItem(
   return (
     <CustomTreeContext.Provider value={{ project, projectNotes }}>
       <TreeItem
-        ContentComponent={(contentProps) => (
-          <CustomContent
-            {...contentProps}
-            className={`${contentProps.className} ${customClassName}`} // Combine MUI className and customClassName
-          />
+        ContentComponent={React.forwardRef(
+          (contentProps: TreeItemContentProps, ref) => (
+            <CustomContent
+              {...contentProps}
+              ref={ref as React.Ref<HTMLDivElement>}
+              className={`${contentProps.className} ${customClassName}`}
+            />
+          ),
         )}
         className={className} // Use the className prop for MUI styles
         {...restProps}
