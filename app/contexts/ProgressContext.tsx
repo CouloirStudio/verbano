@@ -3,6 +3,7 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -58,7 +59,72 @@ interface ProgressProviderProps {
 export const ProgressProvider: React.FC<ProgressProviderProps> = ({
   children,
 }) => {
-  const [tasks, setTasks] = useState<Task>({});
+  const [tasks, setTasks] = useState<Task>(() => {
+    const savedTasks = localStorage.getItem('tasks');
+    return savedTasks ? JSON.parse(savedTasks) : {};
+  });
+
+  const progressIntervalsRef = useRef<{ [noteId: string]: NodeJS.Timeout }>({});
+
+  useEffect(() => {
+    // On load, restart polling for any ongoing tasks
+    Object.entries(tasks).forEach(([noteId, taskDetails]) => {
+      if (taskDetails.Transcription && taskDetails.Transcription.progress < 1) {
+        startPolling(noteId, taskDetails.Transcription.noteName);
+      }
+    });
+
+    return () => {
+      // Cleanup: clear all intervals when unmounting
+      Object.values(progressIntervalsRef.current).forEach(clearInterval);
+    };
+  }, [tasks]);
+
+  const BASE_URL = 'https://localhost:3000';
+
+  const startPolling = (noteId: string, noteName: string) => {
+    const checkProgress = () => {
+      fetch(`${BASE_URL}/transcription/progress/${noteId}`)
+        .then((response) => {
+          if (!response.ok) {
+            removeTask(noteId, 'Transcription');
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.progress === 1) {
+            clearInterval(progressIntervalsRef.current[noteId]);
+          }
+
+          updateProgress(
+            noteName,
+            noteId,
+            'Transcription',
+            data.progress,
+            data.estimatedSecondsLeft,
+          );
+        })
+        .catch((error) => {
+          console.error('Error fetching transcription progress:', error);
+        });
+    };
+
+    // Clear any existing interval for this noteId
+    if (progressIntervalsRef.current[noteId]) {
+      clearInterval(progressIntervalsRef.current[noteId]);
+    }
+
+    // Start a new polling interval
+    progressIntervalsRef.current[noteId] = setInterval(checkProgress, 1000);
+  };
+
+  const stopPolling = (noteId: string) => {
+    if (progressIntervalsRef.current[noteId]) {
+      clearInterval(progressIntervalsRef.current[noteId]);
+      delete progressIntervalsRef.current[noteId];
+    }
+  };
 
   const updateProgress = (
     noteName: string,
@@ -67,17 +133,27 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
     progress: number,
     estimatedSecondsLeft?: number,
   ) => {
-    setTasks((prevTasks) => ({
-      ...prevTasks,
-      [noteId]: {
-        ...prevTasks[noteId],
-        [actionType]: {
-          noteName,
-          progress,
-          estimatedSecondsLeft,
+    setTasks((prevTasks) => {
+      const updatedTasks = {
+        ...prevTasks,
+        [noteId]: {
+          ...prevTasks[noteId],
+          [actionType]: {
+            noteName,
+            progress,
+            estimatedSecondsLeft,
+          },
         },
-      },
-    }));
+      };
+
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+
+      return updatedTasks;
+    });
+
+    if (progress === 1) {
+      stopPolling(noteId);
+    }
   };
 
   const removeTask = (noteId: string, actionType: ProgressType) => {
@@ -91,6 +167,8 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
       }
       return updatedTasks;
     });
+
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   };
 
   return (

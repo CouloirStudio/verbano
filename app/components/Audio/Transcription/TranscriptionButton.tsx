@@ -21,7 +21,7 @@ const TranscriptionButton = () => {
 
   const selectedNoteRef = useRef(selectedNote);
 
-  const { updateProgress } = useProgress();
+  const { updateProgress, removeTask } = useProgress();
 
   const theme = useTheme();
 
@@ -44,7 +44,6 @@ const TranscriptionButton = () => {
     transcribe(selectedNote.audioLocation, BASE_URL, selectedNote.id)
       .then((transcription) => {
         if (!transcription) {
-          clearInterval(progressInterval);
           return;
         }
 
@@ -52,7 +51,6 @@ const TranscriptionButton = () => {
           ? selectedNoteRef.current.id
           : null;
         if (selectedNote.id !== currentNoteId) {
-          clearInterval(progressInterval);
           return;
         }
 
@@ -77,39 +75,12 @@ const TranscriptionButton = () => {
         refetchData();
       })
       .catch((err) => {
-        clearInterval(progressInterval);
-        setErrorMessage(err.message);
+        setErrorMessage(
+          "Sorry, we couldn't transcribe your audio. Try again later.",
+        );
         setIsError(true);
+        removeTask(selectedNote.id, 'Transcription');
       });
-
-    // Polling for progress
-    const checkProgress = () => {
-      fetch(`${BASE_URL}/transcription/progress/${selectedNote.id}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (data.progress === 1) {
-            clearInterval(progressInterval);
-          }
-
-          updateProgress(
-            selectedNote.noteName,
-            selectedNote.id,
-            'Transcription',
-            data.progress,
-            data.estimatedSecondsLeft,
-          );
-        })
-        .catch((error) => {
-          console.error('Error fetching transcription progress:', error);
-        });
-    };
-
-    const progressInterval = setInterval(checkProgress, 1000);
   };
 
   const disabled = !selectedNote?.audioLocation;
