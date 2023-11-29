@@ -236,46 +236,48 @@ const TranscriptionDisplay: React.FC = () => {
 
       <ScrollView>
         <TabPanel value={tabValue} index={0}>
-          <Card variant={'outlined'} sx={{ position: 'relative' }}>
-            <Tooltip title="Copy to clipboard">
-              <IconButton
-                onClick={copyToClipboard}
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  m: 2,
-                  zIndex: 2,
-                }}
-              >
-                <IoCopyOutline />
-              </IconButton>
-            </Tooltip>
-            <CardHeader
-              title={<Typography variant={'h3'}>Transcription</Typography>}
-              subheader={
-                <Typography>
-                  Formatted transcript of your audio message
-                </Typography>
-              }
-            />
-            <CardContent>
-              {loading ? (
-                <Box>
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-                </Box>
-              ) : transcription ? (
-                renderTranscription(transcription)
-              ) : null}
-            </CardContent>
-          </Card>
+          {selectedNote?.transcription && (
+            <Card variant={'outlined'} sx={{ position: 'relative' }}>
+              <Tooltip title="Copy to clipboard">
+                <IconButton
+                  onClick={copyToClipboard}
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    m: 2,
+                    zIndex: 2,
+                  }}
+                >
+                  <IoCopyOutline />
+                </IconButton>
+              </Tooltip>
+              <CardHeader
+                title={<Typography variant={'h3'}>Transcription</Typography>}
+                subheader={
+                  <Typography>
+                    Formatted transcript of your audio message
+                  </Typography>
+                }
+              />
+              <CardContent>
+                {loading ? (
+                  <Box>
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  </Box>
+                ) : transcription ? (
+                  renderTranscription(transcription)
+                ) : null}
+              </CardContent>
+            </Card>
+          )}
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
           <Card variant={'outlined'}>
