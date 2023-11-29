@@ -87,6 +87,11 @@ class ReplicateService {
   }
 }
 
+/**
+ * Parses the logs from the Replicate API to get the latest progress information.
+ * @param logs - The logs from the Replicate API.
+ * @returns {ProgressInfo | null} The latest progress information, or `null` if no progress information was found.
+ */
 const getLatestProgress = (logs: string): ProgressInfo | null => {
   const lines = logs.split('\n');
   for (let i = lines.length - 1; i >= 0; i--) {

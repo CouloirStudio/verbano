@@ -26,6 +26,9 @@ import {
 
 type ProgressType = 'Transcription' | 'Summary';
 
+/**
+ * Defines the shape of the TaskDetail, which is the value of a task in the tasks object.
+ */
 interface TaskDetail {
   noteName: string;
   progress: number;
@@ -36,6 +39,9 @@ interface Task {
   [key: string]: { [type in ProgressType]?: TaskDetail };
 }
 
+/**
+ * Defines the shape of the ProgressContext.
+ */
 interface ProgressContextProps {
   tasks: Task;
   updateProgress: (
@@ -56,6 +62,11 @@ interface ProgressProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Provides the ProgressContext to child components.
+ * @param children The child components to render.
+ * @constructor The ProgressProvider component.
+ */
 export const ProgressProvider: React.FC<ProgressProviderProps> = ({
   children,
 }) => {
@@ -82,6 +93,11 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
 
   const BASE_URL = 'https://localhost:3000';
 
+  /**
+   * Starts polling for the progress of a transcription task.
+   * @param noteId The ID of the note to poll for.
+   * @param noteName The name of the note to poll for.
+   */
   const startPolling = (noteId: string, noteName: string) => {
     const checkProgress = () => {
       fetch(`${BASE_URL}/transcription/progress/${noteId}`)
@@ -119,6 +135,10 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
     progressIntervalsRef.current[noteId] = setInterval(checkProgress, 1000);
   };
 
+  /**
+   * Stops polling for the progress of a transcription task.
+   * @param noteId The ID of the note to stop polling for.
+   */
   const stopPolling = (noteId: string) => {
     if (progressIntervalsRef.current[noteId]) {
       clearInterval(progressIntervalsRef.current[noteId]);
@@ -126,6 +146,14 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
     }
   };
 
+  /**
+   * Updates the progress of a task.
+   * @param noteName The name of the note to update progress for.
+   * @param noteId The ID of the note to update progress for.
+   * @param actionType The type of action to update progress for. Either 'Transcription' or 'Summary'.
+   * @param progress The progress of the task.
+   * @param estimatedSecondsLeft The estimated seconds left for the task.
+   */
   const updateProgress = (
     noteName: string,
     noteId: string,
@@ -156,6 +184,11 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
     }
   };
 
+  /**
+   * Removes a task from the tasks object.
+   * @param noteId The ID of the note to remove the task for.
+   * @param actionType The type of action to remove the task for. Either 'Transcription' or 'Summary'.
+   */
   const removeTask = (noteId: string, actionType: ProgressType) => {
     setTasks((prevTasks) => {
       const updatedTasks = { ...prevTasks };
@@ -178,6 +211,10 @@ export const ProgressProvider: React.FC<ProgressProviderProps> = ({
   );
 };
 
+/**
+ * A hook to use the ProgressContext.
+ * @returns The ProgressContext.
+ */
 export const useProgress = (): ProgressContextProps => {
   const context = useContext(ProgressContext);
   if (!context) {
