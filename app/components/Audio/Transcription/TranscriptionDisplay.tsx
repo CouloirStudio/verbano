@@ -18,9 +18,12 @@ import {
   CardHeader,
   Fade,
   IconButton,
+  Skeleton,
   Stack,
   Tooltip,
 } from '@mui/material';
+import { AutoSizer, List, ListRowRenderer } from 'react-virtualized';
+
 import RecordingSVG from '@/app/components/UI/SVGs/RecordingSVG';
 import TranscriptionSVG from '@/app/components/UI/SVGs/TranscriptionSVG';
 import Tabs from '@mui/material/Tabs';
@@ -97,57 +100,59 @@ const TranscriptionDisplay: React.FC = () => {
   useEffect(() => {
     if (!selectedNote?.id) return;
 
-    if (selectedNote.transcription) {
-      setTranscription(selectedNote.transcription);
-    } else {
-      setTranscription('');
-    }
+    setTranscription('');
 
-    if (selectedNote.summary) {
-      setSummary(selectedNote.summary);
-    } else {
-      setSummary('');
-    }
-
-    // getTranscript({ variables: { id: selectedNote.id } });
-    // getSummary({ variables: { id: selectedNote.id } });
-    //
-    // if (data && data.getTranscription) {
-    //   try {
-    //     const transcriptionData: TranscriptionSegmentData[] = JSON.parse(
-    //       data.getTranscription,
-    //     );
-    //     setTranscription(JSON.stringify(transcriptionData, null, 2));
-    //   } catch (error: unknown) {
-    //     setIsError(true);
-    //     let errorMessage = 'An unknown error occurred.';
-    //     if (error instanceof TranscriptionParseError) {
-    //       errorMessage = error.message;
-    //     } else if (error instanceof Error) {
-    //       errorMessage = 'An unexpected error occurred: ' + error.message;
-    //     }
-    //     setErrorMessage(errorMessage);
-    //   }
+    // if (selectedNote.transcription) {
+    //   setTranscription(selectedNote.transcription);
     // } else {
     //   setTranscription('');
     // }
     //
-    // if (summaryData && summaryData.getSingleSummary) {
-    //   try {
-    //     setSummary(summaryData.getSingleSummary);
-    //   } catch (error: unknown) {
-    //     setIsError(true);
-    //     let errorMessage = 'An unknown error occurred.';
-    //     if (error instanceof TranscriptionParseError) {
-    //       errorMessage = error.message;
-    //     } else if (error instanceof Error) {
-    //       errorMessage = 'An unexpected error occurred: ' + error.message;
-    //     }
-    //     setErrorMessage(errorMessage);
-    //   }
+    // if (selectedNote.summary) {
+    //   setSummary(selectedNote.summary);
     // } else {
     //   setSummary('');
     // }
+
+    getTranscript({ variables: { id: selectedNote.id } });
+    getSummary({ variables: { id: selectedNote.id } });
+
+    if (data && data.getTranscription) {
+      try {
+        const transcriptionData: TranscriptionSegmentData[] = JSON.parse(
+          data.getTranscription,
+        );
+        setTranscription(JSON.stringify(transcriptionData, null, 2));
+      } catch (error: unknown) {
+        setIsError(true);
+        let errorMessage = 'An unknown error occurred.';
+        if (error instanceof TranscriptionParseError) {
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          errorMessage = 'An unexpected error occurred: ' + error.message;
+        }
+        setErrorMessage(errorMessage);
+      }
+    } else {
+      setTranscription('');
+    }
+
+    if (summaryData && summaryData.getSingleSummary) {
+      try {
+        setSummary(summaryData.getSingleSummary);
+      } catch (error: unknown) {
+        setIsError(true);
+        let errorMessage = 'An unknown error occurred.';
+        if (error instanceof TranscriptionParseError) {
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          errorMessage = 'An unexpected error occurred: ' + error.message;
+        }
+        setErrorMessage(errorMessage);
+      }
+    } else {
+      setSummary('');
+    }
   }, [
     selectedNote?.id,
     getTranscript,
@@ -170,12 +175,38 @@ const TranscriptionDisplay: React.FC = () => {
   // Parse and render transcription segments
   const renderTranscription = (transcriptionJson: string) => {
     try {
-      const parsedData = JSON.parse(transcriptionJson);
+      const parsedData: { segments: TranscriptionSegmentData[] } =
+        JSON.parse(transcriptionJson);
+      const segments = parsedData.segments;
 
-      const segments: TranscriptionSegmentData[] = parsedData.segments;
-      return segments.map((segment, index) => (
-        <TranscriptionSegment key={index} segment={segment} />
-      ));
+      const rowRenderer: ListRowRenderer = ({ key, index, style }) => {
+        const segment = segments[index];
+        console.log(`Rendering segment at index ${index}:`, segment);
+
+        return (
+          <div key={key} style={style}>
+            <TranscriptionSegment segment={segment} />
+          </div>
+        );
+      };
+
+      console.log(segments);
+
+      return (
+        <div style={{ width: '100%', height: '100%', minHeight: '800px' }}>
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                width={width}
+                height={height}
+                rowCount={segments.length}
+                rowHeight={100}
+                rowRenderer={rowRenderer}
+              />
+            )}
+          </AutoSizer>
+        </div>
+      );
     } catch (e) {
       return (
         <Typography variant="body2">
@@ -218,33 +249,46 @@ const TranscriptionDisplay: React.FC = () => {
 
       <ScrollView>
         <TabPanel value={tabValue} index={0}>
-          {transcription ? (
-            <Card variant={'outlined'} sx={{ position: 'relative' }}>
-              <Tooltip title="Copy to clipboard">
-                <IconButton
-                  onClick={copyToClipboard}
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    m: 2,
-                    zIndex: 2,
-                  }}
-                >
-                  <IoCopyOutline />
-                </IconButton>
-              </Tooltip>
-              <CardHeader
-                title={<Typography variant={'h3'}>Transcription</Typography>}
-                subheader={
-                  <Typography>
-                    Formatted transcript of your audio message
-                  </Typography>
-                }
-              />
-              <CardContent>{renderTranscription(transcription)}</CardContent>
-            </Card>
-          ) : null}
+          <Card variant={'outlined'} sx={{ position: 'relative' }}>
+            <Tooltip title="Copy to clipboard">
+              <IconButton
+                onClick={copyToClipboard}
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  m: 2,
+                  zIndex: 2,
+                }}
+              >
+                <IoCopyOutline />
+              </IconButton>
+            </Tooltip>
+            <CardHeader
+              title={<Typography variant={'h3'}>Transcription</Typography>}
+              subheader={
+                <Typography>
+                  Formatted transcript of your audio message
+                </Typography>
+              }
+            />
+            <CardContent>
+              {loading ? (
+                <Box>
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                </Box>
+              ) : transcription ? (
+                renderTranscription(transcription)
+              ) : null}
+            </CardContent>
+          </Card>
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
           <Card variant={'outlined'}>
