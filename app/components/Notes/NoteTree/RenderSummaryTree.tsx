@@ -15,11 +15,9 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
   handleContextMenu,
 }) => {
   const { projects, selectedProject, setSelectedProject } = useProjectContext();
-
   const [localSummaries, setLocalSumarries] = useState<ProjectSummaryType[]>(
     [],
   );
-
   useEffect(() => {
     if (selectedProject) {
       setLocalSumarries(
@@ -27,7 +25,6 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
       );
     }
   }, [selectedProject]);
-
   return (
     <Droppable droppableId="summaries" type={'summary'}>
       {(provided) => (
@@ -58,5 +55,4 @@ const RenderNoteTree: React.FC<RenderNoteTreeProps> = ({
     </Droppable>
   );
 };
-
 export default RenderNoteTree;

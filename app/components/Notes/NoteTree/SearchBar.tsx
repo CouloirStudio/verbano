@@ -1,7 +1,7 @@
 import React from 'react';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
-import { IoSearchOutline, IoClose } from 'react-icons/io5';
+import { IoClose, IoSearchOutline } from 'react-icons/io5';
 import styles from './noteTree.module.scss';
 
 type SearchBarProps = {
@@ -9,6 +9,11 @@ type SearchBarProps = {
   searchActive: boolean;
 };
 
+/**
+ * SearchBar is a functional component that allows the user to search through items in the note or summary tree.
+ * @param setSearchActive sets the searchActive boolean
+ * @param searchActive a boolean that represents if the search element is active
+ */
 const SearchBar: React.FC<SearchBarProps> = ({
   setSearchActive,
   searchActive,

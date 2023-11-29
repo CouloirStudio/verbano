@@ -1,3 +1,6 @@
+/**
+ * An SVG for an empty note view.
+ */
 export default function TakingNotesSVG() {
   return (
     <svg

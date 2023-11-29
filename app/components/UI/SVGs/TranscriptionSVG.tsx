@@ -1,3 +1,7 @@
+/**
+ * A SVG for the transcription button.
+ * @constructor
+ */
 export default function TranscriptionSVG() {
   return (
     <svg

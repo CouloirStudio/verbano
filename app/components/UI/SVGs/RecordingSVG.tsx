@@ -1,3 +1,6 @@
+/**
+ * An SVG for the recording button.
+ */
 export default function RecordingSVG() {
   return (
     <svg

@@ -10,13 +10,19 @@ const style = {
   fontSize: '1.2rem',
 };
 
+/**
+ * CreateProjectButton provides a button for creating projects.
+ * @constructor
+ */
 function CreateProjectButton() {
   // Define the mutation hook
   const [addProject, { data, loading, error }] = useMutation(AddProject);
 
   const context = useProjectContext();
 
-  // Handle the button click
+  /**
+   * This function handles the creation of the project when the button is clicked.
+   */
   const handleButtonClick = async () => {
     const projectsWithContainsName = context.projects?.filter((project) =>
       project.project.projectName.includes('New Project'),

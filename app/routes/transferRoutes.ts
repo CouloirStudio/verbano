@@ -4,7 +4,9 @@ import EmailService from '@/app/services/EmailService';
 
 const router = Router();
 
-// Transfer route
+/**
+ * Endpoint for user account transfer.
+ */
 router.get('/:transferCode', async (req, res) => {
   const transferCode = req.params.transferCode;
 

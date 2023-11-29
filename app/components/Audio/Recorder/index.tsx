@@ -9,6 +9,14 @@ type RecorderProps = {
   selectedNote: NoteType | null;
   selectedProject: ProjectType | null;
 };
+/**
+ *  The Recorder component provides an interface for audio recording in a specific note.
+ *  It includes control for starting and stopping audio recording.
+ * @param refreshNoteDetails a function that refreshes the details of the note
+ * @param selectedNote the currently selected note
+ * @param selectedProject the currently selected project
+ * @constructor
+ */
 const Recorder: React.FC<RecorderProps> = ({
   refreshNoteDetails,
   selectedNote,
@@ -17,6 +25,9 @@ const Recorder: React.FC<RecorderProps> = ({
   const { startNewRecording, stopAndUploadRecording, recordingState } =
     useAudioManager();
 
+  /**
+   * handles the starting and stopping of the recording.
+   */
   const toggleRecording = async () => {
     try {
       if (recordingState === 'idle') {

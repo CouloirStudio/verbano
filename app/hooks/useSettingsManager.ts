@@ -1,7 +1,7 @@
-import { useUser } from '@/app/contexts/UserContext';
-import { useMutation } from '@apollo/client';
-import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
-import UpdateUserPassword from '@/app/graphql/mutations/UpdatePassword.graphql';
+import { useUser } from "@/app/contexts/UserContext";
+import { useMutation } from "@apollo/client";
+import UpdateUser from "@/app/graphql/mutations/UpdateUser.graphql";
+import UpdateUserPassword from "@/app/graphql/mutations/UpdatePassword.graphql";
 
 /**
  * Manager for updating user settings
@@ -42,6 +42,7 @@ const useSettingsManager = () => {
    * Function for updating users name
    * @param newFirst The new first name
    * @param newLast The new last name
+   * @returns the result of the operation
    */
   const updateName = async (newFirst: string, newLast: string) => {
     // Check to make sure that current user is not undefined
@@ -94,6 +95,7 @@ const useSettingsManager = () => {
    * @param oldPass The old user password for validation
    * @param newPass The new user password
    * @param newPassConfirm Confirmation of the new password
+   * @returns the result of the operation
    */
   const updatePassword = async (
     oldPass: string,

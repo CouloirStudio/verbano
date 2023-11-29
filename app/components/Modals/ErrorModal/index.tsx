@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
-import styles from './errormodal.module.scss';
-import { useErrorModalContext } from '../../../contexts/ErrorModalContext';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { AiFillQuestionCircle } from 'react-icons/ai';
-import DefaultModal from '../DefaultModal';
+import React, { useEffect } from "react";
+import styles from "./errormodal.module.scss";
+import { useErrorModalContext } from "../../../contexts/ErrorModalContext";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import { AiFillQuestionCircle } from "react-icons/ai";
+import DefaultModal from "../DefaultModal";
 
+/**
+ * A reusable modal for displaying critical error messages.
+ * @constructor
+ */
 const ErrorModal = () => {
   const { isError, errorMessage, setIsError } = useErrorModalContext();
 

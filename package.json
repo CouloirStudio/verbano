@@ -147,7 +147,8 @@
     "storybook-addon-figma": "^0.1.0",
     "supertest": "^6.3.3",
     "ts-loader": "^9.4.4",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.25.4"
   },
   "_moduleAliases": {
     "@": "./"

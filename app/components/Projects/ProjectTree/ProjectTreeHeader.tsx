@@ -10,6 +10,10 @@ const styles = {
   fontSize: '1rem',
 };
 
+/**
+ * ProjectTreeHeader is a header for the project tree.
+ * It contains the CreateProjectButton.
+ */
 function ProjectTreeHeader() {
   const theme = useTheme();
   return (

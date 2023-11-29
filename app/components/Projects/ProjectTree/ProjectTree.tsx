@@ -13,6 +13,10 @@ import { useDraggingContext } from '@/app/contexts/DraggingContext';
 import { useTheme } from '@mui/material/styles';
 import { Skeleton, Stack } from '@mui/material';
 
+/**
+ * This component is used for rendering the items within the project tree.
+ * @param projects a list of the user's projects
+ */
 const renderProjectTree = (projects: PositionedProjectType[]) => {
   return projects.map((project: PositionedProjectType, index) => (
     <ProjectTreeItem
@@ -24,6 +28,9 @@ const renderProjectTree = (projects: PositionedProjectType[]) => {
   ));
 };
 
+/**
+ * ProjectTree handles the rendering of the project items, and project tree header.
+ */
 function ProjectTree() {
   const { refetchData, setSelectedProject, setSelectedNote, projects } =
     useProjectContext();

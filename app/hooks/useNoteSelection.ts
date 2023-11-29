@@ -1,7 +1,11 @@
-import { useNoteListContext } from '@/app/contexts/NoteListContext';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
-import { useCallback, useEffect } from 'react';
+import { useNoteListContext } from "@/app/contexts/NoteListContext";
+import { useProjectContext } from "@/app/contexts/ProjectContext";
+import { useCallback, useEffect } from "react";
 
+/**
+ * A custom hook to handle selecting notes.
+ * @param id of the first note selected
+ */
 const useNoteSelection = (id: string) => {
   const { selectedNotes, setSelectedNotes } = useNoteListContext();
   const context = useProjectContext();
@@ -25,6 +29,9 @@ const useNoteSelection = (id: string) => {
     };
   }, [context, setSelectedNotes, selectedNotes]);
 
+  /**
+   * Handles when a note is selected by being clicked.
+   */
   const handleClick = useCallback(
     (event: React.MouseEvent) => {
       if (event.ctrlKey || event.metaKey) {

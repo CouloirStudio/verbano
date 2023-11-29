@@ -18,7 +18,6 @@ interface TabPanelProps {
 /**
  * a component that represents tab panel
  * @param props props for the tab panel
- * @constructor
  */
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -50,7 +49,6 @@ function a11yProps(index: number) {
 
 /**
  *  A 'Settings' component which houses the respective forms inside MUI tabs.
- * @constructor
  */
 function Settings() {
   const [value, setValue] = React.useState(0);

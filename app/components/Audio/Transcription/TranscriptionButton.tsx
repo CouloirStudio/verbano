@@ -10,8 +10,7 @@ import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
 import {useProgress} from '@/app/contexts/ProgressContext';
 
 /**
- * A button that grabs the selected note and transcribes the audio. .
- * @constructor
+ * A button that grabs the selected note and transcribes the audio.
  */
 const TranscriptionButton = () => {
   const BASE_URL = 'https://localhost:3000';

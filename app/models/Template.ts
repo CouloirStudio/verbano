@@ -1,11 +1,17 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
+/**
+ * Interface for ITemplate object
+ */
 interface ITemplate extends Document {
   templateName: string;
   templateDescription?: string;
   prompt?: string;
 }
 
+/**
+ * MongoDB schema for a Template document.
+ */
 const TemplateSchema = new Schema<ITemplate>({
   templateName: {
     type: String,

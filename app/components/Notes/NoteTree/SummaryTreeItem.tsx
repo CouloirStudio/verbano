@@ -32,7 +32,6 @@ const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
     const [name, setName] = useState<string>(summaryName);
     const { selectedNotes } = useNoteListContext();
     const { handleClick, isSelected } = useNoteSelection(id);
-
     const {
       isEditing,
       value,
@@ -43,13 +42,11 @@ const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
       handleKeyDown,
       exitEditing,
     } = useDoubleClickEdit(summaryName);
-
     useEffect(() => {
       if (selectedNote?.id !== id && isEditing) {
         exitEditing();
       }
     }, [selectedNote, isEditing, id, exitEditing]);
-
     const selectedStyle = useMemo(
       () => ({
         backgroundColor: theme.palette.primary.main,
@@ -57,7 +54,6 @@ const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
       }),
       [theme.palette.primary],
     );
-
     const style = useMemo(
       () => ({
         ...getItemStyle(null, false, theme),
@@ -77,7 +73,6 @@ const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
         setName(summary.summaryName);
         return;
       }
-
       setName(newValue.trim());
       try {
         await updateNote({
@@ -93,12 +88,10 @@ const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
         console.error('Error updating note:', e);
       }
     };
-
     const handleContextMenuEvent = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => handleContextMenu(e, id),
       [handleContextMenu, id],
     );
-
     return (
       <Draggable
         key={'summary-' + summary.id}
@@ -143,5 +136,4 @@ const SummaryTreeItem: React.FC<SummaryTreeItemProps> = memo(
     prevProps.summary.summaryName === nextProps.summary.summaryName &&
     prevProps.index === nextProps.index,
 );
-
 export default SummaryTreeItem;

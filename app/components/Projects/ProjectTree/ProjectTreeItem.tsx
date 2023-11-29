@@ -20,6 +20,9 @@ interface ProjectTreeItemProps {
   className?: string;
 }
 
+/**
+ * ProjectTreeItem is a draggable/droppable component that represents an item in the Project Tree.
+ */
 const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
   ({ project, index, className }) => {
     const [contextMenu, setContextMenu] = useState<{
@@ -102,6 +105,9 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
       setContextMenu(null);
     };
 
+    /**
+     * A function for handling project deletion using graphql/
+     */
     const handleDelete = async () => {
       try {
         //remove the project from the list of projects

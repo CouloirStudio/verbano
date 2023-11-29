@@ -10,6 +10,9 @@ import Typography from '@mui/material/Typography';
 import TakingNotesSVG from '@/app/components/UI/SVGs/TakingNotesSVG';
 import ProgressContext from '@/app/contexts/ProgressContext';
 
+/**
+ * The Home page for Verbano
+ */
 export default function Home() {
   const { selectedNote } = useProjectContext();
   const theme = useTheme();

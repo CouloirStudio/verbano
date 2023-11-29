@@ -1,5 +1,9 @@
-import https from 'https';
+import https from "https";
 
+/**
+ * Function for revoking google token upon account deletion.
+ * @param token the token to be revoked
+ */
 const revokeToken = (token: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const googleRevokeUrl = `https://accounts.google.com/o/oauth2/revoke?token=${token}`;

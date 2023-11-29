@@ -1,13 +1,7 @@
-import { Note } from '../../models/Note';
-import {
-  AddNoteArgs,
-  DeleteNoteArgs,
-  GetNoteArgs,
-  ResolverContext,
-  UpdateNoteArgs,
-} from './types';
-import { Project } from '../../models/Project';
-import { deleteAudioFromS3 } from '@/app/services/AWSService';
+import { Note } from "../../models/Note";
+import { AddNoteArgs, DeleteNoteArgs, GetNoteArgs, ResolverContext, UpdateNoteArgs } from "./types";
+import { Project } from "../../models/Project";
+import { deleteAudioFromS3 } from "@/app/services/AWSService";
 
 /**
  * Resolvers for querying notes from the database.
@@ -137,6 +131,13 @@ export const NoteMutations = {
     return Note.findByIdAndUpdate(args.id, args.input, { new: true });
   },
 
+  /**
+   * Move a note to another project.
+   *
+   * @param _ - Root object (unused in this mutation).
+   * @param args - Arguments for the mutation, including the ID of the note to update and the new details.
+   * @param _context - Resolver context (unused in this mutation).
+   */
   async moveNoteToProject(
     _: unknown,
     args: { noteId: string; projectId: string },
@@ -196,6 +197,14 @@ export const NoteMutations = {
     return note;
   },
 
+  /**
+   * Move a note to a different position in the list.
+   *
+   * @param _ - Root object (unused in this mutation).
+   * @param args - Arguments for the mutation, including the ID of the note to update and the new details.
+   * @param _context - Resolver context (unused in this mutation).
+   * @returns the updated Note object
+   */
   async moveNoteOrder(
     _: unknown,
     args: { noteId: string; order: number },

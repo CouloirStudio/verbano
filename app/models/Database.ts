@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 
 const uri = process.env.MONGO_URI || '';
-
+/**
+ * Utility for connecting to mongoose.
+ */
 export const connectDB = async () => {
   try {
     await mongoose.connect(uri, {
@@ -27,6 +29,9 @@ export const connectDB = async () => {
   }
 };
 
+/**
+ * Utility for disconnecting from mongoose.
+ */
 export const disconnectDB = async () => {
   try {
     await mongoose.disconnect();

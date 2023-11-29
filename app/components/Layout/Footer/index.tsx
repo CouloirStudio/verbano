@@ -10,12 +10,13 @@ export interface FooterProps {
 
 /**
  *  A reusable footer component that word and character count of the given text.
- * @param footerText
- * @constructor
+ * @param footerText the text that the footer is showing data for
  */
 const Footer: React.FC<FooterProps> = ({ footerText }) => {
   const theme = useTheme();
-
+  /**
+   * a function that counts the words and characters of the footer text.
+   */
   const countWords = () => {
     // Made this function so it would not display a word if there are no characters
     const words = footerText.split(' ').length;

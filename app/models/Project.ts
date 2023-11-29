@@ -1,5 +1,8 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
+/**
+ * Interface for IProject object
+ */
 export interface IProject extends Document {
   projectName: string;
   projectDescription?: string;
@@ -7,6 +10,9 @@ export interface IProject extends Document {
   summaries: { summary: typeof Schema.Types.ObjectId; position: number }[]; // Array of summary-position objects
 }
 
+/**
+ * MongoDB schema for a project document.
+ */
 const ProjectSchema = new Schema<IProject>({
   projectName: {
     type: String,
