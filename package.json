@@ -4,7 +4,7 @@
   "description": "Audio transcription and report generation application",
   "private": true,
   "scripts": {
-    "typedoc": "typedoc --options typedoc.json",
+    "typedoc": "typedoc --options typedoc.json --skipErrorChecking",
     "dev": "cross-env NODE_ENV=development nodemon --watch 'server/**/*' -e ts,tsx --exec 'ts-node' --project server/tsconfig.server.json server/server.ts",
     "build": "next build && yarn build:server",
     "build:server": "tsc --project ./server/tsconfig.server.json",
@@ -140,7 +140,6 @@
     "eslint-plugin-storybook": "^0.6.14",
     "eslint-plugin-testing-library": "^6.0.1",
     "jest-environment-jsdom": "^29.7.0",
-    "jsdoc": "^4.0.2",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "storybook": "^7.4.5",

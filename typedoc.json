@@ -1,8 +1,9 @@
 {
   "entryPoints": [
-    "app",
-    "pages",
-    "server"
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "server/*.ts",
+    "pages/*.tsx"
   ],
   "out": "docs",
   "name": "Verbano",
