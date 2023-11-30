@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { AudioRecorder } from "@/app/api/recorder";
+import { useEffect } from 'react';
+import { AudioRecorder } from '@/app/api/recorder';
 
 /**
  * Hook for cleaning media streams from the AudioRecorder object.

@@ -3,9 +3,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import useFormatTimestamp from '@/app/hooks/useFormatTimestamp'; // Import the hook
 import styles from './transcription.module.scss';
-import {Stack} from '@mui/material';
-import {useTheme} from '@mui/material/styles';
-import {RiSpeakLine} from 'react-icons/ri';
+import { Stack } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { RiSpeakLine } from 'react-icons/ri';
 
 /**
  * `TranscriptionSegmentProps` defines the properties that the `TranscriptionSegment` component expects.
@@ -13,8 +13,15 @@ import {RiSpeakLine} from 'react-icons/ri';
  */
 interface TranscriptionSegmentProps {
   segment: {
+    id: number;
+    end: number;
     start: number;
     text: string;
+    tokens: number[];
+    avgLogProb: number;
+    temperature: number;
+    noSpeechProb: number;
+    compressionRatio: number;
   };
 }
 

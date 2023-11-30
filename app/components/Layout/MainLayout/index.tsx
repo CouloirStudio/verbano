@@ -5,6 +5,7 @@ import styles from './layout.module.scss';
 import { DraggingProvider } from '@/app/contexts/DraggingContext';
 import { NoteListContextProvider } from '@/app/contexts/NoteListContext';
 import Box from '@mui/material/Box';
+import { ProgressProvider } from '@/app/contexts/ProgressContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,7 +24,9 @@ function Layout({ children }: LayoutProps) {
             <Sidebar />
           </NoteListContextProvider>
         </DraggingProvider>
-        <main className={styles.mainArea}>{children}</main>
+        <ProgressProvider>
+          <main className={styles.mainArea}>{children}</main>
+        </ProgressProvider>
       </div>
     </Box>
   );

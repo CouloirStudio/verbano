@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 /**
  * Interface for INote object
@@ -7,12 +7,18 @@ export interface INote extends Document {
   audioLocation?: string;
   dateCreated?: Date;
   transcription?: string;
+  progress?: {
+    percentage: number;
+    secondsLeft: number;
+  };
   tags?: string[];
   noteName: string;
   noteDescription?: string;
   summary?: string;
 
   getProjectId(): Promise<String | null>;
+
+  getOwnerId(): Promise<String | null>;
 }
 
 /**
@@ -35,6 +41,16 @@ const NoteSchema = new Schema<INote>({
   },
   noteDescription: String,
   summary: String,
+  progress: {
+    percentage: {
+      type: Number,
+      default: 0,
+    },
+    secondsLeft: {
+      type: Number,
+      default: 0,
+    },
+  },
 });
 
 /**
@@ -55,6 +71,32 @@ NoteSchema.methods.getProjectId = async function (
   }
 
   return null;
+};
+
+NoteSchema.methods.getOwnerId = async function (
+  this: INote,
+): Promise<string | null> {
+  try {
+    const User = mongoose.model('User');
+
+    const projectID = await this.getProjectId();
+    if (!projectID) return null;
+
+    const project = await mongoose
+      .model('Project')
+      .findById(projectID, '_id')
+      .exec();
+    if (!project) return null;
+
+    const owner = await User.findOne(
+      { 'projects.project': project._id },
+      '_id',
+    ).exec();
+    return owner ? owner._id : null;
+  } catch (error) {
+    console.error('Error finding note owner:', error);
+    return null;
+  }
 };
 
 export const Note: Model<INote> = mongoose.model('Note', NoteSchema);

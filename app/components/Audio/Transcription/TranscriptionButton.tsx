@@ -1,24 +1,26 @@
-import React, { useEffect, useRef } from "react";
-import { useProjectContext } from "@/app/contexts/ProjectContext";
-import { useErrorModalContext } from "@/app/contexts/ErrorModalContext";
-import { transcribe } from "@/app/api/transcription";
-import IconButton from "@mui/material/IconButton";
-import { useNoteContext } from "@/app/contexts/NoteContext";
-import { Tooltip, useTheme } from "@mui/material";
-import client from "@/app/config/apolloClient";
-import GetTranscription from "@/app/graphql/queries/GetTranscription.graphql";
+import React, { useEffect, useRef } from 'react';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useErrorModalContext } from '@/app/contexts/ErrorModalContext';
+import { transcribe } from '@/app/api/transcription';
+import IconButton from '@mui/material/IconButton';
+import { useNoteContext } from '@/app/contexts/NoteContext';
+import { Tooltip, useTheme } from '@mui/material';
+import client from '@/app/config/apolloClient';
+import GetTranscription from '@/app/graphql/queries/GetTranscription.graphql';
+import { useProgress } from '@/app/contexts/ProgressContext';
 
 /**
  * A button that grabs the selected note and transcribes the audio.
  */
 const TranscriptionButton = () => {
   const BASE_URL = 'https://localhost:3000';
-  const context = useProjectContext();
+  const { selectedNote, refetchData } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
-  const selectedNote = context.selectedNote;
   const { setTranscription } = useNoteContext();
 
   const selectedNoteRef = useRef(selectedNote);
+
+  const { updateProgress, removeTask } = useProgress();
 
   const theme = useTheme();
 
@@ -30,58 +32,54 @@ const TranscriptionButton = () => {
    * Transcribes audio with Whisper and sets transcription state to the new transcription.
    */
   const transcribeAudio = () => {
-    try {
-      if (selectedNote) {
-        try {
-          // Transcribe audio
-          transcribe(
-            selectedNote?.audioLocation,
-            BASE_URL,
-            selectedNote?.id,
-          ).then((transcription) => {
-            if (!transcription) {
-              return;
-            }
-
-            // Check that the selected note has not changed since the transcription was requested
-            const currentNoteId = selectedNoteRef.current
-              ? selectedNoteRef.current.id
-              : null;
-            if (selectedNote.id !== currentNoteId) {
-              return;
-            }
-            // Set transcription in the NoteContext so that the display updates
-            // this works
-
-            //update the transcription context
-            setTranscription(JSON.stringify(transcription, null, 2));
-
-            //update the apollo cache with the new transcription
-            client.refetchQueries({
-              include: [
-                {
-                  query: GetTranscription,
-                  variables: {
-                    id: selectedNote.id,
-                  },
-                },
-              ],
-            });
-          });
-        } catch (err: any) {
-          setErrorMessage(err.message);
-          setIsError(true);
-        }
-      } else {
-        // There should be a selected note if this button is pressed
-        setIsError(true);
-        setErrorMessage('No note selected.');
-      }
-    } catch (error) {
-      console.log(error);
+    if (!selectedNote) {
       setIsError(true);
-      if (error instanceof Error) setErrorMessage(error.message);
+      setErrorMessage('No note selected.');
+      return;
     }
+
+    updateProgress(selectedNote.noteName, selectedNote.id, 'Transcription', 0);
+
+    transcribe(selectedNote.audioLocation, BASE_URL, selectedNote.id)
+      .then((transcription) => {
+        if (!transcription) {
+          return;
+        }
+
+        const currentNoteId = selectedNoteRef.current
+          ? selectedNoteRef.current.id
+          : null;
+        if (selectedNote.id !== currentNoteId) {
+          return;
+        }
+
+        updateProgress(
+          selectedNote.noteName,
+          selectedNote.id,
+          'Transcription',
+          1,
+          0,
+        );
+
+        setTranscription(transcription);
+        client.refetchQueries({
+          include: [
+            {
+              query: GetTranscription,
+              variables: { id: selectedNote.id },
+            },
+          ],
+        });
+
+        refetchData();
+      })
+      .catch((err) => {
+        setErrorMessage(
+          "Sorry, we couldn't transcribe your audio. Try again later.",
+        );
+        setIsError(true);
+        removeTask(selectedNote.id, 'Transcription');
+      });
   };
 
   const disabled = !selectedNote?.audioLocation;

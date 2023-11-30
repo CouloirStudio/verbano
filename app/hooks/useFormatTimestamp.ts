@@ -1,4 +1,4 @@
-import { useCallback } from "react"; // Custom hook for formatting timestamps
+import { useCallback } from 'react'; // Custom hook for formatting timestamps
 
 /**
  * Custom hook for formatting timestamps.

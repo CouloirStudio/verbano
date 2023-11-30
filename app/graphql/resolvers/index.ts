@@ -1,6 +1,10 @@
-import { UserMutations, UserQueries } from "./UserResolvers";
-import { ProjectMutations, ProjectQueries, ProjectType } from "./ProjectResolvers";
-import { NoteMutations, NoteQueries } from "./NoteResolvers";
+import { UserMutations, UserQueries } from './UserResolvers';
+import {
+  ProjectMutations,
+  ProjectQueries,
+  ProjectType,
+} from './ProjectResolvers';
+import { NoteMutations, NoteQueries } from './NoteResolvers';
 
 /**
  * Consolidation of Graphql resolvers.

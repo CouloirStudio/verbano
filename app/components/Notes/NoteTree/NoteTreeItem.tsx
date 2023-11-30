@@ -99,7 +99,6 @@ const NoteTreeItem: React.FC<NoteTreeItemProps> = memo(
         });
       } catch (e) {
         setName(note.noteName);
-        console.error('Error updating note:', e);
       }
     };
 

@@ -1,4 +1,4 @@
-import https from "https";
+import https from 'https';
 
 /**
  * Function for revoking google token upon account deletion.

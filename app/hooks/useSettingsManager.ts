@@ -1,7 +1,7 @@
-import { useUser } from "@/app/contexts/UserContext";
-import { useMutation } from "@apollo/client";
-import UpdateUser from "@/app/graphql/mutations/UpdateUser.graphql";
-import UpdateUserPassword from "@/app/graphql/mutations/UpdatePassword.graphql";
+import { useUser } from '@/app/contexts/UserContext';
+import { useMutation } from '@apollo/client';
+import UpdateUser from '@/app/graphql/mutations/UpdateUser.graphql';
+import UpdateUserPassword from '@/app/graphql/mutations/UpdatePassword.graphql';
 
 /**
  * Manager for updating user settings

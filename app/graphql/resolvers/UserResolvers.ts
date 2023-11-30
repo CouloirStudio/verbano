@@ -1,13 +1,18 @@
-import { User } from "@/app/models/User";
-import { hashPassword } from "@/app/config/passport";
-import { AddUserArgs, ResolverContext, UpdatePasswordArgs, UpdateUserArgs } from "@/app/graphql/resolvers/types";
-import { Note, Project, Summary } from "@/app/models";
-import { ApolloError } from "apollo-server-express";
-import verifyPassword from "@/app/graphql/resolvers/verifyPassword";
-import { deleteAudioFromS3 } from "@/app/services/AWSService";
-import EmailService from "@/app/services/EmailService";
-import { Request } from "express";
-import revokeToken from "@/app/services/AuthHelper";
+import { User } from '@/app/models/User';
+import { hashPassword } from '@/app/config/passport';
+import {
+  AddUserArgs,
+  ResolverContext,
+  UpdatePasswordArgs,
+  UpdateUserArgs,
+} from '@/app/graphql/resolvers/types';
+import { Note, Project, Summary } from '@/app/models';
+import { ApolloError } from 'apollo-server-express';
+import verifyPassword from '@/app/graphql/resolvers/verifyPassword';
+import { deleteAudioFromS3 } from '@/app/services/AWSService';
+import EmailService from '@/app/services/EmailService';
+import { Request } from 'express';
+import revokeToken from '@/app/services/AuthHelper';
 
 /**
  * Resolvers for querying users from the database.

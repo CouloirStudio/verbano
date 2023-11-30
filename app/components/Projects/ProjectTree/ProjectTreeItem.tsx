@@ -39,6 +39,7 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
       selectedProject,
       setSelectedProject,
       setSelectedNote,
+      setProjects,
     } = useProjectContext();
 
     const { draggingItemType } = useDraggingContext();
@@ -110,12 +111,9 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
     const handleDelete = async () => {
       try {
         //remove the project from the list of projects
-        projects?.splice(
-          projects.findIndex(
-            (projectLoop) => projectLoop.project.id === project.id,
-          ),
-          1,
-        );
+        const newProjects = projects.filter((p) => p.project.id !== project.id);
+
+        setProjects(newProjects);
         setSelectedProject(null);
         setSelectedNote(null);
 
@@ -124,7 +122,7 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
         });
 
         if (!response.data.deleteProject) {
-          console.error('Failed to delete the project.');
+          throw new Error('Failed to delete the project from the backend.');
         }
 
         handleClose();

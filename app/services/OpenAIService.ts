@@ -62,7 +62,7 @@ class OpenAIService {
       const combinedNotes = notes.map((note) => note.transcription).join('\n');
 
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo-1106',
         messages: [
           { role: 'user', content: combinedNotes },
           {
@@ -88,7 +88,7 @@ class OpenAIService {
   public async generateTags(tts: string): Promise<string[] | undefined> {
     try {
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo-1106',
         messages: [
           {
             role: 'system',

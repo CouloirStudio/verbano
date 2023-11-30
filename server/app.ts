@@ -1,4 +1,4 @@
-import express, { json } from 'express';
+import express, { json, urlencoded } from 'express';
 import session from 'express-session';
 import { randomUUID } from 'crypto';
 import cors from 'cors';
@@ -47,7 +47,8 @@ export function createApp(mockMiddleware?: any) {
   // Initialize passport and session
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(json());
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ limit: '50mb' }));
   app.use(helmet());
   app.use(
     helmet.contentSecurityPolicy({
