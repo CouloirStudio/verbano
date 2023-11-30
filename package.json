@@ -4,6 +4,7 @@
   "description": "Audio transcription and report generation application",
   "private": true,
   "scripts": {
+    "typedoc": "typedoc --options typedoc.json --skipErrorChecking",
     "dev": "cross-env NODE_ENV=development nodemon --watch 'server/**/*' -e ts,tsx --exec 'ts-node' --project server/tsconfig.server.json server/server.ts",
     "build": "next build && yarn build:server",
     "build:server": "tsc --project ./server/tsconfig.server.json",

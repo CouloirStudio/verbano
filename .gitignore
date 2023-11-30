@@ -20,7 +20,6 @@ server/build/
 # misc
 .DS_Store
 *.pem
-/docs
 
 #IDE
 .idea

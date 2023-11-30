@@ -1,0 +1,18 @@
+{
+  "entryPoints": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "server/*.ts",
+    "pages/*.tsx"
+  ],
+  "out": "docs",
+  "name": "Verbano",
+  "theme": "default",
+  "exclude": [
+    "**/node_modules/**/*",
+    "**/__tests__/**/*",
+    "**/cypress/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}
