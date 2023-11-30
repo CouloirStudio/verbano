@@ -49,12 +49,12 @@ Whenever you transcribe or summarize, your account will be charged.
 
 ### Dependencies:
 
-For a full list of dependencies, please see the package.json file in the root directory.
+For a full list of dependencies, please see the package.json file in the root directory. Yarn is the package manager used in Verbano and must by installed first by enabling corepack in the latest version of node.
 
 To install all dependencies:
 
 ```bash
-Npm install 
+yarn install 
 ```
 
 ### To run:
