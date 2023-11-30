@@ -55,7 +55,9 @@ router.post('/summarize', async (req, res) => {
     // return the transcription
     res.json({ success: true, summary: summaryText });
   } catch (error) {
-    console.error('An unexpected error occurred:', error);
+    if (error instanceof Error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
   }
 });
 

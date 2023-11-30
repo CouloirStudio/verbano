@@ -1,14 +1,14 @@
-import styles from "@/pages/styles/login.module.scss";
-import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { Button, CircularProgress, Divider } from "@mui/material";
-import { FaGoogle } from "react-icons/fa";
+import styles from '@/pages/styles/login.module.scss';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { Button, CircularProgress, Divider } from '@mui/material';
+import { FaGoogle } from 'react-icons/fa';
 
-import GetCurrentUser from "@/app/graphql/queries/GetCurrentUser";
-import UserLogin from "@/app/graphql/mutations/UserLogin";
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
+import UserLogin from '@/app/graphql/mutations/UserLogin';
 
-import InputField from "@/app/components/Authentication/Login/InputField";
-import { useTheme } from "@mui/material/styles";
+import InputField from '@/app/components/Authentication/Login/InputField';
+import { useTheme } from '@mui/material/styles';
 
 /**
  * The login page for Verbano.

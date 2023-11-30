@@ -1,13 +1,22 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styles from './header.module.scss';
-import {Avatar, Divider, IconButton, Menu, MenuItem, Stack, Theme, useTheme,} from '@mui/material';
-import {Nightlight, WbSunny} from '@mui/icons-material';
-import {BiLogOut} from 'react-icons/bi';
-import {IoSettingsOutline} from 'react-icons/io5';
-import {useUser} from '@/app/contexts/UserContext';
-import {useThemeContext} from '@/app/contexts/ThemeContext';
-import {deepPurple} from '@mui/material/colors';
-import {SettingsModal} from '@/app/components/Modals/SettingsModal';
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Theme,
+  useTheme,
+} from '@mui/material';
+import { Nightlight, WbSunny } from '@mui/icons-material';
+import { BiLogOut } from 'react-icons/bi';
+import { IoSettingsOutline } from 'react-icons/io5';
+import { useUser } from '@/app/contexts/UserContext';
+import { useThemeContext } from '@/app/contexts/ThemeContext';
+import { deepPurple } from '@mui/material/colors';
+import { SettingsModal } from '@/app/components/Modals/SettingsModal';
 import Typography from '@mui/material/Typography';
 
 /**

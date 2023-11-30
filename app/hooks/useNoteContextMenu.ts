@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import DeleteNote from "@/app/graphql/mutations/DeleteNote";
-import { useProjectContext } from "@/app/contexts/ProjectContext";
+import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import DeleteNote from '@/app/graphql/mutations/DeleteNote';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 /**
  * Custom hook for handling the Note context menu.

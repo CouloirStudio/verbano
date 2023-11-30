@@ -1,7 +1,7 @@
-import React, { createContext, ReactNode, useContext } from "react";
-import GetCurrentUser from "@/app/graphql/queries/GetCurrentUser.graphql";
-import { IUser } from "@/app/models/User";
-import { useQuery } from "@apollo/react-hooks";
+import React, { createContext, ReactNode, useContext } from 'react';
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser.graphql';
+import { IUser } from '@/app/models/User';
+import { useQuery } from '@apollo/react-hooks';
 
 /**
  * Context for user management

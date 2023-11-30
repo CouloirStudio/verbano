@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/react-hooks";
-import GetCurrentUser from "@/app/graphql/queries/GetCurrentUser";
+import { useQuery } from '@apollo/react-hooks';
+import GetCurrentUser from '@/app/graphql/queries/GetCurrentUser';
 
 /**
  * User is a component that represents the current user and displays their information.

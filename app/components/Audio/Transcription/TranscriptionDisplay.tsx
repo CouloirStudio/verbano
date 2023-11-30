@@ -18,9 +18,12 @@ import {
   CardHeader,
   Fade,
   IconButton,
+  Skeleton,
   Stack,
   Tooltip,
 } from '@mui/material';
+import { AutoSizer, List, ListRowRenderer } from 'react-virtualized';
+
 import RecordingSVG from '@/app/components/UI/SVGs/RecordingSVG';
 import TranscriptionSVG from '@/app/components/UI/SVGs/TranscriptionSVG';
 import Tabs from '@mui/material/Tabs';
@@ -35,8 +38,15 @@ class TranscriptionParseError extends Error {
 }
 
 interface TranscriptionSegmentData {
+  id: number;
+  end: number;
   start: number;
   text: string;
+  tokens: number[];
+  avgLogProb: number;
+  temperature: number;
+  noSpeechProb: number;
+  compressionRatio: number;
 }
 
 interface TabPanelProps {
@@ -90,6 +100,7 @@ const TranscriptionDisplay: React.FC = () => {
   useEffect(() => {
     if (!selectedNote?.id) return;
 
+    setTranscription('');
     getTranscript({ variables: { id: selectedNote.id } });
     getSummary({ variables: { id: selectedNote.id } });
 
@@ -151,11 +162,35 @@ const TranscriptionDisplay: React.FC = () => {
   // Parse and render transcription segments
   const renderTranscription = (transcriptionJson: string) => {
     try {
-      const segments: TranscriptionSegmentData[] =
+      const parsedData: { segments: TranscriptionSegmentData[] } =
         JSON.parse(transcriptionJson);
-      return segments.map((segment, index) => (
-        <TranscriptionSegment key={index} segment={segment} />
-      ));
+      const segments = parsedData.segments;
+
+      const rowRenderer: ListRowRenderer = ({ key, index, style }) => {
+        const segment = segments[index];
+
+        return (
+          <div key={key} style={style}>
+            <TranscriptionSegment segment={segment} />
+          </div>
+        );
+      };
+
+      return (
+        <div style={{ width: '100%', height: '100%', minHeight: '800px' }}>
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                width={width}
+                height={height}
+                rowCount={segments.length}
+                rowHeight={100}
+                rowRenderer={rowRenderer}
+              />
+            )}
+          </AutoSizer>
+        </div>
+      );
     } catch (e) {
       return (
         <Typography variant="body2">
@@ -198,7 +233,7 @@ const TranscriptionDisplay: React.FC = () => {
 
       <ScrollView>
         <TabPanel value={tabValue} index={0}>
-          {transcription ? (
+          {selectedNote?.transcription && (
             <Card variant={'outlined'} sx={{ position: 'relative' }}>
               <Tooltip title="Copy to clipboard">
                 <IconButton
@@ -222,9 +257,24 @@ const TranscriptionDisplay: React.FC = () => {
                   </Typography>
                 }
               />
-              <CardContent>{renderTranscription(transcription)}</CardContent>
+              <CardContent>
+                {loading ? (
+                  <Box>
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                    <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                  </Box>
+                ) : transcription ? (
+                  renderTranscription(transcription)
+                ) : null}
+              </CardContent>
             </Card>
-          ) : null}
+          )}
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
           <Card variant={'outlined'}>

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import CreateNoteButton from "@/app/components/Notes/NoteTree/CreateNoteButton";
-import SearchBar from "./SearchBar";
-import styles from "./noteTree.module.scss";
-import Typography from "@mui/material/Typography";
-import { AiOutlineMore } from "react-icons/ai";
-import { IoClose } from "react-icons/io5";
-import TooltipIconButton from "@/app/components/UI/TooltipIconButton";
-import { useProjectContext } from "@/app/contexts/ProjectContext";
+import React, { useState } from 'react';
+import CreateNoteButton from '@/app/components/Notes/NoteTree/CreateNoteButton';
+import SearchBar from './SearchBar';
+import styles from './noteTree.module.scss';
+import Typography from '@mui/material/Typography';
+import { AiOutlineMore } from 'react-icons/ai';
+import { IoClose } from 'react-icons/io5';
+import TooltipIconButton from '@/app/components/UI/TooltipIconButton';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
 
 /**
  * The header for the NoteTree component

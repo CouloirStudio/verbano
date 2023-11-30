@@ -1,6 +1,6 @@
 // DraggingContext.tsx
 
-import React, { createContext, ReactNode, useContext, useState } from "react"; // Define the type of the item being dragged
+import React, { createContext, ReactNode, useContext, useState } from 'react'; // Define the type of the item being dragged
 
 // Define the type of the item being dragged
 export type DraggedItemType = 'note' | 'project' | null;

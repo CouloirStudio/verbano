@@ -1,4 +1,4 @@
-import styles from "./scrollView.module.scss";
+import styles from './scrollView.module.scss';
 
 /**
  * ScrollView is a component used to make a component scrollable.

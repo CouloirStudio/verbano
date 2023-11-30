@@ -1,6 +1,6 @@
-import { useNoteListContext } from "@/app/contexts/NoteListContext";
-import { useProjectContext } from "@/app/contexts/ProjectContext";
-import { useCallback, useEffect } from "react";
+import { useNoteListContext } from '@/app/contexts/NoteListContext';
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import { useCallback, useEffect } from 'react';
 
 /**
  * A custom hook to handle selecting notes.

@@ -1,13 +1,14 @@
-import { useProjectContext } from "@/app/contexts/ProjectContext";
-import styles from "@/pages/styles/noteDashboard.module.scss";
-import TranscriptionDisplay from "@/app/components/Audio/Transcription/TranscriptionDisplay";
-import { NoteContextProvider } from "@/app/contexts/NoteContext";
-import { AudioHeader } from "@/app/components/Audio/AudioHeader";
-import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import { Fade, Stack } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import TakingNotesSVG from "@/app/components/UI/SVGs/TakingNotesSVG";
+import { useProjectContext } from '@/app/contexts/ProjectContext';
+import styles from '@/pages/styles/noteDashboard.module.scss';
+import TranscriptionDisplay from '@/app/components/Audio/Transcription/TranscriptionDisplay';
+import { NoteContextProvider } from '@/app/contexts/NoteContext';
+import { AudioHeader } from '@/app/components/Audio/AudioHeader';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import { Fade, Stack } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import TakingNotesSVG from '@/app/components/UI/SVGs/TakingNotesSVG';
+import ProgressContext from '@/app/contexts/ProgressContext';
 
 /**
  * The Home page for Verbano
@@ -49,6 +50,7 @@ export default function Home() {
           </Fade>
         )}
       </Box>
+      <ProgressContext />
     </div>
   );
 }

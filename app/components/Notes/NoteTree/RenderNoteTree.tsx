@@ -1,9 +1,9 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import { Droppable } from "@hello-pangea/dnd";
-import styles from "./noteTree.module.scss";
-import NoteTreeItem from "@/app/components/Notes/NoteTree/NoteTreeItem";
-import { ProjectNoteType, ProjectType } from "@/app/graphql/resolvers/types";
+import React from 'react';
+import Box from '@mui/material/Box';
+import { Droppable } from '@hello-pangea/dnd';
+import styles from './noteTree.module.scss';
+import NoteTreeItem from '@/app/components/Notes/NoteTree/NoteTreeItem';
+import { ProjectNoteType, ProjectType } from '@/app/graphql/resolvers/types';
 
 /**
  * renderNoteTree handles the rendering of note items within the note tree.
