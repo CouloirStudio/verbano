@@ -1,11 +1,10 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped
-with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This repository contains code for a development MVP of Verbano. There is not a live production deployment available at this time.
 
-## Getting Started With Verbano
+## Getting Started
 
 Verbano is a cutting-edge AI-powered application designed to revolutionize the way audio recordings and transcriptions
 are integrated and utilized. Verbano uniquely combines audio recording capabilities, transcription services, and
-document linking to produce contextually rich summaries.
+document linking to produce contextually rich summaries. 
 
 Verbano relies on several microservices, and has a complex development environment. Below will detail what is currently
 needed to run this program.
