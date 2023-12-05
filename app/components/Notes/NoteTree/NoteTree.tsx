@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
-import { useProjectContext } from '@/app/contexts/ProjectContext';
+import {useProjectContext} from '@/app/contexts/ProjectContext';
 import NoteTreeHeader from '@/app/components/Notes/NoteTree/NoteTreeHeader';
 import styles from './noteTree.module.scss';
-import { useTheme } from '@mui/material/styles';
-import { ContextMenuComponent } from '@/app/components/UI/ContextMenu';
+import {useTheme} from '@mui/material/styles';
+import {ContextMenuComponent} from '@/app/components/UI/ContextMenu';
 import renderNoteTree from './RenderNoteTree';
 import NoteTabs from './NoteTabs';
-import { useNoteContextMenu } from '@/app/hooks/useNoteContextMenu';
-import { useNoteListContext } from '@/app/contexts/NoteListContext';
+import {useNoteContextMenu} from '@/app/hooks/useNoteContextMenu';
+import {useNoteListContext} from '@/app/contexts/NoteListContext';
 import RenderSummaryTree from '@/app/components/Notes/NoteTree/RenderSummaryTree';
-import { ProjectNoteType } from '@/app/graphql/resolvers/types';
+import {ProjectNoteType} from '@/app/graphql/resolvers/types';
 
 /**
  * The NoteTree component handles the rendering of the users notes, the note header, and the note tabs.
@@ -69,10 +69,7 @@ function NoteTree() {
       <ContextMenuComponent
         contextMenu={contextMenu}
         handleClose={handleClose}
-        options={[
-          { label: 'Edit', action: () => console.log('Edit clicked') },
-          { label: 'Delete', action: handleDelete },
-        ]}
+        options={[{ label: 'Delete', action: handleDelete }]}
       />
     </Box>
   );

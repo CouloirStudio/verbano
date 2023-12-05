@@ -226,10 +226,6 @@ const ProjectTreeItem: React.FC<ProjectTreeItemProps> = memo(
           handleClose={handleClose}
           options={[
             {
-              label: 'Edit',
-              action: () => console.log('Edit clicked', project.id),
-            },
-            {
               label: 'Delete',
               action: handleDelete, // It's already scoped to the project.id of this item
             },
