@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { Tooltip, useTheme } from '@mui/material';
 import { useNoteContext } from '@/app/contexts/NoteContext';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
+import {useProgress} from "@/app/contexts/ProgressContext";
 
 /**
  * A button that grabs the selected notes and generates a summary.
@@ -24,12 +25,19 @@ const SummarizeButton = () => {
     selectedNotesRef.current = selectedNotes;
   }, [selectedNotes]);
 
+  const { updateProgress, removeTask } = useProgress();
+
   /**
    * Generates a summary of the selected notes.
    */
   const generateSummary = async () => {
     try {
       if (selectedNotes && selectedNotes.length > 0) {
+
+        const combinedIds = selectedNotes.map((note) => note?.id).join(',');
+
+        updateProgress(selectedNote?.noteName || 'Notes', combinedIds, 'Summary', 0.0, 5);
+
         const summary = await summarize(selectedNotes, null, BASE_URL); // Assuming 'null' as a placeholder for templateId
 
         // Check that the selected notes have not changed since the summary was requested
@@ -39,6 +47,8 @@ const SummarizeButton = () => {
         ) {
           return;
         }
+
+        updateProgress(selectedNote?.noteName || 'Notes', combinedIds, 'Summary', 1.0, 0);
 
         // Set summary in the ProjectContext so that the display updates
         setSummary(summary);
