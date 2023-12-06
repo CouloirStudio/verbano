@@ -31,10 +31,12 @@ const SummarizeButton = () => {
    * Generates a summary of the selected notes.
    */
   const generateSummary = async () => {
+
+    const combinedIds = selectedNotes.map((note) => note?.id).join(',');
+
     try {
       if (selectedNotes && selectedNotes.length > 0) {
 
-        const combinedIds = selectedNotes.map((note) => note?.id).join(',');
 
         updateProgress(selectedNote?.noteName || 'Notes', combinedIds, 'Summary', 0.0, 5);
 
@@ -56,10 +58,12 @@ const SummarizeButton = () => {
         // There should be selected notes if this button is pressed
         setIsError(true);
         setErrorMessage('No notes selected.');
+        removeTask(combinedIds, 'Summary');
       }
     } catch (error) {
       console.log(error);
       setIsError(true);
+      removeTask(combinedIds, 'Summary');
       if (error instanceof Error) setErrorMessage(error.message);
     }
   };
