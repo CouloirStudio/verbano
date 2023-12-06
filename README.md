@@ -1,34 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This repository contains code for a development MVP of Verbano. There is not a live production deployment available at this time.
 
 ## Getting Started
 
-First, run the development server:
+Verbano is a cutting-edge AI-powered application designed to revolutionize the way audio recordings and transcriptions
+are integrated and utilized. Verbano uniquely combines audio recording capabilities, transcription services, and
+document linking to produce contextually rich summaries. 
+
+Verbano relies on several microservices, and has a complex development environment. Below will detail what is currently
+needed to run this program.
+
+### Software Requirements to run:
+
+- Node.js (you must install all packages before attempting to run)
+- Webstorm (recommended IDE)
+
+### Required API keys:
+
+- REPLICATE_API_KEY
+- OPENAI_API_KEY
+
+In order to get these keys, you must set up an account with these services and give them your billing information.
+Whenever you transcribe or summarize, your account will be charged.
+
+### Other required ENV variables:
+
+- MONGO_URI
+    - This must be acquired after being granted access to the database by an administrator after you create an account
+      with MongoDB.
+    - This is a paid service, your IP address must be whitelisted by an admin in order for the program to work.
+- AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET
+    - This can only be acquired after being granted access to the database by an administrator, they will create an
+      account for you and send you the details.
+        - This is a paid service, with limited storage.
+- GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
+    - This must be either created on your own, or granted to you by an administrator. It is used for Google OAuth
+      privileges.
+- JWT_SECRET
+    - This can be set to whatever you wish.
+- CERT_PASSPHRASE
+    - This is the passphrase you would have set while generating your cert.pem and key.pem files.
+
+### Certificates for HTTPS:
+
+- In order to run you must place a cert.pem and key.pem file in the 'certs' folder of the root directory.
+- The password you choose while generating these must be used for the CERT_PASSPHRASE env variable listed above.
+- These are used in order for HTTPS to work.
+
+### Dependencies:
+
+For a full list of dependencies, please see the package.json file in the root directory. Yarn is the package manager used in Verbano and must by installed first by enabling corepack in the latest version of node.
+
+To install all dependencies:
 
 ```bash
-npm run dev
-# or
+yarn install 
+```
+
+### To run:
+
+to run the development server:
+
+```bash
 yarn dev
-# or
-pnpm dev
 ```
 
 Open [https://localhost:3000](https://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
