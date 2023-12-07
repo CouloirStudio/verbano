@@ -51,25 +51,54 @@ class OpenAIService {
   /**
    * Generates a summary report of the given text, using the text's context.
    * @param notes the notes to generate a summary for
-   * @param template the template to use for the summary
+   * @param prompt a custom prompt for summary generation
    * @returns the summary if generated, null if not
    */
   public async generateSummary(
     notes: INote[],
-    template?: string,
+    prompt?: string,
   ): Promise<string | null> {
     try {
-      const combinedNotes = notes.map((note) => note.transcription).join('\n');
+      let combinedNotes = '';
+
+      notes.forEach((note) => {
+        if (note.transcription != null) {
+          const json = JSON.parse(note.transcription);
+          const segments = json.segments;
+          segments.forEach((segment: any) => {
+            //timestamp from seconds in mm:ss
+            const seconds = segment.start;
+            const minutes = Math.floor(seconds / 60);
+
+            //round to 0 decimal places
+            const secondsLeft = Math.floor(seconds % 60);
+
+            const timestamp = `${minutes}:${secondsLeft}`;
+            combinedNotes += `(${timestamp}) ${segment.text}\n`;
+          });
+        }
+      });
+
+      console.log(combinedNotes);
+
+      const model =
+        combinedNotes.length > 10000
+          ? 'gpt-4-1106-preview'
+          : 'gpt-3.5-turbo-1106';
+
+      const textPrompt = prompt
+        ? `${prompt} (dont start with "summary" heading, just the content) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.`
+        : 'Summarize this transcription into key points (dont specify duration) (dont start with "summary" heading, just the content) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.';
+
+      console.log(textPrompt);
 
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-4-1106-preview',
+        model: model,
         messages: [
           { role: 'user', content: combinedNotes },
           {
             role: 'system',
-            content:
-              template ||
-              'Summarize this transcription into key points (dont specify duration) (dont start with "summary" heading, just the content) in markdown formatting with included headings (No larger than h4), subheadings, bolded text, and bullet points.',
+            content: textPrompt,
           },
         ],
       });

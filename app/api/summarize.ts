@@ -3,12 +3,12 @@ import fetch from 'node-fetch';
 /**
  * Function to handle request to backend for summarizing notes.
  * @param notes Array of note objects to be summarized.
- * @param templateId ID of the template to be used for summarization, if applicable.
+ * @param prompt A custom prompt for summary generation
  * @param baseURL The base URL of the application, passed for testing purposes.
  */
 export const summarize = async (
   notes: any[], // You might want to define a more specific type for notes
-  templateId: string | null,
+  prompt: string | undefined,
   baseURL: string,
 ): Promise<string> => {
   if (!notes || notes.length === 0) {
@@ -16,7 +16,7 @@ export const summarize = async (
   }
 
   // Setting request parameters
-  const data = { notes, templateId };
+  const data = { notes, prompt };
 
   // Sending summarization request to the backend
   const response = await fetch(`${baseURL}/summaries/summarize`, {

@@ -29,6 +29,8 @@ import TranscriptionSVG from '@/app/components/UI/SVGs/TranscriptionSVG';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { IoCopyOutline } from 'react-icons/io5';
+import { useDropzone } from 'react-dropzone';
+import { uploadAudio } from '@/app/api/audio';
 
 class TranscriptionParseError extends Error {
   constructor(message: string) {
@@ -80,7 +82,7 @@ function TabPanel(props: TabPanelProps) {
  * It fetches the transcription data via a GraphQL query and displays it segment by segment.
  */
 const TranscriptionDisplay: React.FC = () => {
-  const { selectedNote } = useProjectContext();
+  const { selectedNote, selectedProject } = useProjectContext();
   const { setErrorMessage, setIsError } = useErrorModalContext();
   const { transcription, setTranscription } = useNoteContext();
   const { summary, setSummary } = useNoteContext();
@@ -217,6 +219,44 @@ const TranscriptionDisplay: React.FC = () => {
     }
   }, [transcription]);
 
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      try {
+        const blob = new Blob([file], { type: file.type });
+        await uploadAudio(
+          blob,
+          'https://localhost:3000',
+          selectedProject,
+          selectedNote,
+        );
+        // Refresh or update UI accordingly
+      } catch (error) {
+        console.error(error);
+      }
+      setIsDragActive(false);
+    },
+    [selectedProject, selectedNote],
+  );
+
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive: dropzoneDragActive,
+  } = useDropzone({
+    onDrop,
+    accept: {
+      'audio/mp3': ['.mp3'],
+      'audio/wav': ['.wav'],
+    },
+  });
+
+  React.useEffect(() => {
+    setIsDragActive(dropzoneDragActive);
+  }, [dropzoneDragActive]);
+
   return (
     <Box className={styles.transcription}>
       {selectedNote?.audioLocation && (
@@ -296,11 +336,19 @@ const TranscriptionDisplay: React.FC = () => {
               height={'80%'}
               alignItems={'center'}
               spacing={3}
+              {...getRootProps()}
             >
-              <Typography variant={'h4'} color="text.primary">
-                Capture your thoughts and ideas <br /> through an audio note
-              </Typography>
-              <RecordingSVG />
+              <input {...getInputProps()} />
+              {!isDragActive ? (
+                <>
+                  <Typography variant={'h4'} color="text.primary">
+                    Capture your thoughts and ideas <br /> through an audio note
+                  </Typography>
+                  <RecordingSVG />
+                </>
+              ) : (
+                <p>Drop the files here...</p>
+              )}
             </Stack>
           </Fade>
         )}

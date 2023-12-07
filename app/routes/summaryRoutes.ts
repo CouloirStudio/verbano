@@ -11,12 +11,12 @@ const router = express.Router();
 router.post('/summarize', async (req, res) => {
   try {
     const data = req.body;
-    const templateId = data.templateId;
+    const prompt = data.prompt;
     const notes: INote[] = data.notes;
 
     const openAI = new OpenAIService();
     // Transcribe audio
-    const summaryText = await openAI.generateSummary(notes, templateId);
+    const summaryText = await openAI.generateSummary(notes, prompt);
 
     if (notes.length === 1) {
       const note = await Note.findById(notes[0].id);
@@ -32,7 +32,7 @@ router.post('/summarize', async (req, res) => {
       summaryName: 'New Summary',
       summaryDescription: 'New Summary Description',
       content: summaryText,
-      templateId: templateId,
+      templateId: null,
       noteIds: notes.map((note) => note.id),
     });
     await summary.save();
